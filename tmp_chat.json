@@ -1,0 +1,11 @@
+﻿{
+    "useWeb":  true,
+    "messages":  [
+                     {
+                         "content":  "Mikä on Torreviejan väkiluku?",
+                         "role":  "user"
+                     }
+                 ],
+    "stream":  false,
+    "locale":  "fi"
+}

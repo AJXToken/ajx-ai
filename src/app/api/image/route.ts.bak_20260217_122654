@@ -1,0 +1,245 @@
+// src/app/api/image/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+import { type PlanId } from "../../../lib/plans";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+// ====== CONFIG ======
+const DATA_DIR = path.join(process.cwd(), ".ajx-data");
+const USAGE_FILE = path.join(DATA_DIR, "usage.json");
+const IMAGES_DIR = path.join(DATA_DIR, "images");
+
+const COOKIE_NAME = "ajx_uid";
+const COOKIE_SECRET =
+  process.env.AJX_COOKIE_SECRET || process.env.NEXTAUTH_SECRET || "dev-secret-change-me";
+
+const OPENAI_IMAGE_MODEL = "gpt-image-1";
+const ALLOWED_SIZES = new Set(["1024x1024", "1024x1536", "1536x1024", "auto"]);
+
+function ensureDataDir() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
+}
+
+function getMonthKey(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+type UsageRow = {
+  msgThisMonth: number;
+  imgThisMonth: number;
+  webThisMonth: number;
+  imgGenThisMonth?: number;
+  extraMsgThisMonth?: number;
+  extraImgThisMonth?: number;
+};
+type UsageDb = Record<string, Record<string, UsageRow>>;
+
+function loadUsage(): UsageDb {
+  ensureDataDir();
+  if (!fs.existsSync(USAGE_FILE)) return {};
+  try {
+    const raw = fs.readFileSync(USAGE_FILE, "utf8");
+    const j = JSON.parse(raw);
+    if (j && typeof j === "object") return j as UsageDb;
+    return {};
+  } catch {
+    return {};
+  }
+}
+
+function saveUsage(db: UsageDb) {
+  ensureDataDir();
+  fs.writeFileSync(USAGE_FILE, JSON.stringify(db, null, 2), "utf8");
+}
+
+function hmac(data: string) {
+  return crypto.createHmac("sha256", COOKIE_SECRET).update(data).digest("hex");
+}
+function signUid(uid: string) {
+  return `${uid}.${hmac(uid)}`;
+}
+function verifySignedUid(signed: string | undefined | null): string | null {
+  if (!signed) return null;
+  const parts = signed.split(".");
+  if (parts.length !== 2) return null;
+  const [uid, sig] = parts;
+  if (!uid || !sig) return null;
+  const expected = hmac(uid);
+  try {
+    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return uid;
+  } catch {}
+  return null;
+}
+function newUid() {
+  return crypto.randomBytes(16).toString("hex");
+}
+
+function normalizeDevPlan(raw: string): string {
+  const v = (raw || "").toLowerCase().trim();
+  if (v === "lite") return "visual";
+  if (v === "partner") return "company";
+  return v;
+}
+function readPlanFromRequest(req: NextRequest, body: any): PlanId {
+  const hdr = req.headers.get("x-ajx-dev-plan");
+  const h = hdr ? normalizeDevPlan(hdr) : "";
+  const q = normalizeDevPlan(req.nextUrl.searchParams.get("devPlan") || "");
+  const b = normalizeDevPlan(String(body?.devPlan || ""));
+  const cand = h || q || b;
+  const allowed = ["free", "visual", "basic", "pro", "company"];
+  if (allowed.includes(cand)) return cand as any;
+  return "free" as any;
+}
+function resolveDevScope(req: NextRequest, body: any): string | null {
+  const hdr = req.headers.get("x-ajx-dev-plan");
+  const h = hdr ? normalizeDevPlan(hdr) : "";
+  const q = normalizeDevPlan(req.nextUrl.searchParams.get("devPlan") || "");
+  const b = normalizeDevPlan(String(body?.devPlan || ""));
+  const cand = h || q || b;
+  const allowed = ["free", "visual", "basic", "pro", "company"];
+  return allowed.includes(cand) ? cand : null;
+}
+function scopedUserKey(userId: string, devScope: string | null): string {
+  return devScope ? `${userId}__${devScope}` : userId;
+}
+
+type Limits = { msgPerMonth: number; imgPerMonth: number; webPerMonth: number };
+function canonicalLimitsForImage(plan: PlanId): Limits {
+  switch (plan as any) {
+    case "visual":
+      return { msgPerMonth: 800, imgPerMonth: 30, webPerMonth: 0 };
+    case "basic":
+      return { msgPerMonth: 800, imgPerMonth: 120, webPerMonth: 50 };
+    case "pro":
+      return { msgPerMonth: 3000, imgPerMonth: 300, webPerMonth: 200 };
+    case "company":
+      return { msgPerMonth: 4000, imgPerMonth: 600, webPerMonth: 200 };
+    case "free":
+    default:
+      return { msgPerMonth: 10, imgPerMonth: 0, webPerMonth: 0 };
+  }
+}
+
+function jsonError(status: number, message: string, extra?: any, headers?: Headers) {
+  return NextResponse.json({ ok: false, error: message, ...(extra || {}) }, { status, headers });
+}
+
+function makeImageId() {
+  return crypto.randomBytes(12).toString("hex");
+}
+
+function sanitizeSize(raw: string): string {
+  const s = String(raw || "").trim();
+  if (!s) return "1024x1024";
+  if (ALLOWED_SIZES.has(s)) return s;
+  return "1024x1024";
+}
+
+export async function POST(req: NextRequest) {
+  if (!process.env.OPENAI_API_KEY) {
+    return jsonError(500, "Puuttuu OPENAI_API_KEY (.env.local).");
+  }
+
+  let body: any = null;
+  try {
+    body = await req.json();
+  } catch {
+    body = null;
+  }
+
+  const cookieVal = req.cookies.get(COOKIE_NAME)?.value;
+  let userId = verifySignedUid(cookieVal);
+
+  const resHeaders = new Headers();
+  if (!userId) {
+    userId = newUid();
+    const signed = signUid(userId);
+    resHeaders.append("Set-Cookie", `${COOKIE_NAME}=${signed}; Path=/; HttpOnly; SameSite=Lax`);
+  }
+
+  const devScope = resolveDevScope(req, body);
+  const storeUserKey = scopedUserKey(userId, devScope);
+
+  const plan = readPlanFromRequest(req, body);
+  const limits = canonicalLimitsForImage(plan);
+
+  resHeaders.set("x-ajx-debug-plan", String(plan));
+  resHeaders.set("x-ajx-debug-imglimit", String(limits.imgPerMonth));
+
+  const prompt = String(body?.prompt || "").trim();
+  const size = sanitizeSize(String(body?.size || "1024x1024"));
+
+  if (!prompt) return jsonError(400, "Prompt puuttuu.", { plan, limits }, resHeaders);
+
+  const usageDb = loadUsage();
+  const monthKey = getMonthKey();
+
+  usageDb[storeUserKey] ||= {};
+  usageDb[storeUserKey][monthKey] ||= {
+    msgThisMonth: 0,
+    imgThisMonth: 0,
+    webThisMonth: 0,
+    imgGenThisMonth: 0,
+    extraMsgThisMonth: 0,
+    extraImgThisMonth: 0,
+  };
+
+  const usage = usageDb[storeUserKey][monthKey];
+
+  const genUsed = Number(usage.imgGenThisMonth || 0);
+  const genLimit = Number(limits.imgPerMonth || 0);
+
+  resHeaders.set("x-ajx-debug-imggen-used", String(genUsed));
+  resHeaders.set("x-ajx-debug-size", size);
+
+  if (genLimit <= 0 || genUsed + 1 > genLimit) {
+    return jsonError(403, "Kuvat eivät ole käytössä tällä tasolla tai kuukausikiintiö on täynnä.", { plan, limits, usage }, resHeaders);
+  }
+
+  try {
+    const r = await fetch("https://api.openai.com/v1/images/generations", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ model: OPENAI_IMAGE_MODEL, prompt, size }),
+    });
+
+    if (!r.ok) {
+      const tt = await r.text().catch(() => "");
+      return jsonError(502, tt || `OpenAI images error HTTP ${r.status}`, { plan, limits, usage }, resHeaders);
+    }
+
+    const j: any = await r.json();
+    const b64 = j?.data?.[0]?.b64_json ? String(j.data[0].b64_json) : "";
+    if (!b64) {
+      return jsonError(502, "Kuvan luonti ok, mutta b64_json puuttuu.", { plan, limits, usage }, resHeaders);
+    }
+
+    ensureDataDir();
+    const id = makeImageId();
+    fs.writeFileSync(path.join(IMAGES_DIR, `${id}.png`), Buffer.from(b64, "base64"));
+
+    usage.imgGenThisMonth = genUsed + 1;
+    saveUsage(usageDb);
+
+    // ✅ cache-bust, jotta selain ei “muista” tyhjää
+    const imageUrl = `/api/image/file/${id}?v=${Date.now()}`;
+
+    return NextResponse.json(
+      { ok: true, plan, limits, usage, imageId: id, imageUrl, markdown: `![AJX Image](${imageUrl})` },
+      { status: 200, headers: resHeaders }
+    );
+  } catch (e: any) {
+    return jsonError(502, e?.message ? String(e.message) : "Virhe kuvan luonnissa.", { plan, limits }, resHeaders);
+  }
+}

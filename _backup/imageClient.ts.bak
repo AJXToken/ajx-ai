@@ -1,0 +1,76 @@
+export type Plan = "free" | "lite" | "basic" | "pro";
+
+export type Limits = {
+  msgPerMonth: number;
+  imgPerMonth: number;
+  webPerMonth: number;
+};
+
+export type Usage = {
+  msgThisMonth: number;
+  imgThisMonth: number;
+  webThisMonth: number;
+  extraImgThisMonth?: number;
+};
+
+export type ImageOkJson =
+  | {
+      ok: true;
+      format: "png";
+      data: string; // base64
+      source: "openai" | "fallback_svg";
+      plan: Plan;
+      limits: Limits;
+      usage: Usage;
+      note?: string;
+    }
+  | {
+      ok: true;
+      format: "svg";
+      data: string; // raw svg
+      source: "openai" | "fallback_svg";
+      plan: Plan;
+      limits: Limits;
+      usage: Usage;
+      note?: string;
+    };
+
+export type ImageErrJson = {
+  ok: false;
+  error: string;
+  plan?: Plan;
+  limits?: Limits;
+  usage?: Usage;
+  upsell?: { message?: string };
+};
+
+export function makeImageMarkdown(prompt: string, j: ImageOkJson) {
+  let src = "";
+  if (j.format === "png") src = `data:image/png;base64,${j.data}`;
+  else src = `data:image/svg+xml;utf8,${encodeURIComponent(j.data)}`;
+
+  return `🖼️ ${prompt}\n\n![AJX Image](${src})`;
+}
+
+export async function generateImage(
+  prompt: string,
+  devPlan?: Plan | null,
+  size: string = "1024x1024"
+): Promise<ImageOkJson | ImageErrJson> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (devPlan) headers["x-ajx-dev-plan"] = devPlan;
+
+  const res = await fetch("/api/image", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ prompt, size }),
+  });
+
+  const ct = res.headers.get("content-type") || "";
+  if (!ct.includes("application/json")) {
+    const t = await res.text().catch(() => "");
+    return { ok: false, error: t || "Image endpoint returned non-JSON." };
+  }
+
+  return (await res.json()) as ImageOkJson | ImageErrJson;
+}

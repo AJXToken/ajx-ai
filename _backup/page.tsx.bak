@@ -1,0 +1,961 @@
+"use client";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import styles from "./chat2030.module.css";
+import ImageButton from "./ImageButton";
+import {
+  ChatMsg,
+  ChatThread,
+  createThread,
+  deleteThread,
+  getActiveThreadId,
+  loadThreads,
+  saveThreads,
+  setActiveThreadId,
+  upsertThread,
+  updateAutoTitle,
+  setCustomTitle,
+} from "./chatStore";
+import type { Plan, Limits, Usage } from "./imageClient";
+
+import { t, type Locale } from "../../lib/i18n";
+
+type StatsResp = {
+  ok: boolean;
+  plan: Plan;
+  limits: Limits;
+  usage: Usage;
+  error?: string;
+};
+
+type ChatOkJson = {
+  ok: true;
+  plan: Plan;
+  limits: Limits;
+  usage: Usage;
+  text: string;
+};
+
+type ChatErrJson = {
+  ok: false;
+  error: string;
+  plan?: Plan;
+  limits?: Limits;
+  usage?: Usage;
+  upsell?: { message?: string };
+};
+
+const LOCALE_STORAGE_KEY = "ajx_locale_v1";
+
+function clampLocale(v: string | null): Locale | null {
+  if (!v) return null;
+  const s = v.toLowerCase();
+  if (s === "fi" || s === "en" || s === "es") return s as Locale;
+  return null;
+}
+
+function detectBrowserLocale(): Locale {
+  try {
+    const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "fi"])
+      .filter(Boolean)
+      .map((x) => String(x).toLowerCase())
+      .join(",");
+
+    if (langs.includes("es")) return "es";
+    if (langs.includes("en")) return "en";
+    return "fi";
+  } catch {
+    return "fi";
+  }
+}
+
+function clampPlan(v: string | null): Plan | null {
+  if (!v) return null;
+  const s = v.toLowerCase();
+  if (s === "free" || s === "basic" || s === "pro" || s === "lite" || s === "partner") return s as any;
+  return null;
+}
+
+function isLite(p: Plan) {
+  return (p as any) === "lite";
+}
+function isFree(p: Plan) {
+  return p === "free";
+}
+function isPartner(p: Plan) {
+  return (p as any) === "partner";
+}
+function isFreeOrLite(p: Plan) {
+  return isFree(p) || isLite(p);
+}
+
+function planLabel(p: Plan) {
+  if (isPartner(p)) return "PARTNER";
+  if (p === "pro") return "PRO";
+  if (p === "basic") return "BASIC";
+  if (isLite(p)) return "LITE";
+  return "FREE";
+}
+
+function nowTs() {
+  return Date.now();
+}
+
+function isImageCommand(raw: string) {
+  const tt = raw.trim().toLowerCase();
+  return tt.startsWith("kuva:") || tt.startsWith("image:");
+}
+
+type TitleMode = ChatThread["titleMode"];
+function normalizeTitleMode(v: any): TitleMode {
+  if (v === "auto" || v === "manual" || v === "custom") return v as TitleMode;
+  return undefined as TitleMode;
+}
+
+function extractMarkdownImageUrls(text: string): string[] {
+  if (!text) return [];
+  const re = /!\[[^\]]*\]\(\s*([^)]+)\s*\)/g;
+
+  const urls: string[] = [];
+  let m: RegExpExecArray | null;
+
+  while ((m = re.exec(text)) !== null) {
+    const url = (m[1] || "").trim();
+    if (!url) continue;
+    if (url.includes("AJX_IMAGE_REMOVED")) continue;
+    urls.push(url);
+  }
+
+  return Array.from(new Set(urls));
+}
+
+function stripMarkdownImages(text: string): string {
+  if (!text) return "";
+  const re = /!\[[^\]]*\]\(\s*([^)]+)\s*\)/g;
+  return text.replace(re, "").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function renderImagesFromContent(text: string) {
+  const urls = extractMarkdownImageUrls(text);
+  if (urls.length === 0) return null;
+
+  return (
+    <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
+      {urls.map((u, i) => (
+        <img
+          key={`${u}-${i}`}
+          src={u}
+          alt="AJX Image"
+          style={{
+            maxWidth: "100%",
+            borderRadius: 12,
+            border: "1px solid rgba(0,0,0,0.12)",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * UI-defaultit: jotta devPlan näkyy heti oikein,
+ * vaikka /api/stats ei tukisi x-ajx-dev-plan headeria.
+ */
+function defaultLimitsForPlan(p: Plan): Limits {
+  switch (p) {
+    case "lite":
+      return { msgPerMonth: 800, imgPerMonth: 0, webPerMonth: 0 };
+    case "basic":
+      return { msgPerMonth: 800, imgPerMonth: 20, webPerMonth: 50 };
+    case "pro":
+      return { msgPerMonth: 2000, imgPerMonth: 80, webPerMonth: 200 };
+    case "partner":
+      return { msgPerMonth: 2500, imgPerMonth: 120, webPerMonth: 200 };
+    case "free":
+    default:
+      return { msgPerMonth: 10, imgPerMonth: 0, webPerMonth: 0 };
+  }
+}
+
+export default function ChatPage(): React.JSX.Element {
+  const [locale, setLocale] = useState<Locale>("fi");
+
+  const titleDefault = useMemo(() => t(locale, "thread.title_default"), [locale]);
+  const greeting = useMemo(() => t(locale, "chat.greeting"), [locale]);
+
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const [messages, setMessages] = useState<ChatMsg[]>(() => [
+    { role: "assistant", content: t("fi", "chat.greeting"), ts: nowTs() },
+  ]);
+
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [streamOn, setStreamOn] = useState(true);
+
+  // ✅ WEB toggle (UI)
+  const [useWeb, setUseWeb] = useState(false);
+
+  // ✅ Plus-menu
+  const [plusOpen, setPlusOpen] = useState(false);
+
+  // Backendin raportoima plan (tai fallback)
+  const [plan, setPlan] = useState<Plan>("free");
+  const [limits, setLimits] = useState<Limits>({ msgPerMonth: 10, imgPerMonth: 0, webPerMonth: 0 });
+  const [usage, setUsage] = useState<Usage>({
+    msgThisMonth: 0,
+    imgThisMonth: 0,
+    webThisMonth: 0,
+    extraImgThisMonth: 0,
+  });
+
+  // DEV-scope (free/lite/basic/pro/partner) -> erotellaan threadit localStorageen
+  const [devPlan, setDevPlan] = useState<Plan | null>(null);
+  const didInitRef = useRef(false);
+
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // ✅ Effective plan: devPlan ajaa UI:n yli (testaus)
+  const effectivePlan: Plan = (devPlan ?? plan) as any;
+
+  // ✅ Effective limits: jos devPlan on päällä, käytetään vähintään local defaulteja
+  const effectiveLimits: Limits = useMemo(() => {
+    if (devPlan) return defaultLimitsForPlan(effectivePlan);
+    return limits;
+  }, [devPlan, effectivePlan, limits]);
+
+  useEffect(() => {
+    const saved = clampLocale(typeof window !== "undefined" ? localStorage.getItem(LOCALE_STORAGE_KEY) : null);
+    const next = saved || detectBrowserLocale();
+    setLocale(next);
+
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.role === "assistant") {
+        return [{ ...prev[0], content: t(next, "chat.greeting") }];
+      }
+      return prev;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const statsText = useMemo(() => {
+    if (isFree(effectivePlan)) {
+      return t(locale, "usage.messages", { used: usage.msgThisMonth, limit: effectiveLimits.msgPerMonth });
+    }
+    if (isLite(effectivePlan)) {
+      return "";
+    }
+    return t(locale, "usage.images", { used: usage.imgThisMonth, limit: effectiveLimits.imgPerMonth });
+  }, [effectivePlan, usage, effectiveLimits, locale]);
+
+  function scrollToBottom(force = false) {
+    requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: force ? "auto" : "smooth" }));
+  }
+
+  async function fetchStats(forPlan: Plan | null) {
+    const headers: Record<string, string> = {};
+    if (forPlan) headers["x-ajx-dev-plan"] = forPlan as any;
+
+    const res = await fetch("/api/stats", { headers, method: "GET" });
+    const ct = res.headers.get("content-type") || "";
+    if (!ct.includes("application/json")) return;
+
+    const j = (await res.json()) as StatsResp;
+    if (j?.ok) {
+      // Jos stats-endpoint EI tue devPlan headeria, se voi palauttaa "free".
+      // Tällöin pidetään UI:n plan forPlanissa eikä anneta sen romahtaa.
+      const want = (forPlan ?? j.plan) as Plan;
+
+      setPlan(want);
+
+      if (!forPlan || j.plan === forPlan) {
+        setLimits(j.limits);
+        setUsage(j.usage);
+      } else {
+        // devPlan päällä mutta stats ei tue headeria -> jätetään UI-defaultit käyttöön
+        setLimits(defaultLimitsForPlan(want));
+        // usage voidaan jättää ennalleen (tai nollata). Pidetään ennallaan.
+      }
+    }
+  }
+
+  // INIT: lataa threadit scopeen sidottuna
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const p = clampPlan(sp.get("devPlan"));
+    setDevPlan(p);
+
+    // ✅ Näytä devPlan heti UI:ssa (ei odoteta stats/chat vastausta)
+    if (p) {
+      setPlan(p);
+      setLimits(defaultLimitsForPlan(p));
+      setUseWeb(false);
+    }
+
+    if (didInitRef.current) return;
+    didInitRef.current = true;
+
+    const loaded = loadThreads(p);
+    if (loaded.length === 0) {
+      const th = createThread(greeting, titleDefault);
+      const next = [th];
+      setThreads(next);
+      setActiveId(th.id);
+      setMessages(th.messages);
+      saveThreads(next, p);
+      setActiveThreadId(th.id, p);
+    } else {
+      const savedActive = getActiveThreadId(p);
+      const first = loaded[0];
+      const active = loaded.find((x) => x.id === savedActive) || first;
+
+      setThreads(loaded);
+      setActiveId(active.id);
+      setMessages(active.messages);
+      setActiveThreadId(active.id, p);
+    }
+
+    fetchStats(p).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [greeting, titleDefault]);
+
+  // Kun kieli vaihtuu -> päivitä auto-title
+  useEffect(() => {
+    if (!threads.length) return;
+
+    const nextThreads: ChatThread[] = threads.map((th) => {
+      const updated = updateAutoTitle(th, titleDefault) as ChatThread;
+      const normalized: ChatThread = {
+        ...updated,
+        titleMode: normalizeTitleMode((updated as any).titleMode),
+      };
+
+      if ((normalized.titleMode || "auto") === "auto") {
+        if (normalized.messages.length === 1 && normalized.messages[0]?.role === "assistant") {
+          return { ...normalized, title: titleDefault, titleMode: "auto" as TitleMode };
+        }
+      }
+
+      return normalized;
+    });
+
+    const changed =
+      JSON.stringify(nextThreads.map((t) => [t.id, t.title, t.titleMode])) !==
+      JSON.stringify(threads.map((t) => [t.id, t.title, t.titleMode]));
+
+    if (changed) {
+      setThreads(nextThreads);
+      saveThreads(nextThreads, devPlan);
+
+      if (activeId) {
+        const active = nextThreads.find((x) => x.id === activeId);
+        if (active) setMessages(active.messages);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale, titleDefault]);
+
+  useEffect(() => {
+    scrollToBottom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  function persistActive(nextMessages: ChatMsg[]) {
+    if (!activeId) return;
+    const current = threads.find((tt) => tt.id === activeId);
+    if (!current) return;
+
+    const updatedBase: ChatThread = {
+      ...current,
+      messages: nextMessages,
+      updatedAt: Date.now(),
+    };
+
+    const updated = updateAutoTitle(updatedBase, titleDefault) as ChatThread;
+
+    const fixed: ChatThread = {
+      ...updated,
+      titleMode: normalizeTitleMode((updated as any).titleMode),
+    };
+
+    const nextThreads = upsertThread(threads, fixed);
+    setThreads(nextThreads);
+    saveThreads(nextThreads, devPlan);
+  }
+
+  function setActiveThread(id: string) {
+    const th = threads.find((x) => x.id === id);
+    if (!th) return;
+
+    setActiveId(id);
+    setActiveThreadId(id, devPlan);
+    setMessages(th.messages);
+    setInput("");
+    setPlusOpen(false);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  function newChat() {
+    const th = createThread(greeting, titleDefault);
+    const nextThreads = [th, ...threads].sort((a, b) => b.updatedAt - a.updatedAt);
+
+    setThreads(nextThreads);
+    setActiveId(th.id);
+    setActiveThreadId(th.id, devPlan);
+    setMessages(th.messages);
+    saveThreads(nextThreads, devPlan);
+
+    setInput("");
+    setPlusOpen(false);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  function renameChat(id: string) {
+    const th = threads.find((x) => x.id === id);
+    if (!th) return;
+
+    const name = window.prompt(t(locale, "thread.rename"), th.title);
+    if (!name) return;
+
+    const updated = setCustomTitle(th, name) as ChatThread;
+
+    const fixed: ChatThread = {
+      ...updated,
+      titleMode: normalizeTitleMode((updated as any).titleMode),
+    };
+
+    const nextThreads = upsertThread(threads, { ...fixed, updatedAt: Date.now() });
+    setThreads(nextThreads);
+    saveThreads(nextThreads, devPlan);
+  }
+
+  function removeChat(id: string) {
+    const ok = window.confirm(t(locale, "thread.delete.confirm"));
+    if (!ok) return;
+
+    const nextThreads = deleteThread(threads, id);
+    setThreads(nextThreads);
+    saveThreads(nextThreads, devPlan);
+
+    if (activeId === id) {
+      if (nextThreads.length === 0) {
+        const th = createThread(greeting, titleDefault);
+        const arr = [th];
+        setThreads(arr);
+        setActiveId(th.id);
+        setActiveThreadId(th.id, devPlan);
+        setMessages(th.messages);
+        saveThreads(arr, devPlan);
+      } else {
+        const nextActive = nextThreads[0];
+        setActiveId(nextActive.id);
+        setActiveThreadId(nextActive.id, devPlan);
+        setMessages(nextActive.messages);
+      }
+    }
+  }
+
+  function buildBackendMessages(userText: string) {
+    const snapshot = [...messages, { role: "user" as const, content: userText, ts: nowTs() }];
+    const sliced = snapshot.slice(-24);
+    return sliced.map((m) => ({ role: m.role, content: m.content }));
+  }
+
+  function renderMessageContent(text: string) {
+    const s = text || "";
+    const stripped = stripMarkdownImages(s);
+
+    const dataImgMatch = s.match(/!\[[^\]]*]\((data:[^)]+)\)/);
+    const dataSrc = dataImgMatch ? dataImgMatch[1] : null;
+    const before = dataImgMatch ? s.replace(dataImgMatch[0], "").trim() : null;
+
+    if (dataSrc) {
+      return (
+        <div className={styles.bubbleText}>
+          {before ? <div style={{ marginBottom: 10 }}>{before}</div> : null}
+          <img className={styles.inlineImage} src={dataSrc} alt="AJX Image" />
+        </div>
+      );
+    }
+
+    return <div className={styles.bubbleText}>{stripped || ""}</div>;
+  }
+
+  async function sendTextDirect(text: string) {
+    const cleaned = (text || "").trim();
+    if (!cleaned) return;
+
+    if (loading) return;
+
+    setInput("");
+    setPlusOpen(false);
+    setLoading(true);
+
+    const userMsg: ChatMsg = { role: "user", content: cleaned, ts: nowTs() };
+    const optimistic = [...messages, userMsg];
+    setMessages(optimistic);
+    persistActive(optimistic);
+
+    const convoForBackend = buildBackendMessages(cleaned);
+
+    try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (devPlan) headers["x-ajx-dev-plan"] = devPlan as any;
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          stream: streamOn,
+          useWeb, // ✅ nyt UI ohjaa
+          imagesRequested: 0,
+          messages: convoForBackend,
+          locale,
+        }),
+      });
+
+      const ct = res.headers.get("content-type") || "";
+
+      if (!res.ok) {
+        if (ct.includes("application/json")) {
+          const ej = (await res.json()) as ChatErrJson;
+          const errText = ej?.upsell?.message || ej?.error || `HTTP ${res.status}`;
+          const nextMsgs = [...optimistic, { role: "assistant" as const, content: errText, ts: nowTs() }];
+          setMessages(nextMsgs);
+          persistActive(nextMsgs);
+
+          if (ej.plan && ej.limits && ej.usage) {
+            setPlan(ej.plan);
+            setLimits(ej.limits);
+            setUsage(ej.usage);
+          } else {
+            await fetchStats(devPlan).catch(() => {});
+          }
+        } else {
+          const tt = await res.text().catch(() => "");
+          const nextMsgs = [...optimistic, { role: "assistant" as const, content: tt || `HTTP ${res.status}`, ts: nowTs() }];
+          setMessages(nextMsgs);
+          persistActive(nextMsgs);
+          await fetchStats(devPlan).catch(() => {});
+        }
+        return;
+      }
+
+      if (ct.includes("application/json")) {
+        const j = (await res.json()) as ChatOkJson;
+        const nextMsgs = [...optimistic, { role: "assistant" as const, content: j?.text ?? "", ts: nowTs() }];
+        setMessages(nextMsgs);
+        persistActive(nextMsgs);
+
+        setPlan(j.plan);
+        setLimits(j.limits);
+        setUsage(j.usage);
+        return;
+      }
+
+      let streamMsgs = [...optimistic, { role: "assistant" as const, content: "", ts: nowTs() }];
+      setMessages(streamMsgs);
+      persistActive(streamMsgs);
+
+      const reader = res.body?.getReader();
+      if (!reader) {
+        streamMsgs = [...optimistic, { role: "assistant" as const, content: "(Stream body puuttuu)", ts: nowTs() }];
+        setMessages(streamMsgs);
+        persistActive(streamMsgs);
+        await fetchStats(devPlan).catch(() => {});
+        return;
+      }
+
+      const decoder = new TextDecoder();
+      let full = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        if (!chunk) continue;
+
+        full += chunk;
+
+        streamMsgs = streamMsgs.map((m, i) => {
+          if (i === streamMsgs.length - 1 && m.role === "assistant") return { ...m, content: full };
+          return m;
+        });
+
+        setMessages(streamMsgs);
+      }
+
+      persistActive(streamMsgs);
+      await fetchStats(devPlan).catch(() => {});
+    } catch (e: any) {
+      const msg = e?.message ? String(e.message) : "Tuntematon virhe.";
+      const nextMsgs = [...optimistic, { role: "assistant" as const, content: msg, ts: nowTs() }];
+      setMessages(nextMsgs);
+      persistActive(nextMsgs);
+      await fetchStats(devPlan).catch(() => {});
+    } finally {
+      setLoading(false);
+      scrollToBottom();
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }
+
+  async function sendMessage() {
+    const text = input.trim();
+    if (!text || loading) return;
+
+    if (isImageCommand(text)) {
+      // image-komento käsitellään ImageButtonilla /api/image, ei chatissa
+      setInput("");
+      const userMsg: ChatMsg = { role: "user", content: text, ts: nowTs() };
+      const next = [...messages, userMsg];
+      setMessages(next);
+      persistActive(next);
+      requestAnimationFrame(() => inputRef.current?.focus());
+      return;
+    }
+
+    await sendTextDirect(text);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage().catch(() => {});
+    }
+  }
+
+  const activeTitle = useMemo(() => {
+    const th = threads.find((x) => x.id === activeId);
+    return th?.title || titleDefault;
+  }, [threads, activeId, titleDefault]);
+
+  const showImageButton = !isFreeOrLite(effectivePlan);
+
+  function setLocaleAndPersist(next: Locale) {
+    setLocale(next);
+    try {
+      localStorage.setItem(LOCALE_STORAGE_KEY, next);
+    } catch {}
+
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.role === "assistant") {
+        return [{ ...prev[0], content: t(next, "chat.greeting") }];
+      }
+      return prev;
+    });
+  }
+
+  const webAllowed = (effectiveLimits.webPerMonth || 0) > 0;
+
+  return (
+    <div className={styles.shell}>
+      <div className={styles.bg} aria-hidden="true" />
+
+      <div className={styles.layout}>
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
+          <div className={styles.sidebarTop}>
+            <div className={styles.brandMini}>
+              <div className={styles.logoMini}>AJX</div>
+              <div>
+                <div className={styles.brandMiniTitle}>{t(locale, "app.title")}</div>
+                <div className={styles.brandMiniSub}>{t(locale, "ui.chats")}</div>
+              </div>
+            </div>
+
+            <button className={styles.btnPrimarySmall} onClick={newChat}>
+              {t(locale, "ui.new_chat")}
+            </button>
+          </div>
+
+          <div className={styles.threadList}>
+            {threads.map((th) => {
+              const active = th.id === activeId;
+              return (
+                <div
+                  key={th.id}
+                  className={`${styles.threadItem} ${active ? styles.threadActive : ""}`}
+                  onClick={() => setActiveThread(th.id)}
+                  title={th.title}
+                  role="button"
+                >
+                  <div className={styles.threadTitle}>{th.title}</div>
+                  <div className={styles.threadMeta}>
+                    <span>
+                      {new Date(th.updatedAt).toLocaleDateString(
+                        locale === "fi" ? "fi-FI" : locale === "es" ? "es-ES" : "en-US"
+                      )}
+                    </span>
+                    <span>•</span>
+                    <span>
+                      {th.messages.length} {t(locale, "ui.msg")}
+                    </span>
+                  </div>
+
+                  <div className={styles.threadActions}>
+                    <button
+                      className={styles.btnTiny}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        renameChat(th.id);
+                      }}
+                    >
+                      {t(locale, "ui.rename")}
+                    </button>
+                    <button
+                      className={styles.btnTinyDanger}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeChat(th.id);
+                      }}
+                    >
+                      {t(locale, "ui.delete")}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className={styles.sidebarBottom}>
+            <div className={styles.sidebarPills} style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <span className={`${styles.pill} ${styles[`pill_${effectivePlan}`]}`}>{planLabel(effectivePlan)}</span>
+              {webAllowed ? (
+                <span className={styles.pill} style={{ opacity: useWeb ? 1 : 0.45 }}>
+                  WEB {useWeb ? "ON" : "OFF"}
+                </span>
+              ) : null}
+            </div>
+
+            {statsText ? <div className={styles.sidebarUsage}>{statsText}</div> : null}
+          </div>
+        </aside>
+
+        <div className={styles.mainPane}>
+          <header className={styles.topbar}>
+            <div className={styles.topLeft}>
+              <button
+                className={styles.btnGhost}
+                onClick={() => setSidebarOpen((v) => !v)}
+                title={t(locale, "ui.toggle_sidebar")}
+              >
+                ≡
+              </button>
+              <div className={styles.topTitle}>
+                <div className={styles.title}>{activeTitle}</div>
+                <div className={styles.subtitle}>{t(locale, "ui.interface_2030")}</div>
+              </div>
+            </div>
+
+            <div className={styles.actions} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <button
+                className={styles.btnGhost}
+                onClick={() => setStreamOn((v) => !v)}
+                title={t(locale, "chat.streaming_toggle")}
+              >
+                {streamOn ? "STREAM: ON" : "STREAM: OFF"}
+              </button>
+
+              <select
+                value={locale}
+                onChange={(e) => setLocaleAndPersist(e.target.value as Locale)}
+                title={t(locale, "ui.language")}
+                style={{
+                  appearance: "none",
+                  background: "rgba(0,0,0,0.04)",
+                  border: "1px solid rgba(0,0,0,0.14)",
+                  color: "#111",
+                  borderRadius: 12,
+                  padding: "10px 12px",
+                  fontSize: 13,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                <option value="fi">FI</option>
+                <option value="en">EN</option>
+                <option value="es">ES</option>
+              </select>
+            </div>
+          </header>
+
+          <main className={styles.main}>
+            <section className={styles.chatCard}>
+              <div className={styles.msgList}>
+                {messages.map((m, idx) => {
+                  const isUser = m.role === "user";
+                  return (
+                    <div key={`${m.ts}-${idx}`} className={`${styles.msgRow} ${isUser ? styles.rowUser : styles.rowAi}`}>
+                      <div className={isUser ? styles.avatarUser : styles.avatarAi}>{isUser ? "U" : "A"}</div>
+
+                      <div className={`${styles.bubble} ${isUser ? styles.bubbleUser : styles.bubbleAi}`}>
+                        {renderMessageContent(m.content)}
+                        {renderImagesFromContent(m.content)}
+                      </div>
+
+                      <div className={styles.rightSlot} />
+                    </div>
+                  );
+                })}
+                <div ref={bottomRef} />
+              </div>
+
+              <div className={styles.composer}>
+                <div className={styles.composerInner}>
+                  <textarea
+                    ref={inputRef}
+                    className={styles.input}
+                    placeholder={t(locale, "chat.placeholder")}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    rows={2}
+                  />
+
+                  <div className={styles.composerRight} style={{ position: "relative" }}>
+                    {/* ➕ Plus menu */}
+                    <button
+                      className={styles.btnGhost}
+                      onClick={() => setPlusOpen((v) => !v)}
+                      title="Lisää"
+                      disabled={loading}
+                      style={{ fontWeight: 900 }}
+                    >
+                      +
+                    </button>
+
+                    {plusOpen ? (
+                      <div
+                        style={{
+                          position: "absolute",
+                          right: 0,
+                          bottom: 54,
+                          width: 220,
+                          background: "white",
+                          border: "1px solid rgba(0,0,0,0.12)",
+                          borderRadius: 14,
+                          boxShadow: "0 10px 30px rgba(0,0,0,0.10)",
+                          padding: 8,
+                          zIndex: 50,
+                        }}
+                      >
+                        <button
+                          className={styles.btnTiny}
+                          onClick={() => {
+                            // Liitteet placeholder (tulossa)
+                            setPlusOpen(false);
+                            const next = [
+                              ...messages,
+                              { role: "assistant" as const, content: "Liitteet: tulossa seuraavassa versiossa.", ts: nowTs() },
+                            ];
+                            setMessages(next);
+                            persistActive(next);
+                          }}
+                          style={{ width: "100%", textAlign: "left" }}
+                        >
+                          📎 Liitä tiedosto (tulossa)
+                        </button>
+
+                        <button
+                          className={styles.btnTiny}
+                          onClick={() => {
+                            if (!webAllowed) {
+                              setPlusOpen(false);
+                              const next = [
+                                ...messages,
+                                {
+                                  role: "assistant" as const,
+                                  content: "Web-haku ei ole käytössä tällä tasolla. Päivitä Basic/Pro/Partner.",
+                                  ts: nowTs(),
+                                },
+                              ];
+                              setMessages(next);
+                              persistActive(next);
+                              return;
+                            }
+                            setUseWeb((v) => !v);
+                          }}
+                          style={{ width: "100%", textAlign: "left", marginTop: 6 }}
+                        >
+                          🌐 Web-haku: {useWeb ? "ON" : "OFF"}
+                        </button>
+
+                        {showImageButton ? (
+                          <div style={{ marginTop: 6 }}>
+                            <div style={{ fontSize: 12, opacity: 0.7, padding: "4px 8px" }}>🖼️ Kuva</div>
+                            <div style={{ padding: "0 6px 6px 6px" }}>
+                              <div style={{ fontSize: 12, opacity: 0.75 }}>
+                                Käytä kuva-nappia oikealta (Image).
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div style={{ marginTop: 6, fontSize: 12, opacity: 0.7, padding: "4px 8px" }}>
+                            🖼️ Kuvat: ei tällä tasolla
+                          </div>
+                        )}
+                      </div>
+                    ) : null}
+
+                    {/* ImageButton pidetään erillisenä (stabiili) */}
+                    {showImageButton ? (
+                      <ImageButton
+                        disabled={loading}
+                        devPlan={devPlan}
+                        getPrompt={() => input}
+                        clearPrompt={() => setInput("")}
+                        onStatus={(text) => {
+                          const next = [...messages, { role: "assistant" as const, content: text, ts: nowTs() }];
+                          setMessages(next);
+                          persistActive(next);
+                        }}
+                        onResult={(text, ok) => {
+                          setPlan(ok.plan);
+                          setLimits(ok.limits);
+                          setUsage(ok.usage);
+
+                          const next = [...messages, { role: "assistant" as const, content: text, ts: nowTs() }];
+                          setMessages(next);
+                          persistActive(next);
+                        }}
+                        onError={(text, err) => {
+                          if (err.plan && err.limits && err.usage) {
+                            setPlan(err.plan);
+                            setLimits(err.limits);
+                            setUsage(err.usage);
+                          }
+                          const next = [...messages, { role: "assistant" as const, content: text, ts: nowTs() }];
+                          setMessages(next);
+                          persistActive(next);
+                        }}
+                      />
+                    ) : null}
+
+                    <button
+                      className={styles.btnPrimary}
+                      onClick={() => sendMessage().catch(() => {})}
+                      disabled={loading || !input.trim()}
+                    >
+                      {loading ? "…" : t(locale, "ui.send")}
+                    </button>
+                  </div>
+                </div>
+
+                {showImageButton ? <div className={styles.hint}>{t(locale, "ui.image_hint")}</div> : null}
+              </div>
+            </section>
+          </main>
+
+          <footer className={styles.footer}>
+            <span className={styles.footerLeft}>© {t(locale, "app.title")}</span>
+          </footer>
+        </div>
+      </div>
+    </div>
+  );
+}

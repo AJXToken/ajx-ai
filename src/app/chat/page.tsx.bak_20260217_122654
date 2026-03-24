@@ -1,0 +1,1191 @@
+// src/app/chat/page.tsx
+"use client";
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import styles from "./chat2030.module.css";
+import ImageButton from "./ImageButton";
+import {
+  ChatMsg,
+  ChatThread,
+  createThread,
+  deleteThread,
+  getActiveThreadId,
+  loadThreads,
+  saveThreads,
+  setActiveThreadId,
+  upsertThread,
+  updateAutoTitle,
+  setCustomTitle,
+} from "./chatStore";
+import type { Plan, Limits, Usage } from "./imageClient";
+
+import { t, type Locale } from "../../lib/i18n";
+
+type StatsResp = {
+  ok: boolean;
+  plan: Plan;
+  limits: Limits;
+  usage: Usage;
+  error?: string;
+};
+
+type ChatOkJson = {
+  ok: true;
+  plan: Plan;
+  limits: Limits;
+  usage: Usage;
+  text: string;
+};
+
+type ChatErrJson = {
+  ok: false;
+  error: string;
+  plan?: Plan;
+  limits?: Limits;
+  usage?: Usage;
+  upsell?: { message?: string };
+};
+
+const LOCALE_STORAGE_KEY = "ajx_locale_v1";
+
+// ====== Canonical plans (UI) ======
+type CanonicalPlan = "free" | "visual" | "basic" | "pro" | "company";
+const FREE_DISPLAY_LIMIT = 10;
+
+function clampLocale(v: string | null): Locale | null {
+  if (!v) return null;
+  const s = v.toLowerCase();
+  if (s === "fi" || s === "en" || s === "es") return s as Locale;
+  return null;
+}
+
+function detectBrowserLocale(): Locale {
+  try {
+    const langs = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "fi"])
+      .filter(Boolean)
+      .map((x) => String(x).toLowerCase())
+      .join(",");
+
+    if (langs.includes("es")) return "es";
+    if (langs.includes("en")) return "en";
+    return "fi";
+  } catch {
+    return "fi";
+  }
+}
+
+function clampPlan(v: string | null): Plan | null {
+  if (!v) return null;
+  const s = v.toLowerCase();
+  const allowed = ["free", "visual", "basic", "pro", "company", "lite", "partner"];
+  if (allowed.includes(s)) return s as any;
+  return null;
+}
+
+function nowTs() {
+  return Date.now();
+}
+
+function isImageCommand(raw: string) {
+  const tt = raw.trim().toLowerCase();
+  return tt.startsWith("kuva:") || tt.startsWith("image:");
+}
+
+type TitleMode = ChatThread["titleMode"];
+function normalizeTitleMode(v: any): TitleMode {
+  if (v === "auto" || v === "manual" || v === "custom") return v as TitleMode;
+  return undefined as TitleMode;
+}
+
+function extractMarkdownImageUrls(text: string): string[] {
+  if (!text) return [];
+  const re = /!\[[^\]]*\]\(\s*([^)]+)\s*\)/g;
+
+  const urls: string[] = [];
+  let m: RegExpExecArray | null;
+
+  while ((m = re.exec(text)) !== null) {
+    const url = (m[1] || "").trim();
+    if (!url) continue;
+    if (url.includes("AJX_IMAGE_REMOVED")) continue;
+    urls.push(url);
+  }
+
+  return Array.from(new Set(urls));
+}
+
+function stripMarkdownImages(text: string): string {
+  if (!text) return "";
+  const re = /!\[[^\]]*\]\(\s*([^)]+)\s*\)/g;
+  return text.replace(re, "").replace(/\n{3,}/g, "\n\n").trim();
+}
+
+function renderImagesFromContent(text: string) {
+  const urls = extractMarkdownImageUrls(text);
+  if (urls.length === 0) return null;
+
+  return (
+    <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 10 }}>
+      {urls.map((u, i) => (
+        <img
+          key={`${u}-${i}`}
+          src={u}
+          alt="AJX Image"
+          style={{
+            maxWidth: "100%",
+            borderRadius: 12,
+            border: "1px solid rgba(0,0,0,0.12)",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ====== Plan normalization / legacy mapping ======
+function toCanonicalPlan(p: Plan | null | undefined): CanonicalPlan {
+  const s = String(p || "").toLowerCase().trim();
+
+  if (s === "visual") return "visual";
+  if (s === "company") return "company";
+  if (s === "basic") return "basic";
+  if (s === "pro") return "pro";
+  if (s === "free") return "free";
+
+  if (s === "lite") return "visual";
+  if (s === "partner") return "company";
+
+  return "free";
+}
+
+function canonicalToHeaderPlan(cp: CanonicalPlan): Plan {
+  if (cp === "visual") return "lite" as any;
+  if (cp === "company") return "partner" as any;
+  return cp as any;
+}
+
+function planLabelLocalized(cp: CanonicalPlan) {
+  if (cp === "visual") return "VISUAL";
+  if (cp === "company") return "COMPANY";
+  if (cp === "basic") return "BASIC";
+  if (cp === "pro") return "PRO";
+  return "FREE";
+}
+
+// ✅ FIX: devPlan-tilan oletusrajat oikein (ettei kuvat/web tipu nollaan)
+function defaultLimitsForCanonicalPlan(cp: CanonicalPlan): Limits {
+  if (cp === "visual") return { msgPerMonth: 800, imgPerMonth: 30, webPerMonth: 0 };
+  if (cp === "basic") return { msgPerMonth: 800, imgPerMonth: 120, webPerMonth: 50 };
+  if (cp === "pro") return { msgPerMonth: 3000, imgPerMonth: 300, webPerMonth: 200 };
+  if (cp === "company") return { msgPerMonth: 4000, imgPerMonth: 600, webPerMonth: 200 };
+  return { msgPerMonth: FREE_DISPLAY_LIMIT, imgPerMonth: 0, webPerMonth: 0 };
+}
+
+function shouldUseWeb(userText: string): boolean {
+  const s = (userText || "").trim().toLowerCase();
+  if (!s) return false;
+
+  const triggers = [
+    "nyt",
+    "tänään",
+    "eilen",
+    "huomenna",
+    "uusin",
+    "viimeisin",
+    "ajankohtainen",
+    "uutiset",
+    "news",
+    "latest",
+    "current",
+    "price",
+    "hinta",
+    "kurssi",
+    "stock",
+    "crypto",
+    "btc",
+    "sol",
+    "ethereum",
+    "aikataulu",
+    "tulokset",
+    "standings",
+    "sää",
+    "weather",
+    "clima",
+    "tiempo",
+    "lait",
+    "regulation",
+    "verotus",
+    "tax",
+    "opening hours",
+    "aukiolo",
+  ];
+
+  if (triggers.some((t) => s.includes(t))) return true;
+  if (s.includes("lähde") || s.includes("source") || s.includes("linkki") || s.includes("verify") || s.includes("tarkista")) return true;
+  if (/\b(hinta|price|kurssi|rate)\b/.test(s)) return true;
+
+  return false;
+}
+
+// ====== AJX Mode ======
+type AjxMode = "general" | "quick" | "ideas" | "analysis" | "strategy";
+const MODE_KEY = "ajx_mode_v1";
+
+function loadMode(key: string, fallback: AjxMode): AjxMode {
+  try {
+    const v = (localStorage.getItem(key) || "").toLowerCase().trim();
+    const all: AjxMode[] = ["general", "quick", "ideas", "analysis", "strategy"];
+    return (all.includes(v as AjxMode) ? (v as AjxMode) : fallback) as AjxMode;
+  } catch {
+    return fallback;
+  }
+}
+
+function modesForCanonicalPlan(cp: CanonicalPlan): AjxMode[] {
+  const base: AjxMode[] = ["general"];
+  if (cp === "free") return base;
+  if (cp === "visual") return [...base, "quick"];
+  if (cp === "basic") return [...base, "quick", "ideas"];
+  if (cp === "pro") return [...base, "quick", "ideas", "analysis"];
+  if (cp === "company") return [...base, "quick", "ideas", "analysis", "strategy"];
+  return base;
+}
+
+// backendille: käytetään vanhoja role-id:tä jotta serveri pysyy samana
+type RoleId = "neutral" | "quick_assistant" | "ideation_assistant" | "analysis_assistant" | "strategy_assistant";
+function modeToRole(mode: AjxMode): RoleId {
+  if (mode === "quick") return "quick_assistant";
+  if (mode === "ideas") return "ideation_assistant";
+  if (mode === "analysis") return "analysis_assistant";
+  if (mode === "strategy") return "strategy_assistant";
+  return "neutral";
+}
+
+function modeLabel(mode: AjxMode, locale: Locale): string {
+  if (mode === "general") return t(locale, "mode.general");
+  if (mode === "quick") return t(locale, "mode.quick");
+  if (mode === "ideas") return t(locale, "mode.ideas");
+  if (mode === "analysis") return t(locale, "mode.analysis");
+  return t(locale, "mode.strategy");
+}
+
+// ====== Attachments UI ======
+type PendingAttachment = {
+  id: string;
+  kind: "image" | "file";
+  name: string;
+  type: string;
+  dataUrl: string;
+};
+
+type PlusMenuPos = {
+  open: boolean;
+  left: number;
+  top: number;
+  width: number;
+};
+
+export default function ChatPage(): React.JSX.Element {
+  const [locale, setLocale] = useState<Locale>("fi");
+
+  const titleDefault = useMemo(() => t(locale, "thread.title_default"), [locale]);
+  const greeting = useMemo(() => t(locale, "chat.greeting"), [locale]);
+
+  const [threads, setThreads] = useState<ChatThread[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const [messages, setMessages] = useState<ChatMsg[]>(() => [{ role: "assistant", content: t("fi", "chat.greeting"), ts: nowTs() }]);
+
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [plusOpen, setPlusOpen] = useState(false);
+
+  const [plan, setPlan] = useState<Plan>("free");
+  const [limits, setLimits] = useState<Limits>({ msgPerMonth: FREE_DISPLAY_LIMIT, imgPerMonth: 0, webPerMonth: 0 });
+  const [usage, setUsage] = useState<Usage>({
+    msgThisMonth: 0,
+    imgThisMonth: 0,
+    webThisMonth: 0,
+    extraImgThisMonth: 0,
+  });
+
+  const [devPlan, setDevPlan] = useState<Plan | null>(null);
+  const didInitRef = useRef(false);
+
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // ====== Image status (UI) ======
+  const [imageStatus, setImageStatus] = useState<string>("");
+
+  // ====== Attachments ======
+  const [pending, setPending] = useState<PendingAttachment[]>([]);
+  const imgInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // ====== Plus dropdown refs/pos (FIX clipping by using position:fixed) ======
+  const plusBtnRef = useRef<HTMLButtonElement | null>(null);
+  const plusMenuRef = useRef<HTMLDivElement | null>(null);
+  const [plusMenuPos, setPlusMenuPos] = useState<PlusMenuPos>({ open: false, left: 0, top: 0, width: 220 });
+
+  const effectivePlanRaw: Plan = (devPlan ?? plan) as any;
+  const effectiveCanonical: CanonicalPlan = toCanonicalPlan(effectivePlanRaw);
+
+  const effectiveLimits: Limits = useMemo(() => {
+    if (devPlan) return defaultLimitsForCanonicalPlan(effectiveCanonical);
+
+    if (effectiveCanonical === "free") {
+      return { ...limits, msgPerMonth: Number(limits?.msgPerMonth || 0) > 0 ? limits.msgPerMonth : FREE_DISPLAY_LIMIT };
+    }
+    return limits;
+  }, [devPlan, effectiveCanonical, limits]);
+
+  // ✅ näytä kuvanappi vain jos kuvat sallittu
+  const showImageButton = Number(effectiveLimits?.imgPerMonth || 0) > 0;
+
+  // ====== AJX Mode state ======
+  const allowedModes = useMemo(() => modesForCanonicalPlan(effectiveCanonical), [effectiveCanonical]);
+  const [mode, setMode] = useState<AjxMode>("general");
+
+  useEffect(() => {
+    try {
+      setMode(loadMode(MODE_KEY, "general"));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MODE_KEY, mode);
+    } catch {}
+  }, [mode]);
+
+  useEffect(() => {
+    if (!allowedModes.includes(mode)) {
+      setMode(allowedModes[0] || "general");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveCanonical]);
+
+  useEffect(() => {
+    const saved = clampLocale(typeof window !== "undefined" ? localStorage.getItem(LOCALE_STORAGE_KEY) : null);
+    const next = saved || detectBrowserLocale();
+    setLocale(next);
+
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.role === "assistant") {
+        return [{ ...prev[0], content: t(next, "chat.greeting") }];
+      }
+      return prev;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function scrollToBottom(force = false) {
+    requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: force ? "auto" : "smooth" }));
+  }
+
+  async function fetchStats(forPlan: Plan | null) {
+    const headers: Record<string, string> = {};
+    if (forPlan) {
+      const cp = toCanonicalPlan(forPlan);
+      headers["x-ajx-dev-plan"] = canonicalToHeaderPlan(cp) as any;
+    }
+
+    const res = await fetch("/api/stats", { headers, method: "GET" });
+    const ct = res.headers.get("content-type") || "";
+    if (!ct.includes("application/json")) return;
+
+    const j = (await res.json()) as StatsResp;
+    if (j?.ok) {
+      setPlan(j.plan);
+      setLimits(j.limits);
+      setUsage(j.usage);
+    }
+  }
+
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const p = clampPlan(sp.get("devPlan"));
+    setDevPlan(p);
+
+    if (p) {
+      const cp = toCanonicalPlan(p);
+      setLimits(defaultLimitsForCanonicalPlan(cp));
+    }
+
+    if (didInitRef.current) return;
+    didInitRef.current = true;
+
+    const loaded = loadThreads(p);
+    if (loaded.length === 0) {
+      const th = createThread(greeting, titleDefault);
+      const next = [th];
+      setThreads(next);
+      setActiveId(th.id);
+      setMessages(th.messages);
+      saveThreads(next, p);
+      setActiveThreadId(th.id, p);
+    } else {
+      const savedActive = getActiveThreadId(p);
+      const first = loaded[0];
+      const active = loaded.find((x) => x.id === savedActive) || first;
+
+      setThreads(loaded);
+      setActiveId(active.id);
+      setMessages(active.messages);
+      setActiveThreadId(active.id, p);
+    }
+
+    fetchStats(p).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [greeting, titleDefault]);
+
+  useEffect(() => {
+    if (!threads.length) return;
+
+    const nextThreads: ChatThread[] = threads.map((th) => {
+      const updated = updateAutoTitle(th, titleDefault) as ChatThread;
+      const normalized: ChatThread = { ...updated, titleMode: normalizeTitleMode((updated as any).titleMode) };
+
+      if ((normalized.titleMode || "auto") === "auto") {
+        if (normalized.messages.length === 1 && normalized.messages[0]?.role === "assistant") {
+          return { ...normalized, title: titleDefault, titleMode: "auto" as any };
+        }
+      }
+
+      return normalized;
+    });
+
+    const changed =
+      JSON.stringify(nextThreads.map((t) => [t.id, t.title, t.titleMode])) !==
+      JSON.stringify(threads.map((t) => [t.id, t.title, t.titleMode]));
+
+    if (changed) {
+      setThreads(nextThreads);
+      saveThreads(nextThreads, devPlan);
+
+      if (activeId) {
+        const active = nextThreads.find((x) => x.id === activeId);
+        if (active) setMessages(active.messages);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale, titleDefault]);
+
+  useEffect(() => {
+    scrollToBottom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  function persistActive(nextMessages: ChatMsg[]) {
+    if (!activeId) return;
+    const current = threads.find((tt) => tt.id === activeId);
+    if (!current) return;
+
+    const updatedBase: ChatThread = { ...current, messages: nextMessages, updatedAt: Date.now() };
+    const updated = updateAutoTitle(updatedBase, titleDefault) as ChatThread;
+    const fixed: ChatThread = { ...updated, titleMode: normalizeTitleMode((updated as any).titleMode) };
+
+    const nextThreads = upsertThread(threads, fixed);
+    setThreads(nextThreads);
+    saveThreads(nextThreads, devPlan);
+  }
+
+  function appendAssistantMessage(text: string) {
+    const msg: ChatMsg = { role: "assistant", content: text, ts: nowTs() };
+    setMessages((prev) => {
+      const next = [...prev, msg];
+      persistActive(next);
+      return next;
+    });
+  }
+
+  function setActiveThread(id: string) {
+    const th = threads.find((x) => x.id === id);
+    if (!th) return;
+
+    setActiveId(id);
+    setActiveThreadId(id, devPlan);
+    setMessages(th.messages);
+    setInput("");
+    setPlusOpen(false);
+    setImageStatus("");
+    setPending([]);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  function newChat() {
+    const th = createThread(greeting, titleDefault);
+    const nextThreads = [th, ...threads].sort((a, b) => b.updatedAt - a.updatedAt);
+
+    setThreads(nextThreads);
+    setActiveId(th.id);
+    setActiveThreadId(th.id, devPlan);
+    setMessages(th.messages);
+    saveThreads(nextThreads, devPlan);
+
+    setInput("");
+    setPlusOpen(false);
+    setImageStatus("");
+    setPending([]);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  }
+
+  function renameChat(id: string) {
+    const th = threads.find((x) => x.id === id);
+    if (!th) return;
+
+    const name = window.prompt(t(locale, "thread.rename"), th.title);
+    if (!name) return;
+
+    const updated = setCustomTitle(th, name) as ChatThread;
+    const fixed: ChatThread = { ...updated, titleMode: normalizeTitleMode((updated as any).titleMode) };
+
+    const nextThreads = upsertThread(threads, { ...fixed, updatedAt: Date.now() });
+    setThreads(nextThreads);
+    saveThreads(nextThreads, devPlan);
+  }
+
+  function removeChat(id: string) {
+    const ok = window.confirm(t(locale, "thread.delete.confirm"));
+    if (!ok) return;
+
+    const nextThreads = deleteThread(threads, id);
+    setThreads(nextThreads);
+    saveThreads(nextThreads, devPlan);
+
+    if (activeId === id) {
+      if (nextThreads.length === 0) {
+        const th = createThread(greeting, titleDefault);
+        const arr = [th];
+        setThreads(arr);
+        setActiveId(th.id);
+        setActiveThreadId(th.id, devPlan);
+        setMessages(th.messages);
+        saveThreads(arr, devPlan);
+      } else {
+        const nextActive = nextThreads[0];
+        setActiveId(nextActive.id);
+        setActiveThreadId(nextActive.id, devPlan);
+        setMessages(nextActive.messages);
+      }
+    }
+  }
+
+  function buildBackendMessages(userText: string) {
+    const snapshot = [...messages, { role: "user" as const, content: userText, ts: nowTs() }];
+    const sliced = snapshot.slice(-24);
+    return sliced.map((m) => ({ role: m.role, content: m.content }));
+  }
+
+  // ✅ FIX: renderöi pelkkä teksti (kuvat renderöidään vain renderImagesFromContent():llä)
+  function renderMessageContent(text: string) {
+    const s = text || "";
+    const stripped = stripMarkdownImages(s);
+    return <div className={styles.bubbleText}>{stripped || ""}</div>;
+  }
+
+  function setLocaleAndPersist(next: Locale) {
+    setLocale(next);
+    try {
+      localStorage.setItem(LOCALE_STORAGE_KEY, next);
+    } catch {}
+
+    setMessages((prev) => {
+      if (prev.length === 1 && prev[0]?.role === "assistant") {
+        return [{ ...prev[0], content: t(next, "chat.greeting") }];
+      }
+      return prev;
+    });
+  }
+
+  async function readFileAsDataUrl(file: File): Promise<string> {
+    return await new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onerror = () => reject(new Error("FileReader error"));
+      fr.onload = () => resolve(String(fr.result || ""));
+      fr.readAsDataURL(file);
+    });
+  }
+
+  async function addAttachmentFromFile(file: File, kind: "image" | "file") {
+    const dataUrl = await readFileAsDataUrl(file);
+    setPending((prev) => [
+      ...prev,
+      {
+        id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+        kind,
+        name: file.name || (kind === "image" ? "image" : "file"),
+        type: file.type || "application/octet-stream",
+        dataUrl,
+      },
+    ]);
+  }
+
+  function removeAttachment(id: string) {
+    setPending((prev) => prev.filter((x) => x.id !== id));
+  }
+
+  // ====== PLUS dropdown positioning (fixed) ======
+  function computePlusMenuPos() {
+    const btn = plusBtnRef.current;
+    if (!btn) return;
+    const rect = btn.getBoundingClientRect();
+
+    const GAP = 8;
+    const MENU_W = 240;
+
+    let left = rect.left;
+    let top = rect.bottom + GAP;
+
+    const vw = window.innerWidth || 0;
+    if (left + MENU_W > vw - 8) left = Math.max(8, vw - MENU_W - 8);
+
+    const vh = window.innerHeight || 0;
+    const estimatedH = 110;
+    if (top + estimatedH > vh - 8) {
+      top = Math.max(8, rect.top - GAP - estimatedH);
+    }
+
+    setPlusMenuPos({ open: true, left, top, width: MENU_W });
+  }
+
+  useEffect(() => {
+    if (!plusOpen) {
+      setPlusMenuPos((p) => ({ ...p, open: false }));
+      return;
+    }
+
+    computePlusMenuPos();
+
+    const onResize = () => computePlusMenuPos();
+    const onScroll = () => computePlusMenuPos();
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, true);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPlusOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+
+    const onDown = (e: MouseEvent) => {
+      const btn = plusBtnRef.current;
+      const menu = plusMenuRef.current;
+      const target = e.target as Node | null;
+      if (!target) return;
+
+      if (btn && btn.contains(target)) return;
+      if (menu && menu.contains(target)) return;
+
+      setPlusOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onDown);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plusOpen]);
+
+  async function sendTextDirect(text: string) {
+    const cleaned = (text || "").trim();
+    if (!cleaned && pending.length === 0) return;
+    if (loading) return;
+
+    const useWebComputed = shouldUseWeb(cleaned);
+
+    setInput("");
+    setPlusOpen(false);
+    setLoading(true);
+
+    const attachNote = pending.length > 0 ? `\n\n[${t(locale, "ui.attachments")}: ${pending.map((p) => p.name).join(", ")}]` : "";
+    const userContent = (cleaned || "") + attachNote;
+
+    const userMsg: ChatMsg = { role: "user", content: userContent, ts: nowTs() };
+    const optimistic = [...messages, userMsg];
+    setMessages(optimistic);
+    persistActive(optimistic);
+
+    const convoForBackend = buildBackendMessages(userContent);
+
+    try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+
+      if (devPlan) {
+        const cp = toCanonicalPlan(devPlan);
+        headers["x-ajx-dev-plan"] = canonicalToHeaderPlan(cp) as any;
+      }
+
+      // ✅ stream pois: aina JSON-vastaus
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          stream: false,
+          useWeb: useWebComputed,
+          imagesRequested: 0,
+          messages: convoForBackend,
+          locale,
+
+          rolesEnabled: true,
+          role: modeToRole(mode),
+
+          attachments: pending.map((p) => ({
+            kind: p.kind,
+            name: p.name,
+            type: p.type,
+            dataUrl: p.dataUrl,
+          })),
+        }),
+      });
+
+      const ct = res.headers.get("content-type") || "";
+
+      setPending([]);
+
+      if (!res.ok) {
+        if (ct.includes("application/json")) {
+          const ej = (await res.json()) as ChatErrJson;
+          const errText = ej?.upsell?.message || ej?.error || `HTTP ${res.status}`;
+          const nextMsgs = [...optimistic, { role: "assistant" as const, content: errText, ts: nowTs() }];
+          setMessages(nextMsgs);
+          persistActive(nextMsgs);
+
+          if (ej.plan && ej.limits && ej.usage) {
+            setPlan(ej.plan);
+            setLimits(ej.limits);
+            setUsage(ej.usage);
+          } else {
+            await fetchStats(devPlan).catch(() => {});
+          }
+        } else {
+          const tt = await res.text().catch(() => "");
+          const nextMsgs = [...optimistic, { role: "assistant" as const, content: tt || `HTTP ${res.status}`, ts: nowTs() }];
+          setMessages(nextMsgs);
+          persistActive(nextMsgs);
+          await fetchStats(devPlan).catch(() => {});
+        }
+        return;
+      }
+
+      // ✅ odotetaan JSON
+      if (!ct.includes("application/json")) {
+        const tt = await res.text().catch(() => "");
+        const nextMsgs = [...optimistic, { role: "assistant" as const, content: tt || "(Virhe: odotettiin JSON)", ts: nowTs() }];
+        setMessages(nextMsgs);
+        persistActive(nextMsgs);
+        await fetchStats(devPlan).catch(() => {});
+        return;
+      }
+
+      const j = (await res.json()) as ChatOkJson;
+      const nextMsgs = [...optimistic, { role: "assistant" as const, content: j?.text ?? "", ts: nowTs() }];
+      setMessages(nextMsgs);
+      persistActive(nextMsgs);
+
+      setPlan(j.plan);
+      setLimits(j.limits);
+      setUsage(j.usage);
+      return;
+    } catch (e: any) {
+      const msg = e?.message ? String(e.message) : "Tuntematon virhe.";
+      const nextMsgs = [...messages, { role: "assistant" as const, content: msg, ts: nowTs() }];
+      setMessages(nextMsgs);
+      persistActive(nextMsgs);
+      await fetchStats(devPlan).catch(() => {});
+    } finally {
+      setLoading(false);
+      scrollToBottom();
+      requestAnimationFrame(() => inputRef.current?.focus());
+    }
+  }
+
+  async function sendMessage() {
+    const text = input.trim();
+    if ((!text && pending.length === 0) || loading) return;
+
+    if (text && isImageCommand(text)) {
+      setInput("");
+      const userMsg: ChatMsg = { role: "user", content: text, ts: nowTs() };
+      const next = [...messages, userMsg];
+      setMessages(next);
+      persistActive(next);
+      requestAnimationFrame(() => inputRef.current?.focus());
+      return;
+    }
+
+    await sendTextDirect(text);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage().catch(() => {});
+    }
+  }
+
+  const activeTitle = useMemo(() => {
+    const th = threads.find((x) => x.id === activeId);
+    return th?.title || titleDefault;
+  }, [threads, activeId, titleDefault]);
+
+  const planLabel = planLabelLocalized(effectiveCanonical);
+  const freeCounterLabel = t(locale, "ui.free_messages");
+
+  return (
+    <div className={styles.shell}>
+      <div className={styles.bg} aria-hidden="true" />
+
+      <div className={styles.layout}>
+        <aside className={`${styles.sidebar} ${sidebarOpen ? styles.sidebarOpen : styles.sidebarClosed}`}>
+          <div className={styles.sidebarTop}>
+            <div className={styles.brandMini}>
+              <div className={styles.logoMini}>AJX</div>
+              <div>
+                <div className={styles.brandMiniTitle}>{t(locale, "app.title")}</div>
+                <div className={styles.brandMiniSub}>{t(locale, "ui.chats")}</div>
+              </div>
+            </div>
+
+            <button className={styles.btnPrimarySmall} onClick={newChat}>
+              {t(locale, "ui.new_chat")}
+            </button>
+          </div>
+
+          <div className={styles.threadList}>
+            {threads.map((th) => {
+              const active = th.id === activeId;
+              return (
+                <div
+                  key={th.id}
+                  className={`${styles.threadItem} ${active ? styles.threadActive : ""}`}
+                  onClick={() => setActiveThread(th.id)}
+                  title={th.title}
+                  role="button"
+                >
+                  <div className={styles.threadTitle}>{th.title}</div>
+                  <div className={styles.threadMeta}>
+                    <span>
+                      {new Date(th.updatedAt).toLocaleDateString(locale === "fi" ? "fi-FI" : locale === "es" ? "es-ES" : "en-US")}
+                    </span>
+                    <span>•</span>
+                    <span>
+                      {th.messages.length} {t(locale, "ui.msg")}
+                    </span>
+                  </div>
+
+                  <div className={styles.threadActions}>
+                    <button
+                      className={styles.btnTiny}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        renameChat(th.id);
+                      }}
+                    >
+                      {t(locale, "ui.rename")}
+                    </button>
+                    <button
+                      className={styles.btnTinyDanger}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeChat(th.id);
+                      }}
+                    >
+                      {t(locale, "ui.delete")}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className={styles.sidebarBottom}>
+            <div className={styles.sidebarPills} style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              <span className={styles.pill}>{planLabel}</span>
+            </div>
+
+            {effectiveCanonical === "free" ? (
+              <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
+                {freeCounterLabel}: {Number(usage?.msgThisMonth || 0)}/{FREE_DISPLAY_LIMIT}
+              </div>
+            ) : null}
+          </div>
+        </aside>
+
+        <div className={styles.mainPane}>
+          <header className={styles.topbar}>
+            <div className={styles.topLeft}>
+              <button className={styles.btnGhost} onClick={() => setSidebarOpen((v) => !v)} title={t(locale, "ui.toggle_sidebar")}>
+                ≡
+              </button>
+              <div className={styles.topTitle}>
+                <div className={styles.title}>{activeTitle}</div>
+                <div className={styles.subtitle}>{t(locale, "ui.interface_2030")}</div>
+              </div>
+            </div>
+
+            <div className={styles.actions} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <div style={{ fontSize: 12, fontWeight: 900, opacity: 0.75 }}>{t(locale, "ui.ajx_mode")}</div>
+                <select
+                  value={mode}
+                  onChange={(e) => setMode(e.target.value as AjxMode)}
+                  title={t(locale, "ui.ajx_mode")}
+                  style={{
+                    appearance: "none",
+                    background: "rgba(0,0,0,0.04)",
+                    border: "1px solid rgba(0,0,0,0.14)",
+                    color: "#111",
+                    borderRadius: 12,
+                    padding: "10px 12px",
+                    fontSize: 13,
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    outline: "none",
+                  }}
+                >
+                  {allowedModes.map((m) => (
+                    <option key={m} value={m}>
+                      {modeLabel(m, locale)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <select
+                value={locale}
+                onChange={(e) => setLocaleAndPersist(e.target.value as Locale)}
+                title={t(locale, "ui.language")}
+                style={{
+                  appearance: "none",
+                  background: "rgba(0,0,0,0.04)",
+                  border: "1px solid rgba(0,0,0,0.14)",
+                  color: "#111",
+                  borderRadius: 12,
+                  padding: "10px 12px",
+                  fontSize: 13,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                <option value="fi">FI</option>
+                <option value="en">EN</option>
+                <option value="es">ES</option>
+              </select>
+            </div>
+          </header>
+
+          <main className={styles.main}>
+            <section className={styles.chatCard}>
+              <div className={styles.msgList}>
+                {messages.map((m, idx) => {
+                  const isUser = m.role === "user";
+                  return (
+                    <div key={`${m.ts}-${idx}`} className={`${styles.msgRow} ${isUser ? styles.rowUser : styles.rowAi}`}>
+                      <div className={isUser ? styles.avatarUser : styles.avatarAi}>{isUser ? "U" : "A"}</div>
+
+                      <div className={`${styles.bubble} ${isUser ? styles.bubbleUser : styles.bubbleAi}`}>
+                        {renderMessageContent(m.content)}
+                        {renderImagesFromContent(m.content)}
+                      </div>
+
+                      <div className={styles.rightSlot} />
+                    </div>
+                  );
+                })}
+                <div ref={bottomRef} />
+              </div>
+
+              <div className={styles.composer}>
+                <div className={styles.composerInner}>
+                  <textarea
+                    ref={inputRef}
+                    className={styles.input}
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={onKeyDown}
+                    placeholder={t(locale, "chat.placeholder")}
+                    rows={2}
+                    disabled={loading}
+                  />
+
+                  {/* hidden file inputs */}
+                  <input
+                    ref={imgInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!f) return;
+                      try {
+                        await addAttachmentFromFile(f, "image");
+                      } catch (err) {
+                        appendAssistantMessage(locale === "fi" ? "Kuvan liittäminen epäonnistui." : locale === "es" ? "No se pudo adjuntar la imagen." : "Failed to attach image.");
+                      } finally {
+                        setPlusOpen(false);
+                        requestAnimationFrame(() => inputRef.current?.focus());
+                      }
+                    }}
+                  />
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    style={{ display: "none" }}
+                    onChange={async (e) => {
+                      const f = e.target.files?.[0];
+                      e.target.value = "";
+                      if (!f) return;
+                      try {
+                        await addAttachmentFromFile(f, "file");
+                      } catch (err) {
+                        appendAssistantMessage(locale === "fi" ? "Tiedoston liittäminen epäonnistui." : locale === "es" ? "No se pudo adjuntar el archivo." : "Failed to attach file.");
+                      } finally {
+                        setPlusOpen(false);
+                        requestAnimationFrame(() => inputRef.current?.focus());
+                      }
+                    }}
+                  />
+
+                  {/* Pending attachments chips */}
+                  {pending.length > 0 ? (
+                    <div style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      {pending.map((p) => (
+                        <div
+                          key={p.id}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 8,
+                            padding: "6px 10px",
+                            borderRadius: 999,
+                            border: "1px solid rgba(0,0,0,0.14)",
+                            background: "rgba(0,0,0,0.03)",
+                            fontSize: 12,
+                            fontWeight: 800,
+                          }}
+                          title={p.type}
+                        >
+                          <span>{p.kind === "image" ? "🖼️" : "📎"}</span>
+                          <span style={{ maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</span>
+                          <button
+                            className={styles.btnTinyDanger}
+                            onClick={() => removeAttachment(p.id)}
+                            title={t(locale, "ui.attach_clear")}
+                            style={{ padding: "4px 8px" }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                      <button
+                        ref={plusBtnRef}
+                        className={styles.btnGhost}
+                        onClick={() => setPlusOpen((v) => !v)}
+                        disabled={loading}
+                        title={t(locale, "ui.plus")}
+                        aria-label={t(locale, "ui.plus")}
+                      >
+                        ＋
+                      </button>
+
+                      {showImageButton ? (
+                        <ImageButton
+                          disabled={loading}
+                          devPlan={devPlan}
+                          getPrompt={() => input}
+                          clearPrompt={() => setInput("")}
+                          onStatus={(txt) => {
+                            const s = String(txt || "").trim();
+                            setImageStatus(s);
+
+                            const low = s.toLowerCase();
+                            if (
+                              low.includes("http") ||
+                              low.includes("virhe") ||
+                              low.includes("error") ||
+                              low.includes("kiintiö") ||
+                              low.includes("päivitä") ||
+                              low.includes("ei ole käytössä")
+                            ) {
+                              appendAssistantMessage(s);
+                            }
+                          }}
+                        />
+                      ) : null}
+                    </div>
+
+                    <button
+                      className={styles.btnPrimarySmall}
+                      onClick={() => sendMessage().catch(() => {})}
+                      disabled={loading || (!input.trim() && pending.length === 0)}
+                      title={t(locale, "chat.send")}
+                      aria-label={t(locale, "chat.send")}
+                      style={{ width: 44, height: 44, borderRadius: 14, padding: 0, display: "grid", placeItems: "center" }}
+                    >
+                      ➤
+                    </button>
+                  </div>
+
+                  {imageStatus ? <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>{imageStatus}</div> : null}
+                </div>
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+
+      {plusOpen && plusMenuPos.open ? (
+        <div
+          ref={plusMenuRef}
+          style={{
+            position: "fixed",
+            left: plusMenuPos.left,
+            top: plusMenuPos.top,
+            zIndex: 9999,
+            width: plusMenuPos.width,
+            background: "white",
+            border: "1px solid rgba(0,0,0,0.14)",
+            borderRadius: 12,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
+            overflow: "hidden",
+          }}
+        >
+          <button
+            className={styles.btnGhost}
+            style={{ width: "100%", justifyContent: "flex-start", borderRadius: 0, padding: "12px 12px" } as any}
+            onClick={() => {
+              setPlusOpen(false);
+              requestAnimationFrame(() => imgInputRef.current?.click());
+            }}
+          >
+            {t(locale, "ui.attach_image")}
+          </button>
+          <button
+            className={styles.btnGhost}
+            style={{ width: "100%", justifyContent: "flex-start", borderRadius: 0, padding: "12px 12px" } as any}
+            onClick={() => {
+              setPlusOpen(false);
+              requestAnimationFrame(() => fileInputRef.current?.click());
+            }}
+          >
+            {t(locale, "ui.attach_file")}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}

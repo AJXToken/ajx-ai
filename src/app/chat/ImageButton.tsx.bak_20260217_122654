@@ -1,0 +1,142 @@
+// src/app/chat/ImageButton.tsx
+"use client";
+
+import React from "react";
+import { t, type Locale } from "../../lib/i18n";
+import type { Plan } from "./imageClient";
+
+type Props = {
+  disabled?: boolean;
+  devPlan?: Plan | null;
+  getPrompt: () => string;
+  clearPrompt?: () => void;
+  onStatus?: (txt: string) => void;
+};
+
+const LOCALE_STORAGE_KEY = "ajx_locale_v1";
+
+function clampLocale(v: string | null): Locale {
+  const s = (v || "").toLowerCase().trim();
+  if (s === "fi" || s === "en" || s === "es") return s as Locale;
+  return "fi";
+}
+
+function readLocale(): Locale {
+  try {
+    return clampLocale(localStorage.getItem(LOCALE_STORAGE_KEY));
+  } catch {
+    return "fi";
+  }
+}
+
+function toAbsoluteUrl(u: string): string {
+  const s = String(u || "").trim();
+  if (!s) return "";
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  // relative -> absolute
+  try {
+    return `${window.location.origin}${s.startsWith("/") ? "" : "/"}${s}`;
+  } catch {
+    return s;
+  }
+}
+
+export default function ImageButton(props: Props) {
+  const [busy, setBusy] = React.useState(false);
+
+  // lue locale renderillä -> päivittyy kun käyttäjä vaihtaa kielen
+  const locale = readLocale();
+
+  const a11yLabel = `✨ ${t(locale, "ui.create_images")}`;
+
+  async function onClick() {
+    if (busy || props.disabled) return;
+
+    const promptDefault = (props.getPrompt?.() || "").trim();
+    const prompt = window.prompt(t(locale, "image.prompt.ask"), promptDefault);
+    if (!prompt || !prompt.trim()) return;
+
+    setBusy(true);
+    props.onStatus?.(t(locale, "image.generating", { prompt: prompt.trim() }));
+
+    try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      // devPlan serverille headerina (sama logiikka kuin muualla)
+      if (props.devPlan) headers["x-ajx-dev-plan"] = props.devPlan;
+
+      const res = await fetch("/api/image", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          prompt: prompt.trim(),
+          size: "1024x1024",
+          locale,
+          // (devPlan menee headerissa; backend tukee myös query/body, mutta pidetään näin)
+        }),
+      });
+
+      const ct = res.headers.get("content-type") || "";
+
+      if (!res.ok) {
+        const errText = ct.includes("application/json")
+          ? (await res.json().catch(() => null))?.error || `HTTP ${res.status}`
+          : (await res.text().catch(() => "")) || `HTTP ${res.status}`;
+        props.onStatus?.(String(errText || ""));
+        return;
+      }
+
+      const j: any = ct.includes("application/json") ? await res.json().catch(() => null) : null;
+
+      // ✅ imageUrl -> tee siitä absoluuttinen, jotta ChatPage:n filtteri (low.includes("http")) laukeaa
+      if (j?.imageUrl) {
+        const uAbs = toAbsoluteUrl(String(j.imageUrl));
+        props.onStatus?.(`![AJX Image](${uAbs})`);
+        props.clearPrompt?.();
+        return;
+      }
+
+      // fallbackit
+      if (j?.markdown) {
+        props.onStatus?.(String(j.markdown));
+      } else if (j?.image_url) {
+        props.onStatus?.(`![AJX Image](${toAbsoluteUrl(String(j.image_url))})`);
+      } else if (j?.url) {
+        props.onStatus?.(`![AJX Image](${toAbsoluteUrl(String(j.url))})`);
+      } else if (typeof j?.text === "string") {
+        props.onStatus?.(j.text);
+      } else {
+        props.onStatus?.("Image ok, but no imageUrl returned.");
+      }
+
+      props.clearPrompt?.();
+    } catch (e: any) {
+      props.onStatus?.(String(e?.message || "Virhe kuvan luonnissa."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={props.disabled || busy}
+      title={a11yLabel}
+      aria-label={a11yLabel}
+      style={{
+        borderRadius: 12,
+        padding: "10px 12px",
+        fontSize: 16,
+        fontWeight: 900,
+        cursor: props.disabled || busy ? "not-allowed" : "pointer",
+        border: "1px solid rgba(0,0,0,0.14)",
+        background: "rgba(0,0,0,0.04)",
+        color: "#111",
+        opacity: props.disabled || busy ? 0.6 : 1,
+        lineHeight: 1,
+      }}
+    >
+      ✨
+    </button>
+  );
+}

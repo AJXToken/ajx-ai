@@ -1,0 +1,88 @@
+// src/lib/plans.ts
+
+export type PlanId = "free" | "lite" | "basic" | "pro" | "partner";
+
+// ✅ Takaisin yhteensopivuus usage.ts:lle
+export type PlanLimits = {
+  msgPerMonth: number;
+  imgPerMonth: number;
+  webPerMonth: number;
+  memorySlots?: number;
+};
+
+export type Plan = {
+  id: PlanId;
+  title: string;
+  priceEur: number;
+
+  // quotas / month (pitää olla myös backendille)
+  messagesPerMonth: number;
+  imagesPerMonth: number;
+  webSearchesPerMonth: number;
+
+  // memory slots
+  memorySlots: number;
+};
+
+export const PLANS: Record<PlanId, Plan> = {
+  free: {
+    id: "free",
+    title: "Free",
+    priceEur: 0,
+    messagesPerMonth: 10,
+    imagesPerMonth: 0,
+    webSearchesPerMonth: 0,
+    memorySlots: 0,
+  },
+  lite: {
+    id: "lite",
+    title: "Lite",
+    priceEur: 2.99,
+    messagesPerMonth: 800,
+    imagesPerMonth: 0,
+    webSearchesPerMonth: 0,
+    memorySlots: 5,
+  },
+  basic: {
+    id: "basic",
+    title: "Basic",
+    priceEur: 6.99,
+    messagesPerMonth: 800,
+    imagesPerMonth: 20,
+    webSearchesPerMonth: 50,
+    memorySlots: 25,
+  },
+  pro: {
+    id: "pro",
+    title: "Pro",
+    priceEur: 14.99,
+    messagesPerMonth: 2000,
+    imagesPerMonth: 80,
+    webSearchesPerMonth: 200,
+    memorySlots: 50,
+  },
+  partner: {
+    id: "partner",
+    title: "AJX Partner (Business Partner)",
+    priceEur: 19.99,
+    messagesPerMonth: 2500,
+    imagesPerMonth: 120,
+    webSearchesPerMonth: 200,
+    memorySlots: 75,
+  },
+};
+
+export function getPlan(id: PlanId): Plan {
+  return PLANS[id] || PLANS.free;
+}
+
+// ✅ Helper jos joku moduuli haluaa “PlanLimits”-muodossa
+export function getPlanLimits(id: PlanId): PlanLimits {
+  const p = getPlan(id);
+  return {
+    msgPerMonth: p.messagesPerMonth,
+    imgPerMonth: p.imagesPerMonth,
+    webPerMonth: p.webSearchesPerMonth,
+    memorySlots: p.memorySlots,
+  };
+}

@@ -1,0 +1,257 @@
+// src/app/chat/chatStore.ts
+"use client";
+
+export type ChatRole = "system" | "user" | "assistant";
+
+export type ChatMsg = {
+  role: ChatRole;
+  content: string;
+  ts: number;
+};
+
+export type TitleMode = "auto" | "custom" | "manual";
+
+export type ChatThread = {
+  id: string;
+  title: string;
+  titleMode?: TitleMode;
+  messages: ChatMsg[];
+  createdAt: number;
+  updatedAt: number;
+};
+
+// ====== localStorage keys (base) ======
+const STORAGE_KEY_BASE = "ajx_chat_threads_v1";
+const ACTIVE_KEY_BASE = "ajx_active_thread_v1";
+
+// ====== storage safety limits ======
+const MAX_THREADS = 60;
+const MAX_MESSAGES_PER_THREAD = 80;
+const MAX_CONTENT_CHARS_PER_MESSAGE = 8000;
+const IMAGE_REMOVED_TOKEN = "AJX_IMAGE_REMOVED";
+
+// ====== helpers ======
+function now() {
+  return Date.now();
+}
+
+function makeId() {
+  return `${now().toString(16)}-${Math.random().toString(16).slice(2)}`;
+}
+
+function clampStr(v: any, max: number) {
+  const s = typeof v === "string" ? v : String(v ?? "");
+  return s.length <= max ? s : s.slice(0, max);
+}
+
+/**
+ * ✅ Scope-tuki devPlanille:
+ * - scope null/undefined => käytetään vanhoja avaimia (prod / default)
+ * - scope "pro" => ajx_chat_threads_v1__pro jne.
+ */
+function normalizeScope(scope?: string | null): string | null {
+  if (!scope) return null;
+  const s = String(scope).trim().toLowerCase();
+  if (!s) return null;
+  // sallitaan vain turvalliset merkit, ettei tule hassuja avaimia
+  const safe = s.replace(/[^a-z0-9_-]/g, "");
+  return safe || null;
+}
+
+function threadsKey(scope?: string | null) {
+  const sc = normalizeScope(scope);
+  return sc ? `${STORAGE_KEY_BASE}__${sc}` : STORAGE_KEY_BASE;
+}
+
+function activeKey(scope?: string | null) {
+  const sc = normalizeScope(scope);
+  return sc ? `${ACTIVE_KEY_BASE}__${sc}` : ACTIVE_KEY_BASE;
+}
+
+function sanitizeContentForStorage(content: string): string {
+  const s = content || "";
+
+  // Poista markdown-kuvat joissa data:... (base64)
+  const reDataImg = /!\[[^\]]*\]\(\s*data:[^)]+\s*\)/gi;
+  let out = s.replace(reDataImg, `![${IMAGE_REMOVED_TOKEN}](${IMAGE_REMOVED_TOKEN})`);
+
+  // Poista myös paljaat data-urlit
+  const reDataUrl = /\bdata:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+\b/g;
+  out = out.replace(reDataUrl, IMAGE_REMOVED_TOKEN);
+
+  // Turva: rajoita viestin pituutta
+  out = clampStr(out, MAX_CONTENT_CHARS_PER_MESSAGE);
+
+  return out;
+}
+
+function sanitizeMsgForStorage(m: ChatMsg): ChatMsg {
+  return {
+    role: m.role,
+    ts: typeof m.ts === "number" ? m.ts : now(),
+    content: sanitizeContentForStorage(m.content || ""),
+  };
+}
+
+function normalizeThread(x: any): ChatThread {
+  const id = String(x?.id || makeId());
+  const title = typeof x?.title === "string" ? x.title : "Chat";
+  const titleMode =
+    x?.titleMode === "auto" || x?.titleMode === "custom" || x?.titleMode === "manual" ? x.titleMode : "auto";
+
+  const msgsRaw = Array.isArray(x?.messages) ? x.messages : [];
+  const messages: ChatMsg[] = msgsRaw.map((m: any) => ({
+    role: m?.role === "user" || m?.role === "assistant" || m?.role === "system" ? m.role : "assistant",
+    content: typeof m?.content === "string" ? m.content : "",
+    ts: typeof m?.ts === "number" ? m.ts : now(),
+  }));
+
+  return {
+    id,
+    title,
+    titleMode,
+    messages,
+    createdAt: typeof x?.createdAt === "number" ? x.createdAt : now(),
+    updatedAt: typeof x?.updatedAt === "number" ? x.updatedAt : now(),
+  };
+}
+
+function pruneThreadForStorage(th: ChatThread): ChatThread {
+  const safeTitle = clampStr(th.title ?? "", 120) || "Chat";
+
+  const sanitized = (Array.isArray(th.messages) ? th.messages : []).map(sanitizeMsgForStorage);
+  const pruned = sanitized.length > MAX_MESSAGES_PER_THREAD ? sanitized.slice(-MAX_MESSAGES_PER_THREAD) : sanitized;
+
+  const mode =
+    th.titleMode === "auto" || th.titleMode === "custom" || th.titleMode === "manual" ? th.titleMode : "auto";
+
+  return {
+    id: String(th.id || makeId()),
+    title: safeTitle,
+    titleMode: mode,
+    messages: pruned,
+    createdAt: typeof th.createdAt === "number" ? th.createdAt : now(),
+    updatedAt: typeof th.updatedAt === "number" ? th.updatedAt : now(),
+  };
+}
+
+function pruneThreadsForStorage(threads: ChatThread[]): ChatThread[] {
+  const arr = Array.isArray(threads) ? threads : [];
+  const sorted = [...arr].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  const limited = sorted.slice(0, MAX_THREADS);
+  return limited.map(pruneThreadForStorage);
+}
+
+// ====== exports used by page.tsx ======
+
+export function loadThreads(scope?: string | null): ChatThread[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = localStorage.getItem(threadsKey(scope));
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    const normalized = parsed.filter(Boolean).map(normalizeThread);
+    const pruned = pruneThreadsForStorage(normalized);
+
+    // kirjoita takaisin heti -> vanha paisunut data korjaantuu
+    saveThreads(pruned, scope);
+
+    return pruned;
+  } catch {
+    return [];
+  }
+}
+
+export function saveThreads(threads: ChatThread[], scope?: string | null) {
+  if (typeof window === "undefined") return;
+
+  try {
+    const pruned = pruneThreadsForStorage(threads);
+    localStorage.setItem(threadsKey(scope), JSON.stringify(pruned));
+  } catch {
+    // jos quota jo täynnä -> aggressiivisempi yritys
+    try {
+      const aggressive = pruneThreadsForStorage(threads)
+        .slice(0, 20)
+        .map((t) => ({ ...t, messages: t.messages.slice(-40) }));
+      localStorage.setItem(threadsKey(scope), JSON.stringify(aggressive));
+    } catch {
+      // viimeinen keino: älä kaada UI:ta
+    }
+  }
+}
+
+export function getActiveThreadId(scope?: string | null): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const v = localStorage.getItem(activeKey(scope));
+    return v ? String(v) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setActiveThreadId(id: string, scope?: string | null) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(activeKey(scope), String(id || ""));
+  } catch {}
+}
+
+export function createThread(greeting: string, titleDefault: string): ChatThread {
+  const ts = now();
+  const th: ChatThread = {
+    id: makeId(),
+    title: titleDefault || "Chat",
+    titleMode: "auto",
+    messages: [{ role: "assistant", content: greeting || "Moi! Miten voin auttaa tänään?", ts }],
+    createdAt: ts,
+    updatedAt: ts,
+  };
+  return pruneThreadForStorage(th);
+}
+
+export function upsertThread(threads: ChatThread[], thread: ChatThread): ChatThread[] {
+  const arr = Array.isArray(threads) ? [...threads] : [];
+  const fixed = pruneThreadForStorage(thread);
+
+  const idx = arr.findIndex((t) => t.id === fixed.id);
+  if (idx >= 0) arr[idx] = fixed;
+  else arr.unshift(fixed);
+
+  arr.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+  return arr;
+}
+
+export function deleteThread(threads: ChatThread[], id: string): ChatThread[] {
+  const arr = Array.isArray(threads) ? threads : [];
+  return arr.filter((t) => t.id !== id);
+}
+
+export function updateAutoTitle(thread: ChatThread, titleDefault: string): ChatThread {
+  const th = pruneThreadForStorage(thread);
+  const mode = th.titleMode || "auto";
+  if (mode !== "auto") return th;
+
+  const lastUser = [...th.messages].reverse().find((m) => m.role === "user" && (m.content || "").trim());
+  if (!lastUser) {
+    return { ...th, title: titleDefault || th.title || "Chat", titleMode: "auto" };
+  }
+
+  const raw = (lastUser.content || "").trim().replace(/\s+/g, " ");
+  const derived = raw.slice(0, 48);
+
+  const nextTitle = derived && derived.trim() ? derived : titleDefault || th.title || "Chat";
+  return { ...th, title: nextTitle, titleMode: "auto" };
+}
+
+export function setCustomTitle(thread: ChatThread, title: string): ChatThread {
+  const th = pruneThreadForStorage(thread);
+  const t = (title || "").trim().slice(0, 60);
+  if (!t) return th;
+  return { ...th, title: t, titleMode: "custom", updatedAt: now() };
+}

@@ -1,0 +1,886 @@
+:global(html), :global(body) {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* =========
+   AJX Premium UI tokens
+   ========= */
+
+.shell {
+  --bg0: #f6f7fb;
+  --bg1: #eef1f6;
+
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface2: rgba(255, 255, 255, 0.62);
+
+  --text: #0b0d12;
+  --muted: rgba(11, 13, 18, 0.62);
+
+  --line: rgba(11, 13, 18, 0.1);
+  --line2: rgba(11, 13, 18, 0.08);
+
+  --shadowSm: 0 6px 18px rgba(11, 13, 18, 0.08);
+  --shadowMd: 0 14px 44px rgba(11, 13, 18, 0.12);
+  --shadowLg: 0 28px 90px rgba(11, 13, 18, 0.16);
+
+  --r12: 12px;
+  --r14: 14px;
+  --r16: 16px;
+  --r18: 18px;
+
+  --focus: 0 0 0 4px rgba(11, 13, 18, 0.08);
+
+  min-height: 100dvh;
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Arial;
+}
+
+/* =========
+   Background
+   ========= */
+
+.bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(900px 650px at 18% 12%, rgba(17, 24, 39, 0.06), transparent 60%),
+    radial-gradient(950px 700px at 82% 18%, rgba(17, 24, 39, 0.05), transparent 60%),
+    radial-gradient(800px 600px at 50% 90%, rgba(17, 24, 39, 0.04), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #e8ebf2);
+}
+
+/* =========
+   Layout
+   ========= */
+
+.layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  height: 100dvh;
+  width: 100%;
+}
+
+/* =========
+   Sidebar
+   ========= */
+
+.sidebar {
+  border-right: 1px solid var(--line2);
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100dvh;
+  min-width: 0;
+  overflow: hidden;
+  transition:
+    transform 0.22s ease,
+    opacity 0.18s ease,
+    width 0.22s ease;
+}
+
+.sidebarOpen {
+  width: 320px;
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebarClosed {
+  width: 0;
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+  border-right: 0;
+}
+
+.sidebarTop {
+  padding: 16px 14px 12px;
+  border-bottom: 1px solid var(--line2);
+  display: grid;
+  gap: 12px;
+}
+
+.brandMiniTitle {
+  font-size: 14px;
+  font-weight: 950;
+  color: var(--text);
+}
+
+.brandMiniSub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========
+   Buttons
+   ========= */
+
+.btnPrimarySmall {
+  border: 1px solid rgba(11, 13, 18, 0.16);
+  background: linear-gradient(180deg, #12151c, #0b0d12);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  padding: 10px 12px;
+  border-radius: var(--r16);
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: var(--shadowSm);
+}
+
+.btnPrimarySmall:hover {
+  filter: brightness(1.05);
+}
+
+.btnGhost {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--r14);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.btnTiny,
+.btnTinyDanger {
+  border: 1px solid var(--line);
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 900;
+  cursor: pointer;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.btnTinyDanger {
+  color: #8b1e1e;
+  -webkit-text-fill-color: #8b1e1e;
+}
+
+.btnGhost:disabled,
+.btnTiny:disabled,
+.btnTinyDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnPrimarySmall:disabled {
+  opacity: 1;
+  cursor: not-allowed;
+  border: 1px solid rgba(11, 13, 18, 0.16);
+  background: linear-gradient(180deg, #12151c, #0b0d12);
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+  box-shadow: var(--shadowSm);
+  filter: none;
+}
+
+/* =========
+   Threads
+   ========= */
+
+.threadList {
+  padding: 10px;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.threadItem {
+  border: 1px solid var(--line2);
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 18px;
+  padding: 10px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.threadItem:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.threadActive {
+  border-color: rgba(11, 13, 18, 0.18);
+}
+
+.threadTitle {
+  font-weight: 950;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.threadMeta {
+  font-size: 11px;
+  opacity: 0.75;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
+.threadActions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* =========
+   Main
+   ========= */
+
+.mainPane {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  min-width: 0;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* =========
+   Topbar
+   ========= */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.76);
+  border-bottom: 1px solid var(--line2);
+  min-width: 0;
+  position: relative;
+  z-index: 20;
+  flex: 0 0 auto;
+}
+
+.topLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.topTitle {
+  min-width: 0;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 950;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========
+   Chat
+   ========= */
+
+.main {
+  display: grid;
+  place-items: stretch;
+  padding: 6px 8px;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.chatCard {
+  width: min(1700px, 100%);
+  max-width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  border-radius: 22px;
+  border: 1px solid var(--line2);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadowLg);
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* =========
+   Messages
+   ========= */
+
+.msgList {
+  padding: 16px 18px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.msgRow {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+  gap: 12px;
+  margin: 12px 0;
+  align-items: start;
+  min-width: 0;
+}
+
+.rowUser {
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+}
+
+.rowAi {
+  grid-template-columns: 40px minmax(0, 1fr) 40px;
+}
+
+.avatarAi,
+.avatarUser {
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  border: 1px solid var(--line2);
+  flex: 0 0 auto;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+
+.bubble {
+  border-radius: 18px;
+  padding: 14px 16px;
+  border: 1px solid var(--line2);
+  font-size: 15.5px;
+  line-height: 1.72;
+  max-width: min(132ch, 100%);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+
+.bubbleAi {
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.bubbleUser {
+  background: rgba(11, 13, 18, 0.04);
+}
+
+.bubbleText {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+}
+
+.rightSlot {
+  min-width: 0;
+}
+
+/* =========
+   Composer
+   ========= */
+
+.composer {
+  padding: 8px 10px 10px;
+  border-top: 1px solid var(--line2);
+  background: rgba(255, 255, 255, 0.76);
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+.composerInner {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* =========
+   INPUT
+   ========= */
+
+.input {
+  width: 100%;
+  resize: none;
+  border-radius: 18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(11, 13, 18, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  line-height: 1.45;
+  box-shadow: 0 12px 28px rgba(11, 13, 18, 0.08);
+  transition:
+    border 0.12s ease,
+    box-shadow 0.12s ease;
+  max-height: 180px;
+  overflow-y: auto;
+  min-width: 0;
+  box-sizing: border-box;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  opacity: 1;
+}
+
+.input::placeholder {
+  color: var(--muted);
+  -webkit-text-fill-color: var(--muted);
+  opacity: 1;
+}
+
+.input:focus {
+  border-color: rgba(11, 13, 18, 0.2);
+  box-shadow:
+    0 14px 36px rgba(11, 13, 18, 0.12),
+    var(--focus);
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+  caret-color: var(--text);
+  opacity: 1;
+}
+
+/* =========
+   Images
+   ========= */
+
+.inlineImage {
+  max-width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--line2);
+  box-shadow: 0 18px 46px rgba(11, 13, 18, 0.12);
+}
+
+/* =========
+   Global UI helpers from page.tsx
+   ========= */
+
+:global(.ajxTopControls),
+:global(.ajxControlGroup),
+:global(.ajxSelectWrap),
+:global(.ajxQuickWrap),
+:global(.ajxQuickRow),
+:global(.ajxComposerActions),
+:global(.ajxComposerLeft),
+:global(.ajxComposerRight),
+:global(.ajxChips),
+:global(.ajxInlineImages) {
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+:global(.ajxQuickRow) {
+  max-width: 100%;
+  overflow-x: visible;
+  overflow-y: hidden;
+}
+
+:global(.ajxChips) {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* =========
+   Desktop composer layout:
+   left buttons | input | right buttons
+   ========= */
+
+:global(.ajxComposerActions) {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+  width: 100%;
+}
+
+:global(.ajxComposerLeft) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-self: start;
+}
+
+:global(.ajxComposerRight) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  justify-self: end;
+}
+
+:global(.ajxComposerActions textarea),
+:global(.ajxComposerActions .input) {
+  min-width: 0;
+  width: 100%;
+}
+
+:global(.ajxComposerActions > textarea),
+:global(.ajxComposerActions > .input) {
+  grid-column: 2;
+}
+
+:global(.ajxComposerActions > .ajxComposerLeft) {
+  grid-column: 1;
+}
+
+:global(.ajxComposerActions > .ajxComposerRight) {
+  grid-column: 3;
+}
+
+/* =========
+   Force visible text/icons for mobile + inline buttons/icons
+   ========= */
+
+:global(button),
+:global(select),
+:global(textarea),
+:global(input) {
+  color: var(--text);
+  -webkit-text-fill-color: currentColor;
+}
+
+:global(button svg),
+:global(button svg *),
+:global(.ajxTopControls svg),
+:global(.ajxTopControls svg *),
+:global(.ajxComposerActions svg),
+:global(.ajxComposerActions svg *),
+:global(.ajxControlGroup svg),
+:global(.ajxControlGroup svg *) {
+  stroke: currentColor;
+  fill: none;
+}
+
+:global(.ajxTopControls button),
+:global(.ajxComposerActions button),
+:global(.ajxControlGroup button),
+:global(.ajxSelectWrap button),
+:global(.ajxQuickRow button) {
+  color: var(--text);
+  -webkit-text-fill-color: currentColor;
+}
+
+:global(.ajxTopControls),
+:global(.ajxComposerActions),
+:global(.ajxControlGroup),
+:global(.ajxSelectWrap),
+:global(.ajxQuickWrap),
+:global(.ajxQuickRow) {
+  color: var(--text);
+}
+
+/* =========
+   Mobile
+   ========= */
+
+@media (max-width: 980px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 110px;
+    bottom: 0;
+    width: min(320px, 86vw);
+    max-width: 86vw;
+    height: calc(100dvh - 110px);
+    z-index: 120;
+    box-shadow: 0 24px 80px rgba(11, 13, 18, 0.22);
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sidebarClosed {
+    width: min(320px, 86vw);
+    max-width: 86vw;
+    transform: translateX(-105%);
+    opacity: 0;
+    pointer-events: none;
+    border-right: 1px solid var(--line2);
+  }
+
+  .mainPane {
+    width: 100%;
+    min-width: 0;
+    height: 100dvh;
+    grid-template-rows: auto minmax(0, 1fr);
+    position: relative;
+    z-index: 10;
+    overflow: hidden;
+  }
+
+  .topbar {
+    padding: 10px 12px;
+    gap: 10px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    z-index: 30;
+  }
+
+  .topLeft {
+    width: 100%;
+  }
+
+  .topTitle {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .title {
+    max-width: 100%;
+  }
+
+  .main {
+    padding: 4px;
+    display: block;
+    min-height: 0;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    box-sizing: border-box;
+  }
+
+  .chatCard {
+    width: 100%;
+    max-width: 100%;
+    height: calc(100dvh - 74px);
+    min-height: calc(100dvh - 74px);
+    border-radius: 16px;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  .msgList {
+    padding: 12px;
+  }
+
+  .msgRow,
+  .rowUser,
+  .rowAi {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .rightSlot {
+    display: none;
+  }
+
+  .avatarAi,
+  .avatarUser {
+    width: 30px;
+    height: 30px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .bubble {
+    max-width: 100%;
+    font-size: 14px;
+    line-height: 1.68;
+    padding: 12px 13px;
+  }
+
+  .composer {
+    padding: 8px;
+  }
+
+  .threadList {
+    padding-bottom: 20px;
+  }
+
+  :global(.ajxTopControls) {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
+    overflow-x: hidden;
+  }
+
+  :global(.ajxControlGroup) {
+    max-width: 100%;
+  }
+
+  :global(.ajxSelectWrap) {
+    max-width: 100%;
+  }
+
+  :global(.ajxQuickWrap) {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  :global(.ajxQuickRow) {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  :global(.ajxQuickRow::-webkit-scrollbar) {
+    display: none;
+  }
+
+  /* Mobiilissa:
+     textarea ylös koko riville,
+     sen alle nappulat samalle riville:
+     vasen ryhmä | oikea ryhmä (esim. Ohjeet)
+  */
+  :global(.ajxComposerActions) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 8px;
+    width: 100%;
+  }
+
+  :global(.ajxComposerActions > textarea),
+  :global(.ajxComposerActions > .input) {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    min-height: 120px;
+    max-height: 240px;
+  }
+
+  :global(.ajxComposerActions > .ajxComposerLeft) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  :global(.ajxComposerActions > .ajxComposerRight) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  :global(.ajxComposerLeft),
+  :global(.ajxComposerRight) {
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  :global(.ajxComposerLeft) {
+    justify-content: flex-start;
+  }
+
+  :global(.ajxComposerRight) {
+    justify-content: flex-end;
+  }
+
+  :global(.ajxComposerLeft > *),
+  :global(.ajxComposerRight > *) {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 8px 10px;
+  }
+
+  .title {
+    font-size: 15px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
+
+  .chatCard {
+    height: calc(100dvh - 68px);
+    min-height: calc(100dvh - 68px);
+    border-radius: 14px;
+  }
+
+  .msgList {
+    padding: 10px;
+  }
+
+  .composer {
+    padding: 8px;
+  }
+
+  .bubble {
+    font-size: 13.5px;
+  }
+
+  .threadItem {
+    border-radius: 16px;
+  }
+
+  .sidebar {
+    top: 118px;
+    height: calc(100dvh - 118px);
+  }
+
+  :global(.ajxComposerActions > textarea),
+  :global(.ajxComposerActions > .input) {
+    min-height: 132px;
+    max-height: 260px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  :global(.ajxComposerActions) {
+    gap: 10px;
+  }
+
+  :global(.ajxComposerLeft),
+  :global(.ajxComposerRight) {
+    gap: 6px;
+  }
+}

@@ -1,0 +1,640 @@
+// src/app/api/chat/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
+
+import { getPlan, PlanId } from "../../../lib/plans";
+
+export const runtime = "nodejs";
+
+// ====== CONFIG ======
+const OPENAI_MODEL = "gpt-5-mini";
+
+// Gemini (valinnainen)
+const GEMINI_TEXT_MODEL = "gemini-2.5-flash";
+const GEMINI_PREMIUM_MODEL = "gemini-2.5-pro";
+
+const DATA_DIR = path.join(process.cwd(), ".ajx-data");
+const USAGE_FILE = path.join(DATA_DIR, "usage.json");
+const MEMORY_FILE = path.join(DATA_DIR, "memory.json");
+
+const COOKIE_NAME = "ajx_uid";
+const COOKIE_SECRET =
+  process.env.AJX_COOKIE_SECRET ||
+  process.env.NEXTAUTH_SECRET ||
+  "dev-secret-change-me";
+
+type Plan = PlanId;
+type Msg = { role: "system" | "user" | "assistant"; content: string };
+
+// ====== PRO / PARTNER 2-STEP QUOTA (Gemini Pro -> Gemini Flash) ======
+const PRO_GEMINI_PRO_MSG = 400;
+const PRO_LITE_BASE_MSG = 1600;
+
+function ensureDataDir() {
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+function getMonthKey(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
+type UsageDb = Record<
+  string,
+  Record<
+    string,
+    {
+      msgThisMonth: number;
+      imgThisMonth: number;
+      webThisMonth: number;
+      extraMsgThisMonth?: number;
+    }
+  >
+>;
+
+function loadUsage(): UsageDb {
+  ensureDataDir();
+  if (!fs.existsSync(USAGE_FILE)) return {};
+  try {
+    const raw = fs.readFileSync(USAGE_FILE, "utf8");
+    const j = JSON.parse(raw);
+    if (j && typeof j === "object") return j as UsageDb;
+    return {};
+  } catch {
+    return {};
+  }
+}
+
+function saveUsage(db: UsageDb) {
+  ensureDataDir();
+  fs.writeFileSync(USAGE_FILE, JSON.stringify(db, null, 2), "utf8");
+}
+
+type MemoryDb = Record<string, { snapshot: string; updatedAt: string }>;
+
+function loadMemory(): MemoryDb {
+  ensureDataDir();
+  if (!fs.existsSync(MEMORY_FILE)) return {};
+  try {
+    const raw = fs.readFileSync(MEMORY_FILE, "utf8");
+    const j = JSON.parse(raw);
+    if (j && typeof j === "object") return j as MemoryDb;
+    return {};
+  } catch {
+    return {};
+  }
+}
+
+function saveMemory(db: MemoryDb) {
+  ensureDataDir();
+  fs.writeFileSync(MEMORY_FILE, JSON.stringify(db, null, 2), "utf8");
+}
+
+function hmac(data: string) {
+  return crypto.createHmac("sha256", COOKIE_SECRET).update(data).digest("hex");
+}
+
+function signUid(uid: string) {
+  return `${uid}.${hmac(uid)}`;
+}
+
+function verifySignedUid(signed: string | undefined | null): string | null {
+  if (!signed) return null;
+  const parts = signed.split(".");
+  if (parts.length !== 2) return null;
+  const [uid, sig] = parts;
+  if (!uid || !sig) return null;
+  const expected = hmac(uid);
+  try {
+    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return uid;
+  } catch {}
+  return null;
+}
+
+function newUid() {
+  return crypto.randomBytes(16).toString("hex");
+}
+
+function resolvePlan(req: NextRequest): Plan {
+  const dev = (req.headers.get("x-ajx-dev-plan") || "").toLowerCase();
+  if (dev === "free" || dev === "lite" || dev === "basic" || dev === "pro" || dev === "partner") return dev as Plan;
+  return "free";
+}
+
+/**
+ * DEV-SCOPE: vain jos header on mukana.
+ * Tämä estää sen, että tuotannossa (ei headeria) kaikki scopaantuisi "free":ksi.
+ */
+function resolveDevScope(req: NextRequest): Plan | null {
+  const raw = req.headers.get("x-ajx-dev-plan");
+  if (!raw) return null;
+  const v = raw.toLowerCase();
+  return v === "free" || v === "lite" || v === "basic" || v === "pro" || v === "partner" ? (v as Plan) : null;
+}
+
+function scopedUserKey(userId: string, devScope: Plan | null): string {
+  return devScope ? `${userId}__${devScope}` : userId;
+}
+
+function jsonError(status: number, message: string, extra?: any, headers?: Headers) {
+  return NextResponse.json({ ok: false, error: message, ...(extra || {}) }, { status, headers });
+}
+
+function isModelQuestion(text: string) {
+  const t = text.toLowerCase();
+  return t.includes("mikä malli") || t.includes("what model") || t.includes("which model") || t.includes("gpt-") || t.includes("model");
+}
+
+function transcript(messages: Msg[]) {
+  const out: string[] = [];
+  for (const m of messages) {
+    if (!m?.content) continue;
+    if (m.role === "system") continue;
+    const role = m.role === "user" ? "User" : "Assistant";
+    out.push(`${role}: ${String(m.content).trim()}`);
+  }
+  return out.join("\n");
+}
+
+function quotaUpsellForPlan(plan: Plan) {
+  if (plan === "lite") return { message: "Lite-raja täynnä tältä kuulta. Päivitä Basic-tasolle jatkaaksesi." };
+  if (plan === "free") return { message: "Free-raja täynnä tältä kuulta. Päivitä Basic-tasolle jatkaaksesi." };
+  return null;
+}
+
+// ====== Provider selection (Gemini ensisijainen) ======
+type Provider = "gemini" | "openai";
+
+function hasGeminiKey() {
+  return !!process.env.GEMINI_API_KEY;
+}
+function hasOpenAIKey() {
+  return !!process.env.OPENAI_API_KEY;
+}
+
+function chooseProvider(): Provider {
+  // ✅ ensisijainen Gemini jos mahdollista
+  if (hasGeminiKey()) return "gemini";
+  return "openai";
+}
+
+// ====== OpenAI (NON-STREAM) ======
+async function callOpenAIResponses(opts: { apiKey: string; instructions: string; input: string }): Promise<string> {
+  const body = { model: OPENAI_MODEL, instructions: opts.instructions, input: opts.input };
+
+  const res = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${opts.apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(t || `OpenAI error HTTP ${res.status}`);
+  }
+
+  const j: any = await res.json();
+  const outText =
+    j?.output_text ??
+    j?.output?.find?.((it: any) => it?.type === "message")?.content?.find?.((c: any) => c?.type === "output_text")?.text ??
+    "";
+
+  return String(outText || "");
+}
+
+// ====== OpenAI (STREAM) ======
+async function* callOpenAIResponsesStream(opts: { apiKey: string; instructions: string; input: string }): AsyncGenerator<string> {
+  const body = { model: OPENAI_MODEL, instructions: opts.instructions, input: opts.input, stream: true };
+
+  const res = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${opts.apiKey}`,
+      "Content-Type": "application/json",
+      Accept: "text/event-stream",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(t || `OpenAI error HTTP ${res.status}`);
+  }
+
+  const reader = res.body?.getReader();
+  if (!reader) return;
+
+  const decoder = new TextDecoder();
+  let buf = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    buf += decoder.decode(value, { stream: true });
+
+    while (true) {
+      const idx = buf.indexOf("\n\n");
+      if (idx === -1) break;
+      const chunk = buf.slice(0, idx);
+      buf = buf.slice(idx + 2);
+
+      const lines = chunk.split("\n");
+      for (const line of lines) {
+        const l = line.trim();
+        if (!l.startsWith("data:")) continue;
+        const data = l.slice(5).trim();
+        if (!data) continue;
+        if (data === "[DONE]") return;
+
+        let evt: any = null;
+        try {
+          evt = JSON.parse(data);
+        } catch {
+          continue;
+        }
+
+        if (evt?.type === "response.output_text.delta") {
+          const delta = evt?.delta ?? evt?.text ?? evt?.output_text_delta ?? evt?.data?.delta ?? "";
+          if (delta) yield String(delta);
+        }
+      }
+    }
+  }
+}
+
+// ====== Gemini ======
+function buildGeminiPrompt(instructions: string, input: string) {
+  return `${instructions}\n\n---\n\n${input}`.trim();
+}
+
+async function callGeminiGenerateContent(opts: { apiKey: string; model: string; prompt: string }): Promise<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(opts.model)}:generateContent`;
+
+  const body = {
+    contents: [{ role: "user", parts: [{ text: opts.prompt }] }],
+  };
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "x-goog-api-key": opts.apiKey, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(t || `Gemini error HTTP ${res.status}`);
+  }
+
+  const j: any = await res.json();
+  const text =
+    j?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "").join("") ??
+    j?.candidates?.[0]?.content?.parts?.[0]?.text ??
+    "";
+
+  return String(text || "");
+}
+
+async function* callGeminiStreamGenerateContent(opts: { apiKey: string; model: string; prompt: string }): AsyncGenerator<string> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(opts.model)}:streamGenerateContent?alt=sse&key=${encodeURIComponent(opts.apiKey)}`;
+
+  const body = {
+    contents: [{ role: "user", parts: [{ text: opts.prompt }] }],
+  };
+
+  const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(t || `Gemini error HTTP ${res.status}`);
+  }
+
+  const reader = res.body?.getReader();
+  if (!reader) return;
+
+  const decoder = new TextDecoder();
+  let buf = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+
+    buf += decoder.decode(value, { stream: true });
+
+    while (true) {
+      const idx = buf.indexOf("\n\n");
+      if (idx === -1) break;
+
+      const chunk = buf.slice(0, idx);
+      buf = buf.slice(idx + 2);
+
+      const lines = chunk.split("\n");
+      for (const line of lines) {
+        const l = line.trim();
+        if (!l.startsWith("data:")) continue;
+
+        const data = l.slice(5).trim();
+        if (!data) continue;
+        if (data === "[DONE]") return;
+
+        let evt: any = null;
+        try {
+          evt = JSON.parse(data);
+        } catch {
+          continue;
+        }
+
+        const text =
+          evt?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "").join("") ??
+          evt?.candidates?.[0]?.content?.parts?.[0]?.text ??
+          "";
+
+        if (text) yield String(text);
+      }
+    }
+  }
+}
+
+function localeToInstruction(locale?: string) {
+  const l = String(locale || "").toLowerCase();
+  if (l === "es") return "Reply in Spanish.";
+  if (l === "en") return "Reply in English.";
+  return "Reply in Finnish.";
+}
+
+// ====== ROUTE ======
+export async function POST(req: NextRequest) {
+  if (!hasGeminiKey() && !hasOpenAIKey()) {
+    return jsonError(500, "Puuttuu sekä OPENAI_API_KEY että GEMINI_API_KEY (.env.local).");
+  }
+
+  const cookieVal = req.cookies.get(COOKIE_NAME)?.value;
+  let userId = verifySignedUid(cookieVal);
+
+  const resHeaders = new Headers();
+  if (!userId) {
+    userId = newUid();
+    const signed = signUid(userId);
+    resHeaders.append("Set-Cookie", `${COOKIE_NAME}=${signed}; Path=/; HttpOnly; SameSite=Lax`);
+  }
+
+  const devScope = resolveDevScope(req);
+  const storeUserKey = scopedUserKey(userId, devScope);
+
+  const plan = resolvePlan(req);
+
+  const p = getPlan(plan);
+  const baseLimits = {
+    msgPerMonth: p.messagesPerMonth,
+    imgPerMonth: p.imagesPerMonth,
+    webPerMonth: p.webSearchesPerMonth,
+  };
+
+  let body: any = null;
+  try {
+    body = await req.json();
+  } catch {
+    body = null;
+  }
+
+  const stream = !!body?.stream;
+  const useWeb = !!body?.useWeb;
+  const imagesRequested = Number(body?.imagesRequested || 0);
+  const messages: Msg[] = Array.isArray(body?.messages) ? body.messages : [];
+  const locale = String(body?.locale || "");
+
+  const lastUser = [...messages].reverse().find((m) => m?.role === "user" && typeof m?.content === "string");
+  const lastText = lastUser?.content || "";
+
+  // ====== quota ======
+  const usageDb = loadUsage();
+  const monthKey = getMonthKey();
+
+  usageDb[storeUserKey] ||= {};
+  usageDb[storeUserKey][monthKey] ||= { msgThisMonth: 0, imgThisMonth: 0, webThisMonth: 0, extraMsgThisMonth: 0 };
+  const usage = usageDb[storeUserKey][monthKey];
+
+  // Partner/Pro erityislogiikka voidaan laajentaa myöhemmin – nyt mennään baseLimitsillä + (Pro/Partner) premium-step
+  const extraMsg = Number(usage.extraMsgThisMonth || 0);
+  const premiumMsgLimit = PRO_GEMINI_PRO_MSG + PRO_LITE_BASE_MSG + extraMsg;
+  const effectiveMsgLimit = (plan === "pro" || plan === "partner") ? premiumMsgLimit : Number(baseLimits.msgPerMonth || 0);
+
+  if ((usage.msgThisMonth || 0) >= effectiveMsgLimit) {
+    if (plan === "pro" || plan === "partner") {
+      const upsell = {
+        kind: "pack",
+        sku: "plus_messages_2000",
+        priceEur: 4.9,
+        message: "Viestikiintiö täynnä tältä kuulta. Osta +2000 viestin paketti ja jatka heti.",
+      };
+      return NextResponse.json(
+        { ok: false, error: upsell.message, upsell, plan, limits: { ...baseLimits, msgPerMonth: effectiveMsgLimit }, usage },
+        { status: 403, headers: resHeaders }
+      );
+    }
+
+    const upsell = quotaUpsellForPlan(plan);
+    return NextResponse.json(
+      { ok: false, error: upsell?.message || "Viestikiintiö saavutettu.", upsell, plan, limits: baseLimits, usage },
+      { status: 403, headers: resHeaders }
+    );
+  }
+
+  // Web
+  if (useWeb && (baseLimits.webPerMonth || 0) <= 0) {
+    const upsell = { message: "Web-haku ei ole käytössä tällä tasolla. Päivitä Basic/Pro/Partner." };
+    return NextResponse.json(
+      { ok: false, error: upsell.message, upsell, plan, limits: baseLimits, usage },
+      { status: 403, headers: resHeaders }
+    );
+  }
+  if (useWeb && (usage.webThisMonth || 0) >= (baseLimits.webPerMonth || 0)) {
+    const upsell = { message: "Web-kiintiö täynnä tältä kuulta. Päivitä Pro/Partner." };
+    return NextResponse.json(
+      { ok: false, error: upsell.message, upsell, plan, limits: baseLimits, usage },
+      { status: 403, headers: resHeaders }
+    );
+  }
+
+  // Kuvat
+  if (imagesRequested > 0 && (baseLimits.imgPerMonth || 0) <= 0) {
+    const upsell = { message: "Kuvat eivät ole käytössä tällä tasolla. Päivitä Basic/Pro/Partner." };
+    return NextResponse.json(
+      { ok: false, error: upsell.message, upsell, plan, limits: baseLimits, usage },
+      { status: 403, headers: resHeaders }
+    );
+  }
+  if (imagesRequested > 0 && (usage.imgThisMonth || 0) >= (baseLimits.imgPerMonth || 0)) {
+    const upsell = { message: "Kuvakiintiö täynnä tältä kuulta. Päivitä Pro/Partner." };
+    return NextResponse.json(
+      { ok: false, error: upsell.message, upsell, plan, limits: baseLimits, usage },
+      { status: 403, headers: resHeaders }
+    );
+  }
+
+  // kulutus
+  usage.msgThisMonth = (usage.msgThisMonth || 0) + 1;
+  if (useWeb) usage.webThisMonth = (usage.webThisMonth || 0) + 1;
+
+  // kevyt muisti (scopetettu)
+  const memDb = loadMemory();
+  const userMsgs = messages
+    .filter((m) => m.role === "user" && typeof m.content === "string")
+    .slice(-6)
+    .map((m) => m.content);
+
+  memDb[storeUserKey] = {
+    snapshot: userMsgs.join("\n").slice(0, 1200),
+    updatedAt: new Date().toISOString(),
+  };
+
+  saveUsage(usageDb);
+  saveMemory(memDb);
+
+  // ====== locked response: model/version questions ======
+  if (lastText && isModelQuestion(lastText)) {
+    const text = "AJX AI ei paljasta käytössä olevia malliversioita.";
+    if (!stream) {
+      return NextResponse.json(
+        { ok: true, plan, limits: { ...baseLimits, msgPerMonth: effectiveMsgLimit }, usage, text },
+        { status: 200, headers: resHeaders }
+      );
+    }
+    const encoder = new TextEncoder();
+    const readable = new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode(text));
+        controller.close();
+      },
+    });
+    return new Response(readable, {
+      status: 200,
+      headers: new Headers({
+        ...Object.fromEntries(resHeaders.entries()),
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache",
+      }),
+    });
+  }
+
+  // ====== build instructions + input ======
+  const memorySnapshot = memDb[storeUserKey]?.snapshot ? `\n\nUser memory snapshot:\n${memDb[storeUserKey].snapshot}` : "";
+
+  const instructions =
+    "You are AJX AI.\n" +
+    "- Do NOT reveal internal model/version details.\n" +
+    "- Be direct and helpful.\n" +
+    localeToInstruction(locale) +
+    (useWeb ? "\n- Web help requested.\n" : "\n- Do not use web.\n") +
+    memorySnapshot;
+
+  const input = transcript(messages) || `User: ${String(lastText || "").trim()}`;
+
+  const appendedNote = imagesRequested > 0 ? "\n\n(Huom: Kuvien generointi tehdään /api/image -endpointilla.)" : "";
+
+  const primaryProvider = chooseProvider();
+
+  async function callTextNonStream(): Promise<string> {
+    if (primaryProvider === "gemini") {
+      if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY puuttuu (.env.local).");
+      const prompt = buildGeminiPrompt(instructions, input);
+
+      // Pro/Partner: ensin premium, muuten flash
+      const wantPremium = (plan === "pro" || plan === "partner") && (usage.msgThisMonth || 0) <= PRO_GEMINI_PRO_MSG;
+
+      try {
+        const text = await callGeminiGenerateContent({
+          apiKey: process.env.GEMINI_API_KEY!,
+          model: wantPremium ? GEMINI_PREMIUM_MODEL : GEMINI_TEXT_MODEL,
+          prompt,
+        });
+        return text;
+      } catch (e) {
+        // fallback flash
+        const text = await callGeminiGenerateContent({
+          apiKey: process.env.GEMINI_API_KEY!,
+          model: GEMINI_TEXT_MODEL,
+          prompt,
+        });
+        return text;
+      }
+    }
+
+    // openai fallback
+    if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
+    return await callOpenAIResponses({ apiKey: process.env.OPENAI_API_KEY!, instructions, input });
+  }
+
+  async function* callTextStream(): AsyncGenerator<string> {
+    if (primaryProvider === "gemini") {
+      if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY puuttuu (.env.local).");
+      const prompt = buildGeminiPrompt(instructions, input);
+
+      const wantPremium = (plan === "pro" || plan === "partner") && (usage.msgThisMonth || 0) <= PRO_GEMINI_PRO_MSG;
+
+      try {
+        yield* callGeminiStreamGenerateContent({
+          apiKey: process.env.GEMINI_API_KEY!,
+          model: wantPremium ? GEMINI_PREMIUM_MODEL : GEMINI_TEXT_MODEL,
+          prompt,
+        });
+        return;
+      } catch {
+        yield* callGeminiStreamGenerateContent({
+          apiKey: process.env.GEMINI_API_KEY!,
+          model: GEMINI_TEXT_MODEL,
+          prompt,
+        });
+        return;
+      }
+    }
+
+    // openai fallback
+    if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
+    yield* callOpenAIResponsesStream({ apiKey: process.env.OPENAI_API_KEY!, instructions, input });
+  }
+
+  try {
+    if (stream) {
+      const encoder = new TextEncoder();
+      const readable = new ReadableStream({
+        async start(controller) {
+          try {
+            for await (const delta of callTextStream()) {
+              controller.enqueue(encoder.encode(delta));
+            }
+            if (appendedNote) controller.enqueue(encoder.encode(appendedNote));
+          } catch (e: any) {
+            const msg = e?.message ? String(e.message) : "Virhe streamissä.";
+            controller.enqueue(encoder.encode(`\n\n[Virhe] ${msg}`));
+          } finally {
+            controller.close();
+          }
+        },
+      });
+
+      return new Response(readable, {
+        status: 200,
+        headers: new Headers({
+          ...Object.fromEntries(resHeaders.entries()),
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": "no-cache",
+        }),
+      });
+    }
+
+    const outText = await callTextNonStream();
+    const full = String(outText || "") + appendedNote;
+
+    return NextResponse.json(
+      { ok: true, plan, limits: { ...baseLimits, msgPerMonth: effectiveMsgLimit }, usage, text: full },
+      { status: 200, headers: resHeaders }
+    );
+  } catch (e: any) {
+    const msg = e?.message ? String(e.message) : "Virhe mallikutsussa.";
+    return jsonError(502, msg, { plan, limits: { ...baseLimits, msgPerMonth: effectiveMsgLimit }, usage }, resHeaders);
+  }
+}

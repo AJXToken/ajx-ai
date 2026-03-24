@@ -1,0 +1,7 @@
+﻿C:\ajx\ajx-ai\src\app\api\chat\route.ts
+C:\ajx\ajx-ai\src\app\api\image\route.ts
+C:\ajx\ajx-ai\src\app\chat\chatStore.ts
+C:\ajx\ajx-ai\src\app\chat\ImageButton.tsx
+C:\ajx\ajx-ai\src\app\chat\imageClient.ts
+C:\ajx\ajx-ai\src\app\chat\page.tsx
+C:\ajx\ajx-ai\src\lib\i18n.ts
