@@ -228,7 +228,7 @@ function usageRedisKey(storeUserKey: string, monthKey: string) {
   return `${USAGE_KEY_PREFIX}:${storeUserKey}:${monthKey}`;
 }
 
-async function redisCommand<T = any>(command: (string | number)[]): Promise<T> {
+async function redisPipeline(command: (string | number)[]): Promise<any | null> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 8000);
 
@@ -249,51 +249,86 @@ async function redisCommand<T = any>(command: (string | number)[]): Promise<T> {
       throw new Error(`Redis REST HTTP ${res.status}: ${text || "unknown error"}`);
     }
 
-    const json: any = await res.json();
+    const json: any = await res.json().catch(() => null);
     const item = Array.isArray(json?.result) ? json.result[0] : null;
 
-    if (!item) {
-      throw new Error("Redis REST returned empty result");
-    }
+    if (!item) return null;
+    if (item?.error) return null;
 
-    if (item.error) {
-      throw new Error(String(item.error));
-    }
-
-    return item.result as T;
+    return item.result ?? null;
   } finally {
     clearTimeout(timeout);
   }
 }
 
+async function redisDirect(command: (string | number)[]): Promise<any | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const [op, ...rest] = command;
+    const url = `${REDIS_REST_URL}/${String(op).toLowerCase()}/${rest
+      .map((v) => encodeURIComponent(String(v)))
+      .join("/")}`;
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${REDIS_REST_TOKEN}`,
+      },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Redis REST HTTP ${res.status}: ${text || "unknown error"}`);
+    }
+
+    const json: any = await res.json().catch(() => null);
+    if (json?.error) return null;
+    return json?.result ?? null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function redisCommand<T = any>(command: (string | number)[]): Promise<T | null> {
+  try {
+    const piped = await redisPipeline(command);
+    if (piped !== null && piped !== undefined) return piped as T;
+  } catch {}
+
+  try {
+    const direct = await redisDirect(command);
+    if (direct !== null && direct !== undefined) return direct as T;
+  } catch {}
+
+  return null;
+}
+
 async function loadUsageRow(storeUserKey: string, monthKey: string): Promise<UsageRow> {
   const key = usageRedisKey(storeUserKey, monthKey);
 
-  if (!hasRedisConfig()) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "Puuttuu AJX_UPSTASH_REDIS_REST_URL tai AJX_UPSTASH_REDIS_REST_TOKEN tuotannossa."
-      );
+  if (hasRedisConfig()) {
+    try {
+      const raw = await redisCommand<string | null>(["GET", key]);
+
+      if (!raw) return emptyUsageRow();
+
+      const parsed = JSON.parse(String(raw || ""));
+      if (!parsed || typeof parsed !== "object") return emptyUsageRow();
+
+      return {
+        ...emptyUsageRow(),
+        ...parsed,
+      } as UsageRow;
+    } catch {
+      return usageMemoryFallback.get(key) || emptyUsageRow();
     }
-
-    return usageMemoryFallback.get(key) || emptyUsageRow();
   }
 
-  try {
-    const raw = await redisCommand<string | null>(["GET", key]);
-
-    if (!raw) return emptyUsageRow();
-
-    const parsed = JSON.parse(String(raw || ""));
-    if (!parsed || typeof parsed !== "object") return emptyUsageRow();
-
-    return {
-      ...emptyUsageRow(),
-      ...parsed,
-    } as UsageRow;
-  } catch {
-    return emptyUsageRow();
-  }
+  return usageMemoryFallback.get(key) || emptyUsageRow();
 }
 
 async function saveUsageRow(
@@ -304,18 +339,14 @@ async function saveUsageRow(
   const key = usageRedisKey(storeUserKey, monthKey);
   const payload = JSON.stringify(usage);
 
-  if (!hasRedisConfig()) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        "Puuttuu AJX_UPSTASH_REDIS_REST_URL tai AJX_UPSTASH_REDIS_REST_TOKEN tuotannossa."
-      );
-    }
-
-    usageMemoryFallback.set(key, usage);
-    return;
+  if (hasRedisConfig()) {
+    try {
+      const ok = await redisCommand<any>(["SET", key, payload]);
+      if (ok !== null) return;
+    } catch {}
   }
 
-  await redisCommand(["SET", key, payload]);
+  usageMemoryFallback.set(key, usage);
 }
 
 // ====== COOKIES ======

@@ -22,10 +22,21 @@ type StoreShape = {
   users: Record<string, AjxUsage>;
 };
 
+const IS_VERCEL =
+  process.env.VERCEL === "1" ||
+  !!process.env.VERCEL_ENV ||
+  !!process.env.AWS_REGION ||
+  process.cwd().startsWith("/var/task");
+
 const DATA_DIR = process.env.AJX_DATA_DIR || path.join(process.cwd(), ".ajx-data");
 const STORE_FILE = path.join(DATA_DIR, "usage.json");
 
-// Kevyt prosessilukko (riittÃ¤Ã¤ MVP/dev)
+const memoryStore: StoreShape = {
+  version: 1,
+  users: {},
+};
+
+// Kevyt prosessilukko (riittää MVP/dev)
 let mutex = Promise.resolve();
 
 async function withLock<T>(fn: () => Promise<T>): Promise<T> {
@@ -46,14 +57,31 @@ function monthKey(d = new Date()) {
   return `${y}-${m}`;
 }
 
+function cloneStore(store: StoreShape): StoreShape {
+  return {
+    version: 1,
+    users: { ...store.users },
+  };
+}
+
+function canUseFilesystem() {
+  return !IS_VERCEL;
+}
+
 async function ensureStore(): Promise<StoreShape> {
-  await fs.mkdir(DATA_DIR, { recursive: true });
+  if (!canUseFilesystem()) {
+    return cloneStore(memoryStore);
+  }
+
   try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
     const raw = await fs.readFile(STORE_FILE, "utf8");
     const parsed = JSON.parse(raw) as StoreShape;
+
     if (!parsed || parsed.version !== 1 || typeof parsed.users !== "object") {
       return { version: 1, users: {} };
     }
+
     return parsed;
   } catch {
     return { version: 1, users: {} };
@@ -61,6 +89,13 @@ async function ensureStore(): Promise<StoreShape> {
 }
 
 async function writeStore(store: StoreShape) {
+  if (!canUseFilesystem()) {
+    memoryStore.version = 1;
+    memoryStore.users = { ...store.users };
+    return;
+  }
+
+  await fs.mkdir(DATA_DIR, { recursive: true });
   const tmp = `${STORE_FILE}.tmp`;
   await fs.writeFile(tmp, JSON.stringify(store, null, 2), "utf8");
   await fs.rename(tmp, STORE_FILE);
@@ -74,9 +109,12 @@ export async function getUsage(uid: string): Promise<AjxUsage> {
     const existing = store.users[uid];
     if (!existing) {
       const fresh: AjxUsage = {
-        msgMonth: mk, msgCount: 0,
-        imgMonth: mk, imgCount: 0,
-        webMonth: mk, webCount: 0,
+        msgMonth: mk,
+        msgCount: 0,
+        imgMonth: mk,
+        imgCount: 0,
+        webMonth: mk,
+        webCount: 0,
         updatedAt: Date.now(),
       };
       store.users[uid] = fresh;
@@ -84,10 +122,18 @@ export async function getUsage(uid: string): Promise<AjxUsage> {
       return fresh;
     }
 
-    // Resetoi kuukauden vaihtuessa
-    if (existing.msgMonth !== mk) { existing.msgMonth = mk; existing.msgCount = 0; }
-    if (existing.imgMonth !== mk) { existing.imgMonth = mk; existing.imgCount = 0; }
-    if (existing.webMonth !== mk) { existing.webMonth = mk; existing.webCount = 0; }
+    if (existing.msgMonth !== mk) {
+      existing.msgMonth = mk;
+      existing.msgCount = 0;
+    }
+    if (existing.imgMonth !== mk) {
+      existing.imgMonth = mk;
+      existing.imgCount = 0;
+    }
+    if (existing.webMonth !== mk) {
+      existing.webMonth = mk;
+      existing.webCount = 0;
+    }
 
     existing.updatedAt = Date.now();
     store.users[uid] = existing;
@@ -106,16 +152,27 @@ export async function incrementUsage(
     const mk = monthKey();
 
     const existing: AjxUsage = store.users[uid] ?? {
-      msgMonth: mk, msgCount: 0,
-      imgMonth: mk, imgCount: 0,
-      webMonth: mk, webCount: 0,
+      msgMonth: mk,
+      msgCount: 0,
+      imgMonth: mk,
+      imgCount: 0,
+      webMonth: mk,
+      webCount: 0,
       updatedAt: Date.now(),
     };
 
-    // Resetoi kuukauden vaihtuessa
-    if (existing.msgMonth !== mk) { existing.msgMonth = mk; existing.msgCount = 0; }
-    if (existing.imgMonth !== mk) { existing.imgMonth = mk; existing.imgCount = 0; }
-    if (existing.webMonth !== mk) { existing.webMonth = mk; existing.webCount = 0; }
+    if (existing.msgMonth !== mk) {
+      existing.msgMonth = mk;
+      existing.msgCount = 0;
+    }
+    if (existing.imgMonth !== mk) {
+      existing.imgMonth = mk;
+      existing.imgCount = 0;
+    }
+    if (existing.webMonth !== mk) {
+      existing.webMonth = mk;
+      existing.webCount = 0;
+    }
 
     if (what === "msg") existing.msgCount += amount;
     if (what === "img") existing.imgCount += amount;
