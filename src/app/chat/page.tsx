@@ -1213,6 +1213,10 @@ export default function ChatPage(): React.JSX.Element {
   const [manualImageIntent, setManualImageIntent] = useState<ImageIntentChoice>(null);
   const [inputFocused, setInputFocused] = useState(false);
   const [keyboardInset, setKeyboardInset] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState<number>(() => {
+    if (typeof window === "undefined") return 0;
+    return window.innerHeight || 0;
+  });
 
   const effectivePlanRaw: Plan = (devPlan ?? plan) as any;
   const effectiveCanonical: CanonicalPlan = toCanonicalPlan(effectivePlanRaw);
@@ -1368,6 +1372,7 @@ export default function ChatPage(): React.JSX.Element {
     const apply = () => {
       const mobile = window.innerWidth <= 980;
       setIsMobile(mobile);
+      setViewportHeight(window.innerHeight || 0);
       setSidebarOpen((prev) => {
         if (mobile) return false;
         return prev;
@@ -1505,28 +1510,39 @@ export default function ChatPage(): React.JSX.Element {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const vv = window.visualViewport;
-    if (!vv) return;
 
     const updateViewportLayout = () => {
       const mobile = window.innerWidth <= 980;
       if (!mobile) {
+        setViewportHeight(window.innerHeight || 0);
         setKeyboardInset(0);
         return;
       }
 
-      const rawInset = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
-      const nextInset = rawInset > 80 ? rawInset : 0;
-      setKeyboardInset(nextInset);
-
-      if (document.activeElement === inputRef.current) {
-        requestAnimationFrame(() => {
-          composerRef.current?.scrollIntoView({ block: "end", behavior: "auto" });
-          scrollToBottom(true);
-        });
+      if (!vv) {
+        setViewportHeight(window.innerHeight || 0);
+        setKeyboardInset(0);
+        return;
       }
+
+      const nextViewportHeight = Math.max(0, Math.round(vv.height));
+      const rawInset = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+      const nextInset = rawInset > 80 ? Math.round(rawInset) : 0;
+
+      setViewportHeight(nextViewportHeight || window.innerHeight || 0);
+      setKeyboardInset(nextInset);
     };
 
     updateViewportLayout();
+
+    if (!vv) {
+      window.addEventListener("resize", updateViewportLayout);
+      window.addEventListener("orientationchange", updateViewportLayout);
+      return () => {
+        window.removeEventListener("resize", updateViewportLayout);
+        window.removeEventListener("orientationchange", updateViewportLayout);
+      };
+    }
 
     vv.addEventListener("resize", updateViewportLayout);
     vv.addEventListener("scroll", updateViewportLayout);
@@ -1537,20 +1553,18 @@ export default function ChatPage(): React.JSX.Element {
       vv.removeEventListener("scroll", updateViewportLayout);
       window.removeEventListener("orientationchange", updateViewportLayout);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!isMobile || !inputFocused) return;
 
     const id = window.setTimeout(() => {
-      composerRef.current?.scrollIntoView({ block: "end", behavior: "auto" });
       scrollToBottom(true);
-    }, 0);
+    }, 120);
 
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input, isMobile, inputFocused]);
+  }, [isMobile, inputFocused, keyboardInset]);
 
   function persistActive(nextMessages: ChatMsg[]) {
     if (!activeId) return;
@@ -2073,6 +2087,18 @@ export default function ChatPage(): React.JSX.Element {
   const composerTextPlaceholder = composerPlaceholder(locale);
   const chatsLabel = chatsToggleLabel(locale);
 
+  const disclaimerText = useMemo(() => {
+    if (locale === "es") {
+      return "AJX AI es una inteligencia artificial y puede cometer errores. Verifica siempre la información.";
+    }
+    if (locale === "en") {
+      return "AJX AI is an AI and can make mistakes. Always verify important information.";
+    }
+    return "AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina.";
+  }, [locale]);
+
+  const detailsLabel = locale === "fi" ? "Lisätiedot" : locale === "es" ? "Más info" : "More info";
+
   const imageIntentHint = useMemo(() => {
     if (!hasPendingImage) return "";
 
@@ -2104,8 +2130,17 @@ export default function ChatPage(): React.JSX.Element {
     (!input.trim() && pending.length === 0) ||
     (hasPendingImage && !!input.trim() && effectiveImageIntent === null);
 
+  const mobileShellStyle: React.CSSProperties = isMobile
+    ? {
+        height: viewportHeight > 0 ? `${viewportHeight}px` : "100dvh",
+        minHeight: viewportHeight > 0 ? `${viewportHeight}px` : "100dvh",
+        maxHeight: viewportHeight > 0 ? `${viewportHeight}px` : "100dvh",
+        overflow: "hidden",
+      }
+    : {};
+
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
@@ -2629,6 +2664,25 @@ export default function ChatPage(): React.JSX.Element {
           box-shadow: 0 14px 30px rgba(11, 13, 18, 0.1);
         }
 
+        .ajxDisclaimerRow {
+          margin-top: 10px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          font-size: 11px;
+          line-height: 1.45;
+          color: rgba(11, 13, 18, 0.62);
+        }
+
+        .ajxDisclaimerLink {
+          color: #0b0d12;
+          font-weight: 900;
+          text-decoration: none;
+        }
+
         @media (max-width: 980px) {
           .ajxTopControls {
             gap: 8px;
@@ -2695,10 +2749,25 @@ export default function ChatPage(): React.JSX.Element {
           .ajxQuickActionsWrap {
             padding: 0 14px 14px 14px;
           }
+
+          .ajxDisclaimerRow {
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+          }
         }
       `}</style>
 
-      <div className={styles.layout}>
+      <div
+        className={styles.layout}
+        style={
+          isMobile
+            ? {
+                height: viewportHeight > 0 ? `${viewportHeight}px` : "100%",
+                minHeight: 0,
+                overflow: "hidden",
+              }
+            : undefined
+        }
+      >
         {isMobile && sidebarOpen ? (
           <button
             type="button"
@@ -2789,7 +2858,18 @@ export default function ChatPage(): React.JSX.Element {
           </div>
         </aside>
 
-        <div className={styles.mainPane}>
+        <div
+          className={styles.mainPane}
+          style={
+            isMobile
+              ? {
+                  minHeight: 0,
+                  height: "100%",
+                  overflow: "hidden",
+                }
+              : undefined
+          }
+        >
           <header className={styles.topbar}>
             <div className={styles.topLeft}>
               <button
@@ -2805,7 +2885,6 @@ export default function ChatPage(): React.JSX.Element {
 
               <div className={styles.topTitle}>
                 <div className={styles.title}>{activeTitle}</div>
-                <div className={styles.subtitle}>{t(locale, "ui.interface_2030")}</div>
               </div>
             </div>
 
@@ -2866,9 +2945,43 @@ export default function ChatPage(): React.JSX.Element {
             </div>
           </header>
 
-          <main className={styles.main}>
-            <section className={styles.chatCard}>
-              <div className={styles.msgList}>
+          <main
+            className={styles.main}
+            style={
+              isMobile
+                ? {
+                    minHeight: 0,
+                    height: "100%",
+                    overflow: "hidden",
+                  }
+                : undefined
+            }
+          >
+            <section
+              className={styles.chatCard}
+              style={
+                isMobile
+                  ? {
+                      minHeight: 0,
+                      height: "100%",
+                      overflow: "hidden",
+                    }
+                  : undefined
+              }
+            >
+              <div
+                className={styles.msgList}
+                style={
+                  isMobile
+                    ? {
+                        minHeight: 0,
+                        overflowY: "auto",
+                        WebkitOverflowScrolling: "touch",
+                        paddingBottom: keyboardInset > 0 ? 20 : undefined,
+                      }
+                    : undefined
+                }
+              >
                 {messages.map((m, idx) => {
                   const isUser = m.role === "user";
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
@@ -2943,6 +3056,7 @@ export default function ChatPage(): React.JSX.Element {
                   bottom: isMobile ? `${keyboardInset}px` : undefined,
                   transition: "bottom 120ms ease",
                   zIndex: isMobile ? 40 : undefined,
+                  paddingBottom: isMobile ? "max(0px, env(safe-area-inset-bottom, 0px))" : undefined,
                 }}
               >
                 <div className={styles.composerInner}>
@@ -3026,24 +3140,11 @@ export default function ChatPage(): React.JSX.Element {
                           const el = e.target;
                           el.style.height = "auto";
                           el.style.height = `${Math.min(el.scrollHeight, 220)}px`;
-
-                          if (isMobile) {
-                            requestAnimationFrame(() => {
-                              composerRef.current?.scrollIntoView({
-                                block: "end",
-                                behavior: "auto",
-                              });
-                            });
-                          }
                         }}
                         onFocus={() => {
                           setInputFocused(true);
                           if (isMobile) {
                             window.setTimeout(() => {
-                              composerRef.current?.scrollIntoView({
-                                block: "end",
-                                behavior: "auto",
-                              });
                               scrollToBottom(true);
                             }, 120);
                           }
@@ -3235,6 +3336,13 @@ export default function ChatPage(): React.JSX.Element {
                       ))}
                     </div>
                   ) : null}
+
+                  <div className="ajxDisclaimerRow">
+                    <span>{disclaimerText}</span>
+                    <a href={`/help?lang=${locale}`} className="ajxDisclaimerLink">
+                      {detailsLabel}
+                    </a>
+                  </div>
                 </div>
               </div>
             </section>
