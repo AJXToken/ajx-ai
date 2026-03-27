@@ -2,14 +2,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+function isProductionLikeRuntime() {
+  return (
+    process.env.VERCEL === "1" ||
+    !!process.env.VERCEL ||
+    !!process.env.VERCEL_ENV ||
+    process.env.NODE_ENV === "production"
+  );
+}
+
+function buildSafeTmpDataDir() {
+  return path.join(os.tmpdir(), "ajx-data");
+}
+
 function resolveDataDir() {
-  const env = process.env.AJX_DATA_DIR;
-  if (env && String(env).trim()) return String(env).trim();
+  const env = String(process.env.AJX_DATA_DIR || "").trim();
+
+  // Vercel / production / serverless: käytä aina tmp:tä
+  if (isProductionLikeRuntime()) {
+    return buildSafeTmpDataDir();
+  }
+
+  if (env) return env;
+
   return path.join(process.cwd(), ".ajx-data");
 }
 
@@ -53,6 +74,8 @@ export async function GET(
           ok: false,
           error: "Kuvaa ei löytynyt.",
           filePath,
+          dataDir: DATA_DIR,
+          imagesDir: IMAGES_DIR,
         },
         {
           status: 404,
@@ -80,6 +103,8 @@ export async function GET(
         ok: false,
         error: e?.message ? String(e.message) : "Kuvan lukeminen epäonnistui.",
         filePath,
+        dataDir: DATA_DIR,
+        imagesDir: IMAGES_DIR,
       },
       {
         status: 500,
