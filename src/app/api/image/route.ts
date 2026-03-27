@@ -64,10 +64,7 @@ function switchDataDir(nextDir: string) {
 
 function ensureDataDir() {
   const candidates = Array.from(
-    new Set([
-      DATA_DIR,
-      buildSafeTmpDataDir(),
-    ].filter(Boolean))
+    new Set([DATA_DIR, buildSafeTmpDataDir()].filter(Boolean))
   );
 
   let lastError: unknown = null;
@@ -596,7 +593,14 @@ export async function POST(req: NextRequest) {
 
       const id = makeImageId();
       const outFile = path.join(IMAGES_DIR, `${id}.png`);
-      fs.writeFileSync(outFile, Buffer.from(b64, "base64"));
+
+      // Talletetaan local-deviä varten / mahdolliseksi debugiksi.
+      // Vercelissä ei nojauduta tähän kuvan näyttämisessä.
+      try {
+        fs.writeFileSync(outFile, Buffer.from(b64, "base64"));
+      } catch {
+        // Ei kaadeta onnistunutta generointia tallennusongelmaan.
+      }
 
       usage.imgGenThisMonth = genUsedMonth + 1;
       if (limits.imgGenPerDay > 0) {
@@ -607,10 +611,13 @@ export async function POST(req: NextRequest) {
       saveUsage(usageDb);
 
       const imageUrl = `/api/image/file/${id}?v=${Date.now()}`;
+      const markdownDataUrl = `![AJX Image](data:image/png;base64,${b64})`;
 
       return NextResponse.json(
         {
           ok: true,
+          format: "png",
+          data: b64,
           source: "gemini-image",
           model: GEMINI_IMAGE_MODEL,
           edited: !!sourceImage?.dataUrl,
@@ -622,12 +629,12 @@ export async function POST(req: NextRequest) {
           requestedSize: requestedSizeRaw,
           effectiveSize,
           text: textOut || "",
-          markdown: `![AJX Image](${imageUrl})`,
+          markdown: markdownDataUrl,
         },
         { status: 200, headers: resHeaders }
       );
     } catch (e: any) {
-      const msg = e?.message ? String(e.message) : "Failed to save generated image";
+      const msg = e?.message ? String(e.message) : "Failed to finalize generated image";
       return jsonError(
         500,
         msg,
