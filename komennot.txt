@@ -18,6 +18,7 @@ bugi lista 2
 
 - interface 2030 lukee. mitä se tarkoittaa ja miksi se pitää näkyä?
 - alakulmaan voitaisi pienellä lisätä teksti jossa lukee esim. AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina. lisätiedot. sitten lisätietoihin helvetilliset vastuuvapaus tekstit.
+- mobiilissa aina kun rupee kirjoittamaan niin näppäimistö tulee suoraan tesktikentän eteen näe mitä on kirjoittamassa. ennen se siirtyi ylös jotta näkee mitä kirjoitti
 
 
 

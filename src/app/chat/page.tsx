@@ -1189,6 +1189,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const composerRef = useRef<HTMLDivElement | null>(null);
 
   const [, setImageStatus] = useState<string>("");
 
@@ -1210,6 +1211,8 @@ export default function ChatPage(): React.JSX.Element {
 
   const [copiedKey, setCopiedKey] = useState<string>("");
   const [manualImageIntent, setManualImageIntent] = useState<ImageIntentChoice>(null);
+  const [inputFocused, setInputFocused] = useState(false);
+  const [keyboardInset, setKeyboardInset] = useState(0);
 
   const effectivePlanRaw: Plan = (devPlan ?? plan) as any;
   const effectiveCanonical: CanonicalPlan = toCanonicalPlan(effectivePlanRaw);
@@ -1504,22 +1507,50 @@ export default function ChatPage(): React.JSX.Element {
     const vv = window.visualViewport;
     if (!vv) return;
 
-    const onViewportChange = () => {
-      if (plusOpen) {
-        computePlusMenuPos();
+    const updateViewportLayout = () => {
+      const mobile = window.innerWidth <= 980;
+      if (!mobile) {
+        setKeyboardInset(0);
+        return;
       }
-      scrollToBottom(true);
+
+      const rawInset = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+      const nextInset = rawInset > 80 ? rawInset : 0;
+      setKeyboardInset(nextInset);
+
+      if (document.activeElement === inputRef.current) {
+        requestAnimationFrame(() => {
+          composerRef.current?.scrollIntoView({ block: "end", behavior: "auto" });
+          scrollToBottom(true);
+        });
+      }
     };
 
-    vv.addEventListener("resize", onViewportChange);
-    vv.addEventListener("scroll", onViewportChange);
+    updateViewportLayout();
+
+    vv.addEventListener("resize", updateViewportLayout);
+    vv.addEventListener("scroll", updateViewportLayout);
+    window.addEventListener("orientationchange", updateViewportLayout);
 
     return () => {
-      vv.removeEventListener("resize", onViewportChange);
-      vv.removeEventListener("scroll", onViewportChange);
+      vv.removeEventListener("resize", updateViewportLayout);
+      vv.removeEventListener("scroll", updateViewportLayout);
+      window.removeEventListener("orientationchange", updateViewportLayout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plusOpen]);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile || !inputFocused) return;
+
+    const id = window.setTimeout(() => {
+      composerRef.current?.scrollIntoView({ block: "end", behavior: "auto" });
+      scrollToBottom(true);
+    }, 0);
+
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input, isMobile, inputFocused]);
 
   function persistActive(nextMessages: ChatMsg[]) {
     if (!activeId) return;
@@ -2043,7 +2074,7 @@ export default function ChatPage(): React.JSX.Element {
   const chatsLabel = chatsToggleLabel(locale);
 
   const imageIntentHint = useMemo(() => {
-    if (!hasPendingImage || !input.trim()) return "";
+    if (!hasPendingImage) return "";
 
     if (effectiveImageIntent === "edit") {
       return locale === "fi"
@@ -2066,7 +2097,7 @@ export default function ChatPage(): React.JSX.Element {
       : locale === "es"
         ? "Elige si quieres analizar o editar la imagen"
         : "Choose whether you want to analyze or edit the image";
-  }, [effectiveImageIntent, hasPendingImage, input, locale]);
+  }, [effectiveImageIntent, hasPendingImage, locale]);
 
   const sendDisabled =
     loading ||
@@ -2905,7 +2936,15 @@ export default function ChatPage(): React.JSX.Element {
                 </div>
               ) : null}
 
-              <div className={styles.composer}>
+              <div
+                ref={composerRef}
+                className={styles.composer}
+                style={{
+                  bottom: isMobile ? `${keyboardInset}px` : undefined,
+                  transition: "bottom 120ms ease",
+                  zIndex: isMobile ? 40 : undefined,
+                }}
+              >
                 <div className={styles.composerInner}>
                   <div className="ajxComposerActions">
                     <div className="ajxComposerLeft">
@@ -2987,17 +3026,39 @@ export default function ChatPage(): React.JSX.Element {
                           const el = e.target;
                           el.style.height = "auto";
                           el.style.height = `${Math.min(el.scrollHeight, 220)}px`;
+
+                          if (isMobile) {
+                            requestAnimationFrame(() => {
+                              composerRef.current?.scrollIntoView({
+                                block: "end",
+                                behavior: "auto",
+                              });
+                            });
+                          }
                         }}
                         onFocus={() => {
+                          setInputFocused(true);
                           if (isMobile) {
-                            window.setTimeout(() => scrollToBottom(true), 120);
+                            window.setTimeout(() => {
+                              composerRef.current?.scrollIntoView({
+                                block: "end",
+                                behavior: "auto",
+                              });
+                              scrollToBottom(true);
+                            }, 120);
                           }
+                        }}
+                        onBlur={() => {
+                          setInputFocused(false);
                         }}
                         onKeyDown={onKeyDown}
                         placeholder={composerTextPlaceholder}
                         rows={1}
                         disabled={loading}
                         enterKeyHint="send"
+                        style={{
+                          scrollMarginBottom: isMobile ? keyboardInset + 24 : undefined,
+                        }}
                       />
                     </div>
 
@@ -3056,7 +3117,7 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
                   </div>
 
-                  {hasPendingImage && input.trim() ? (
+                  {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">{imageIntentHint}</div>
 
