@@ -555,7 +555,9 @@
 :global(.ajxQuickActionsRow),
 :global(.ajxComposerActions),
 :global(.ajxComposerLeft),
+:global(.ajxComposerCenter),
 :global(.ajxComposerRight),
+:global(.ajxComposerText),
 :global(.ajxChips),
 :global(.ajxInlineImages) {
   min-width: 0;
@@ -598,6 +600,12 @@
   justify-self: start;
 }
 
+:global(.ajxComposerCenter) {
+  grid-column: 2;
+  min-width: 0;
+  width: 100%;
+}
+
 :global(.ajxComposerRight) {
   display: flex;
   align-items: center;
@@ -607,19 +615,21 @@
   justify-self: end;
 }
 
+:global(.ajxComposerText),
+:global(.ajxComposerCenter textarea),
+:global(.ajxComposerCenter .input),
 :global(.ajxComposerActions textarea),
 :global(.ajxComposerActions .input) {
   min-width: 0;
   width: 100%;
 }
 
-:global(.ajxComposerActions > textarea),
-:global(.ajxComposerActions > .input) {
-  grid-column: 2;
-}
-
 :global(.ajxComposerActions > .ajxComposerLeft) {
   grid-column: 1;
+}
+
+:global(.ajxComposerActions > .ajxComposerCenter) {
+  grid-column: 2;
 }
 
 :global(.ajxComposerActions > .ajxComposerRight) {
@@ -718,15 +728,17 @@
   }
 
   .topbar {
-    padding: 10px 12px;
-    gap: 10px;
-    align-items: flex-start;
-    flex-wrap: wrap;
+    padding: 8px 10px;
+    gap: 8px;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    flex-direction: column;
     z-index: 30;
   }
 
   .topLeft {
     width: 100%;
+    min-width: 0;
   }
 
   .topTitle {
@@ -751,8 +763,8 @@
   .chatCard {
     width: 100%;
     max-width: 100%;
-    height: calc(100dvh - 74px);
-    min-height: calc(100dvh - 74px);
+    height: 100%;
+    min-height: 0;
     border-radius: 16px;
     margin: 0;
     box-sizing: border-box;
@@ -800,12 +812,21 @@
     width: 100%;
     justify-content: flex-start;
     gap: 8px;
-    flex-wrap: wrap;
-    overflow-x: hidden;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  :global(.ajxTopControls::-webkit-scrollbar) {
+    display: none;
   }
 
   :global(.ajxControlGroup) {
-    max-width: 100%;
+    max-width: none;
+    flex: 0 0 auto;
   }
 
   :global(.ajxSelectWrap) {
@@ -864,23 +885,31 @@
   /* Mobiilissa:
      textarea ylös koko riville,
      sen alle nappulat samalle riville:
-     vasen ryhmä | oikea ryhmä (esim. Ohjeet)
+     vasen ryhmä | oikea ryhmä
   */
   :global(.ajxComposerActions) {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
     align-items: end;
     gap: 8px;
     width: 100%;
   }
 
-  :global(.ajxComposerActions > textarea),
-  :global(.ajxComposerActions > .input) {
+  :global(.ajxComposerCenter) {
     grid-column: 1 / -1;
+    grid-row: 1;
+    min-width: 0;
+    width: 100%;
+  }
+
+  :global(.ajxComposerText),
+  :global(.ajxComposerCenter textarea),
+  :global(.ajxComposerCenter .input) {
     width: 100%;
     min-width: 0;
-    min-height: 120px;
-    max-height: 240px;
+    min-height: 52px;
+    max-height: 180px;
   }
 
   :global(.ajxComposerActions > .ajxComposerLeft) {
@@ -932,8 +961,8 @@
   }
 
   .chatCard {
-    height: calc(100dvh - 68px);
-    min-height: calc(100dvh - 68px);
+    height: 100%;
+    min-height: 0;
     border-radius: 14px;
   }
 
@@ -958,10 +987,11 @@
     height: calc(100dvh - 118px);
   }
 
-  :global(.ajxComposerActions > textarea),
-  :global(.ajxComposerActions > .input) {
-    min-height: 132px;
-    max-height: 260px;
+  :global(.ajxComposerText),
+  :global(.ajxComposerCenter textarea),
+  :global(.ajxComposerCenter .input) {
+    min-height: 52px;
+    max-height: 180px;
     padding-top: 14px;
     padding-bottom: 14px;
     font-size: 16px;
