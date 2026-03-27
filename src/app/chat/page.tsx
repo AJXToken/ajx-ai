@@ -54,6 +54,13 @@ const FREE_DISPLAY_LIMIT = 20;
 
 type ImageIntentChoice = "analyze" | "edit" | null;
 
+type QuickAction = {
+  id: string;
+  label: string;
+  prompt: string;
+  mode: AjxMode;
+};
+
 function clampLocale(v: string | null): Locale | null {
   if (!v) return null;
   const s = v.toLowerCase();
@@ -304,11 +311,7 @@ function isSummaryLine(line: string, locale: Locale) {
     );
   }
 
-  return (
-    s.startsWith("summary:") ||
-    s.startsWith("in short:") ||
-    s.startsWith("briefly:")
-  );
+  return s.startsWith("summary:") || s.startsWith("in short:") || s.startsWith("briefly:");
 }
 
 type RichSegment =
@@ -825,8 +828,143 @@ function defaultLimitsForCanonicalPlan(cp: CanonicalPlan): Limits {
   if (cp === "basic") return { msgPerMonth: 1000, imgPerMonth: 150, webPerMonth: 0 };
   if (cp === "plus") return { msgPerMonth: 1000, imgPerMonth: 120, webPerMonth: 0 };
   if (cp === "pro") return { msgPerMonth: 3000, imgPerMonth: 200, webPerMonth: 200 };
-  if (cp === "company") return { msgPerMonth: 4000, imgPerMonth: 300, webPerMonth: 300 };
+  if (cp === "company") return { msgPerMonth: 4000, imgPerMonth: 150, webPerMonth: 300 };
   return { msgPerMonth: FREE_DISPLAY_LIMIT, imgPerMonth: 0, webPerMonth: 0 };
+}
+
+function composerPlaceholder(locale: Locale): string {
+  if (locale === "es") return "Escribe…";
+  if (locale === "en") return "Write…";
+  return "Kirjoita…";
+}
+
+function chatsToggleLabel(locale: Locale): string {
+  if (locale === "es") return "Conversaciones";
+  if (locale === "en") return "Chats";
+  return "Keskustelut";
+}
+
+function quickActionsForLocale(locale: Locale): QuickAction[] {
+  if (locale === "es") {
+    return [
+      {
+        id: "offer",
+        label: "Crear oferta",
+        prompt: "Ayúdame a crear una oferta clara y convincente para un cliente.",
+        mode: "research",
+      },
+      {
+        id: "sales",
+        label: "Aumentar ventas",
+        prompt: "Ayúdame a encontrar formas prácticas de aumentar mis ventas.",
+        mode: "analysis",
+      },
+      {
+        id: "customers",
+        label: "Encontrar clientes",
+        prompt: "Ayúdame a encontrar clientes potenciales para mi negocio.",
+        mode: "research",
+      },
+      {
+        id: "marketing",
+        label: "Mejorar marketing",
+        prompt: "Ayúdame a mejorar mi marketing de forma práctica.",
+        mode: "ideation",
+      },
+      {
+        id: "pricing",
+        label: "Mejorar precios",
+        prompt: "Analiza mi pricing y ayúdame a mejorarlo.",
+        mode: "analysis",
+      },
+      {
+        id: "problem",
+        label: "Resolver problema",
+        prompt: "Ayúdame a resolver un problema de negocio paso a paso.",
+        mode: "analysis",
+      },
+    ];
+  }
+
+  if (locale === "en") {
+    return [
+      {
+        id: "offer",
+        label: "Create offer",
+        prompt: "Help me create a clear and convincing offer for a client.",
+        mode: "research",
+      },
+      {
+        id: "sales",
+        label: "Grow sales",
+        prompt: "Help me find practical ways to grow my sales.",
+        mode: "analysis",
+      },
+      {
+        id: "customers",
+        label: "Find customers",
+        prompt: "Help me find potential customers for my business.",
+        mode: "research",
+      },
+      {
+        id: "marketing",
+        label: "Improve marketing",
+        prompt: "Help me improve my marketing in a practical way.",
+        mode: "ideation",
+      },
+      {
+        id: "pricing",
+        label: "Improve pricing",
+        prompt: "Analyze my pricing and help me improve it.",
+        mode: "analysis",
+      },
+      {
+        id: "problem",
+        label: "Solve problem",
+        prompt: "Help me solve a business problem step by step.",
+        mode: "analysis",
+      },
+    ];
+  }
+
+  return [
+    {
+      id: "offer",
+      label: "Luo tarjous",
+      prompt: "Auta minua luomaan selkeä ja myyvä tarjous asiakkaalle.",
+      mode: "research",
+    },
+    {
+      id: "sales",
+      label: "Kasvata myyntiä",
+      prompt: "Auta minua löytämään käytännöllisiä tapoja kasvattaa myyntiä.",
+      mode: "analysis",
+    },
+    {
+      id: "customers",
+      label: "Löydä asiakkaita",
+      prompt: "Auta minua löytämään potentiaalisia asiakkaita yritykselleni.",
+      mode: "research",
+    },
+    {
+      id: "marketing",
+      label: "Paranna markkinointia",
+      prompt: "Auta minua parantamaan markkinointia käytännöllisesti.",
+      mode: "ideation",
+    },
+    {
+      id: "pricing",
+      label: "Paranna hinnoittelua",
+      prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sitä.",
+      mode: "analysis",
+    },
+    {
+      id: "problem",
+      label: "Ratkaise yritysongelma",
+      prompt: "Auta minua ratkaisemaan yritysongelma askel askeleelta.",
+      mode: "analysis",
+    },
+  ];
 }
 
 // ====== Attachments UI ======
@@ -925,7 +1063,13 @@ export default function ChatPage(): React.JSX.Element {
     return limits;
   }, [devPlan, effectiveCanonical, limits]);
 
-  const showImageButton = Number(effectiveLimits?.imgPerMonth || 0) > 0;
+  const canGenerateImages =
+    effectiveCanonical === "plus" ||
+    effectiveCanonical === "pro" ||
+    effectiveCanonical === "company";
+
+  const canAttachImagesForAnalysis = Number(effectiveLimits?.imgPerMonth || 0) > 0;
+  const showImageButton = canGenerateImages;
   const showWebButton = Number(effectiveLimits?.webPerMonth || 0) > 0;
 
   const allowedModes = useMemo(
@@ -942,6 +1086,10 @@ export default function ChatPage(): React.JSX.Element {
   const hasPendingImage = !!firstPendingImage;
   const suggestedImageIntent = useMemo(() => detectImageIntent(input), [input]);
   const effectiveImageIntent: ImageIntentChoice = manualImageIntent ?? suggestedImageIntent;
+
+  const quickActions = useMemo(() => quickActionsForLocale(locale), [locale]);
+  const showQuickActions =
+    messages.length <= 1 && !loading && pending.length === 0 && !input.trim();
 
   function closeSidebarOnMobile() {
     if (isMobile) setSidebarOpen(false);
@@ -1630,6 +1778,11 @@ export default function ChatPage(): React.JSX.Element {
     await sendTextDirect(text);
   }
 
+  async function runQuickAction(action: QuickAction) {
+    setMode(action.mode);
+    await sendTextDirect(action.prompt, action.mode);
+  }
+
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -1646,6 +1799,8 @@ export default function ChatPage(): React.JSX.Element {
   const freeCounterLabel = t(locale, "ui.free_messages");
 
   const helpLabel = locale === "fi" ? "Ohjeet" : locale === "es" ? "Ayuda" : "Help";
+  const composerTextPlaceholder = composerPlaceholder(locale);
+  const chatsLabel = chatsToggleLabel(locale);
 
   const imageIntentHint = useMemo(() => {
     if (!hasPendingImage || !input.trim()) return "";
@@ -1704,12 +1859,48 @@ export default function ChatPage(): React.JSX.Element {
           max-width: 100%;
         }
 
+        .ajxControlGroupPlan {
+          padding: 8px 12px;
+          gap: 10px;
+          border: 1px solid rgba(11, 13, 18, 0.1);
+          background: rgba(255, 255, 255, 0.86);
+        }
+
         .ajxControlLabel {
           font-size: 12px;
           font-weight: 950;
           letter-spacing: 0.2px;
           color: rgba(11, 13, 18, 0.62);
           padding-left: 8px;
+          white-space: nowrap;
+        }
+
+        .ajxPlanTopLabel {
+          font-size: 12px;
+          font-weight: 950;
+          letter-spacing: 0.2px;
+          color: rgba(11, 13, 18, 0.62);
+          white-space: nowrap;
+        }
+
+        .ajxPlanBadge {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 8px 12px;
+          border-radius: 999px;
+          background: #0b0d12;
+          color: #ffffff;
+          font-size: 12px;
+          font-weight: 950;
+          letter-spacing: 0.3px;
+          min-width: 74px;
+        }
+
+        .ajxFreeMini {
+          font-size: 12px;
+          font-weight: 800;
+          color: rgba(11, 13, 18, 0.72);
           white-space: nowrap;
         }
 
@@ -1873,6 +2064,31 @@ export default function ChatPage(): React.JSX.Element {
           flex: 0 0 auto;
           position: relative;
           z-index: 3;
+        }
+
+        .ajxSidebarToggleBtn {
+          min-width: 46px;
+          height: 46px;
+          border-radius: 16px;
+          padding: 0 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 14px;
+          font-weight: 900;
+        }
+
+        .ajxSidebarToggleIcon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 18px;
+          font-size: 16px;
+          line-height: 1;
+        }
+
+        .ajxSidebarToggleText {
+          white-space: nowrap;
         }
 
         .ajxSidebarBackdrop {
@@ -2096,6 +2312,52 @@ export default function ChatPage(): React.JSX.Element {
           align-items: center;
         }
 
+        .ajxQuickActionsWrap {
+          padding: 0 20px 16px 20px;
+        }
+
+        .ajxQuickActionsTitle {
+          font-size: 12px;
+          font-weight: 950;
+          letter-spacing: 0.2px;
+          color: rgba(11, 13, 18, 0.62);
+          margin-bottom: 10px;
+        }
+
+        .ajxQuickActionsRow {
+          display: flex;
+          gap: 10px;
+          overflow-x: auto;
+          padding-bottom: 4px;
+          scrollbar-width: thin;
+        }
+
+        .ajxQuickActionBtn {
+          flex: 0 0 auto;
+          border: 1px solid rgba(11, 13, 18, 0.1);
+          background: rgba(255, 255, 255, 0.9);
+          color: #0b0d12;
+          border-radius: 999px;
+          padding: 10px 14px;
+          font-size: 13px;
+          font-weight: 900;
+          cursor: pointer;
+          white-space: nowrap;
+          box-shadow: 0 10px 22px rgba(11, 13, 18, 0.08);
+          transition:
+            border 0.12s ease,
+            box-shadow 0.12s ease,
+            transform 0.12s ease,
+            background 0.12s ease;
+        }
+
+        .ajxQuickActionBtn:hover {
+          transform: translateY(-1px);
+          border-color: rgba(11, 13, 18, 0.16);
+          background: rgba(255, 255, 255, 0.96);
+          box-shadow: 0 14px 30px rgba(11, 13, 18, 0.1);
+        }
+
         @media (max-width: 980px) {
           .ajxTopControls {
             gap: 8px;
@@ -2149,6 +2411,18 @@ export default function ChatPage(): React.JSX.Element {
             grid-column: 2;
             grid-row: 2;
             justify-content: flex-end;
+          }
+
+          .ajxSidebarToggleBtn {
+            padding: 0 12px;
+          }
+
+          .ajxSidebarToggleText {
+            display: none;
+          }
+
+          .ajxQuickActionsWrap {
+            padding: 0 14px 14px 14px;
           }
         }
       `}</style>
@@ -2248,12 +2522,16 @@ export default function ChatPage(): React.JSX.Element {
           <header className={styles.topbar}>
             <div className={styles.topLeft}>
               <button
-                className={styles.btnGhost}
+                className={`${styles.btnGhost} ajxSidebarToggleBtn`}
                 onClick={() => setSidebarOpen((v) => !v)}
-                title={t(locale, "ui.toggle_sidebar")}
+                title={sidebarOpen ? chatsLabel : chatsLabel}
+                aria-label={sidebarOpen ? chatsLabel : chatsLabel}
+                type="button"
               >
-                ≡
+                <span className="ajxSidebarToggleIcon">{sidebarOpen ? "✕" : "☰"}</span>
+                <span className="ajxSidebarToggleText">{chatsLabel}</span>
               </button>
+
               <div className={styles.topTitle}>
                 <div className={styles.title}>{activeTitle}</div>
                 <div className={styles.subtitle}>{t(locale, "ui.interface_2030")}</div>
@@ -2261,6 +2539,16 @@ export default function ChatPage(): React.JSX.Element {
             </div>
 
             <div className="ajxTopControls">
+              <div className="ajxControlGroup ajxControlGroupPlan" aria-label="Plan">
+                <span className="ajxPlanTopLabel">Plan</span>
+                <span className="ajxPlanBadge">{planLabel}</span>
+                {effectiveCanonical === "free" ? (
+                  <span className="ajxFreeMini">
+                    {Number(usage?.msgThisMonth || 0)}/{FREE_DISPLAY_LIMIT}
+                  </span>
+                ) : null}
+              </div>
+
               <a
                 href={`/help?lang=${locale}`}
                 className="ajxHelpLink ajxTopHelp"
@@ -2353,6 +2641,30 @@ export default function ChatPage(): React.JSX.Element {
                 <div ref={bottomRef} />
               </div>
 
+              {showQuickActions ? (
+                <div className="ajxQuickActionsWrap">
+                  <div className="ajxQuickActionsTitle">
+                    {locale === "fi"
+                      ? "Pikatoiminnot"
+                      : locale === "es"
+                        ? "Acciones rápidas"
+                        : "Quick actions"}
+                  </div>
+                  <div className="ajxQuickActionsRow">
+                    {quickActions.map((action) => (
+                      <button
+                        key={action.id}
+                        type="button"
+                        className="ajxQuickActionBtn"
+                        onClick={() => runQuickAction(action).catch(() => {})}
+                      >
+                        {action.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
               <div className={styles.composer}>
                 <div className={styles.composerInner}>
                   <div className="ajxComposerActions">
@@ -2437,7 +2749,7 @@ export default function ChatPage(): React.JSX.Element {
                           el.style.height = `${Math.min(el.scrollHeight, 220)}px`;
                         }}
                         onKeyDown={onKeyDown}
-                        placeholder="Kirjoita…"
+                        placeholder={composerTextPlaceholder}
                         rows={1}
                         disabled={loading}
                       />
@@ -2631,16 +2943,18 @@ export default function ChatPage(): React.JSX.Element {
             width: plusMenuPos.width,
           }}
         >
-          <button
-            className={`${styles.btnGhost} ajxMenuItem`}
-            onClick={() => {
-              setPlusOpen(false);
-              requestAnimationFrame(() => imgInputRef.current?.click());
-            }}
-            type="button"
-          >
-            {t(locale, "ui.attach_image")}
-          </button>
+          {canAttachImagesForAnalysis ? (
+            <button
+              className={`${styles.btnGhost} ajxMenuItem`}
+              onClick={() => {
+                setPlusOpen(false);
+                requestAnimationFrame(() => imgInputRef.current?.click());
+              }}
+              type="button"
+            >
+              {t(locale, "ui.attach_image")}
+            </button>
+          ) : null}
 
           <button
             className={`${styles.btnGhost} ajxMenuItem`}

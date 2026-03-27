@@ -13,6 +13,13 @@ export const revalidate = 0;
 function resolveDataDir() {
   const env = process.env.AJX_DATA_DIR;
   if (env && String(env).trim()) return String(env).trim();
+
+  // Vercel/serverless-safe default:
+  // local project dir is often not writable in production/serverless.
+  if (process.env.VERCEL || process.env.VERCEL_ENV) {
+    return "/tmp/ajx-data";
+  }
+
   return path.join(process.cwd(), ".ajx-data");
 }
 
@@ -26,16 +33,20 @@ const COOKIE_SECRET =
   process.env.NEXTAUTH_SECRET ||
   "dev-secret-change-me";
 
-// Gemini native image model:
-// supports text-to-image and text+image-to-image
-const GEMINI_IMAGE_MODEL = "gemini-3.1-flash-image-preview";
+// Halvempi ja vakaampi native image generation -malli
+const GEMINI_IMAGE_MODEL = "gemini-2.5-flash-image";
 const GEMINI_IMAGE_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
   GEMINI_IMAGE_MODEL
 )}:generateContent`;
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-  if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
+  } catch (e: any) {
+    const msg = e?.message ? String(e.message) : "Unknown filesystem error";
+    throw new Error(`Failed to initialize image storage at "${DATA_DIR}": ${msg}`);
+  }
 }
 
 function getMonthKey(d = new Date()) {
@@ -94,7 +105,9 @@ function loadUsage(): UsageDb {
 
 function saveUsage(db: UsageDb) {
   ensureDataDir();
-  fs.writeFileSync(USAGE_FILE, JSON.stringify(db, null, 2), "utf8");
+  const tmpFile = `${USAGE_FILE}.tmp`;
+  fs.writeFileSync(tmpFile, JSON.stringify(db, null, 2), "utf8");
+  fs.renameSync(tmpFile, USAGE_FILE);
 }
 
 function hmac(data: string) {
@@ -168,7 +181,7 @@ function canonicalImageGenLimits(plan: PlanId): Limits {
     case "pro":
       return { imgGenPerMonth: 100, imgGenPerDay: 0 };
     case "company":
-      return { imgGenPerMonth: 200, imgGenPerDay: 0 };
+      return { imgGenPerMonth: 150, imgGenPerDay: 0 };
     case "free":
     default:
       return { imgGenPerMonth: 0, imgGenPerDay: 0 };
@@ -302,9 +315,10 @@ export async function POST(req: NextRequest) {
   if (!userId) {
     userId = newUid();
     const signed = signUid(userId);
+    const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
     resHeaders.append(
       "Set-Cookie",
-      `${COOKIE_NAME}=${signed}; Path=/; HttpOnly; SameSite=Lax`
+      `${COOKIE_NAME}=${signed}; Path=/; HttpOnly; SameSite=Lax${secure}`
     );
   }
 
@@ -318,6 +332,7 @@ export async function POST(req: NextRequest) {
 
   resHeaders.set("x-ajx-debug-plan", String(plan));
   resHeaders.set("x-ajx-debug-image-model", GEMINI_IMAGE_MODEL);
+  resHeaders.set("x-ajx-debug-image-data-dir", DATA_DIR);
   resHeaders.set("x-ajx-debug-imggen-month-limit-base", String(baseLimits.imgGenPerMonth));
   resHeaders.set("x-ajx-debug-imggen-day-limit", String(baseLimits.imgGenPerDay));
 
@@ -342,37 +357,43 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ====== Usage load/init ======
-  const usageDb = loadUsage();
+  let usageDb: UsageDb;
+  let usage: UsageRow;
   const monthKey = getMonthKey();
   const dayKey = getDayKey();
 
-  usageDb[storeUserKey] ||= {};
-  usageDb[storeUserKey][monthKey] ||= {
-    msgThisMonth: 0,
-    imgThisMonth: 0,
-    webThisMonth: 0,
-    imgGenThisMonth: 0,
-    imgGenDayKey: dayKey,
-    imgGenToday: 0,
-    extraMsgThisMonth: 0,
-    extraImgThisMonth: 0,
-    extraGenThisMonth: 0,
-    extraWebThisMonth: 0,
-  };
+  try {
+    usageDb = loadUsage();
+    usageDb[storeUserKey] ||= {};
+    usageDb[storeUserKey][monthKey] ||= {
+      msgThisMonth: 0,
+      imgThisMonth: 0,
+      webThisMonth: 0,
+      imgGenThisMonth: 0,
+      imgGenDayKey: dayKey,
+      imgGenToday: 0,
+      extraMsgThisMonth: 0,
+      extraImgThisMonth: 0,
+      extraGenThisMonth: 0,
+      extraWebThisMonth: 0,
+    };
 
-  const usage = usageDb[storeUserKey][monthKey];
+    usage = usageDb[storeUserKey][monthKey];
 
-  if (typeof usage.imgGenThisMonth !== "number") usage.imgGenThisMonth = 0;
-  if (typeof usage.imgGenToday !== "number") usage.imgGenToday = 0;
-  if (typeof usage.extraGenThisMonth !== "number") usage.extraGenThisMonth = 0;
-  if (typeof usage.extraWebThisMonth !== "number") usage.extraWebThisMonth = 0;
-  if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
-  if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
+    if (typeof usage.imgGenThisMonth !== "number") usage.imgGenThisMonth = 0;
+    if (typeof usage.imgGenToday !== "number") usage.imgGenToday = 0;
+    if (typeof usage.extraGenThisMonth !== "number") usage.extraGenThisMonth = 0;
+    if (typeof usage.extraWebThisMonth !== "number") usage.extraWebThisMonth = 0;
+    if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
+    if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
 
-  if (usage.imgGenDayKey !== dayKey) {
-    usage.imgGenDayKey = dayKey;
-    usage.imgGenToday = 0;
+    if (usage.imgGenDayKey !== dayKey) {
+      usage.imgGenDayKey = dayKey;
+      usage.imgGenToday = 0;
+    }
+  } catch (e: any) {
+    const msg = e?.message ? String(e.message) : "Usage storage init failed";
+    return jsonError(500, msg, { plan, dataDir: DATA_DIR }, resHeaders);
   }
 
   const genUsedMonth = Number(usage.imgGenThisMonth || 0);
@@ -453,7 +474,12 @@ export async function POST(req: NextRequest) {
       return jsonError(
         502,
         tt || `Gemini image error HTTP ${r.status}`,
-        { plan, limits, usage },
+        {
+          plan,
+          limits,
+          usage,
+          model: GEMINI_IMAGE_MODEL,
+        },
         resHeaders
       );
     }
@@ -466,43 +492,66 @@ export async function POST(req: NextRequest) {
       return jsonError(
         502,
         textOut || "Kuvan luonti onnistui, mutta kuva-data puuttuu vastauksesta.",
-        { plan, limits, usage, raw: j },
+        {
+          plan,
+          limits,
+          usage,
+          model: GEMINI_IMAGE_MODEL,
+        },
         resHeaders
       );
     }
 
-    ensureDataDir();
-    const id = makeImageId();
-    fs.writeFileSync(path.join(IMAGES_DIR, `${id}.png`), Buffer.from(b64, "base64"));
+    try {
+      ensureDataDir();
+      const id = makeImageId();
+      const outFile = path.join(IMAGES_DIR, `${id}.png`);
+      fs.writeFileSync(outFile, Buffer.from(b64, "base64"));
 
-    usage.imgGenThisMonth = genUsedMonth + 1;
-    if (limits.imgGenPerDay > 0) {
-      usage.imgGenToday = genUsedToday + 1;
-      usage.imgGenDayKey = dayKey;
+      usage.imgGenThisMonth = genUsedMonth + 1;
+      if (limits.imgGenPerDay > 0) {
+        usage.imgGenToday = genUsedToday + 1;
+        usage.imgGenDayKey = dayKey;
+      }
+
+      saveUsage(usageDb);
+
+      const imageUrl = `/api/image/file/${id}?v=${Date.now()}`;
+
+      return NextResponse.json(
+        {
+          ok: true,
+          format: "png",
+          data: b64,
+          source: "gemini-image",
+          model: GEMINI_IMAGE_MODEL,
+          edited: !!sourceImage?.dataUrl,
+          plan,
+          limits,
+          usage,
+          imageId: id,
+          imageUrl,
+          text: textOut || "",
+          markdown: `![AJX Image](${imageUrl})`,
+        },
+        { status: 200, headers: resHeaders }
+      );
+    } catch (e: any) {
+      const msg = e?.message ? String(e.message) : "Failed to save generated image";
+      return jsonError(
+        500,
+        msg,
+        {
+          plan,
+          limits,
+          usage,
+          model: GEMINI_IMAGE_MODEL,
+          dataDir: DATA_DIR,
+          imagesDir: IMAGES_DIR,
+        },
+        resHeaders
+      );
     }
-
-    saveUsage(usageDb);
-
-    const imageUrl = `/api/image/file/${id}?v=${Date.now()}`;
-
-    return NextResponse.json(
-      {
-        ok: true,
-        format: "png",
-        data: b64,
-        source: "gemini-image",
-        model: GEMINI_IMAGE_MODEL,
-        edited: !!sourceImage?.dataUrl,
-        plan,
-        limits,
-        usage,
-        imageId: id,
-        imageUrl,
-        text: textOut || "",
-        markdown: `![AJX Image](${imageUrl})`,
-      },
-      { status: 200, headers: resHeaders }
-    );
   } catch (e: any) {
     const msg =
       e?.name === "AbortError"
@@ -511,6 +560,16 @@ export async function POST(req: NextRequest) {
           ? String(e.message)
           : "Virhe kuvan luonnissa.";
 
-    return jsonError(502, msg, { plan, limits: baseLimits }, resHeaders);
+    return jsonError(
+      502,
+      msg,
+      {
+        plan,
+        limits,
+        dataDir: DATA_DIR,
+        model: GEMINI_IMAGE_MODEL,
+      },
+      resHeaders
+    );
   }
 }

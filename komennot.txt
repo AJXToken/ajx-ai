@@ -1,20 +1,5 @@
 komennot ja bugit
 
-cd C:\ajx\ajx-ai
-taskkill /F /IM node.exe
-npm run build
-npx next start --hostname 192.168.100.88 --port 3000
-
-cd C:\ajx\ajx-ai
-taskkill /F /IM node.exe
-npm run build
-npx next start --hostname 192.168.100.88 --port 3000
-
-cd C:\ajx\ajx-ai
-taskkill /F /IM node.exe
-rmdir .next /s /q
-npm run build
-npx next start --hostname 192.168.100.88 --port 3000
 
 cd C:\ajx\ajx-ai
 
@@ -38,9 +23,16 @@ npx next start --hostname 192.168.100.88 --port 3000
 
 bugi lista 2
 
-- suurin ongelma on että vastaukset tulevat yhdessä pötkössä
-- verkkohaku ei toimi kunnolla. sää jutut kyllä toimii mutta mikään muu ei. pitäisi saada sillä tavalla että haku pakotettaisiin jos sitä käytetään.
-- pro tasolla ainakin päivämäärä ei täsmää viikonpäivän kanssa. Company tasolla täsmää. miksi?
+- kun vaihtaa kieltä tekstikentässä ei vaihdu kieli vaan siinä lukee edelleen "Kirjoita". samoin se pikku näppäin siellä yläkulmassa jossa on kolme viivaa päällekkäin. Olisiko järkevää että se olisi toisenlainen että käyttäjä ymmärtää että se avaa ja sulkee keskustelut valikon?
+
+-kuvien generointia halvemmaksi. chat gpt kokoinen ja halpa riittää, pidetään kustannukset alhaalla
+
+
+
+
+
+
+
 
 - tuote verkkoon testaukseen ihmisille ennen julkistusta
 
@@ -53,3 +45,131 @@ bugi lista 2
 Pieni vinkki jatkoon:
 Koska käytät Gemini 3 Flashia, muista hyödyntää sen Context Cachingia. Jos käyttäjäsi alkavat tehdä pitkiä chat-ketjuja, voit tallentaa keskustelun historian välimuistiin. Se pudottaa toistuvien viestien kustannukset lähes nollaan ja tekee vastauksista vieläkin nopeampia.
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+PS C:\ajx\ajx-ai> Get-ChildItem -Path .\src -Recurse -File | Select-Object FullName
+
+FullName
+--------
+C:\ajx\ajx-ai\src\app\.env.local
+C:\ajx\ajx-ai\src\app\favicon.ico
+C:\ajx\ajx-ai\src\app\globals.css
+C:\ajx\ajx-ai\src\app\layout.tsx
+C:\ajx\ajx-ai\src\app\page.module.css
+C:\ajx\ajx-ai\src\app\page.tsx
+C:\ajx\ajx-ai\src\app\api\addons\buy\route.ts
+C:\ajx\ajx-ai\src\app\api\chat\ajxMemoryStore.ts
+C:\ajx\ajx-ai\src\app\api\chat\ajxUsageStore.ts
+C:\ajx\ajx-ai\src\app\api\chat\ajxUserId.ts
+C:\ajx\ajx-ai\src\app\api\chat\route.ts
+C:\ajx\ajx-ai\src\app\api\chat\stats\route.ts
+C:\ajx\ajx-ai\src\app\api\image\route.ts
+C:\ajx\ajx-ai\src\app\api\image\route.ts.bak_20260217_122654
+C:\ajx\ajx-ai\src\app\api\image\file\[id]\route.ts
+C:\ajx\ajx-ai\src\app\api\stats\route.ts
+C:\ajx\ajx-ai\src\app\chat\chat2030.module.css
+C:\ajx\ajx-ai\src\app\chat\chat2030.module.css.bak
+C:\ajx\ajx-ai\src\app\chat\chat2030.module.css.bak_20260217_122654
+C:\ajx\ajx-ai\src\app\chat\chatStore.ts
+C:\ajx\ajx-ai\src\app\chat\chatStore.ts.bak
+C:\ajx\ajx-ai\src\app\chat\ImageButton.tsx
+C:\ajx\ajx-ai\src\app\chat\ImageButton.tsx.bak_20260217_122654
+C:\ajx\ajx-ai\src\app\chat\imageClient.ts
+C:\ajx\ajx-ai\src\app\chat\page.tsx
+C:\ajx\ajx-ai\src\app\chat\page.tsx.bak
+C:\ajx\ajx-ai\src\app\chat\page.tsx.bak_20260217_122654
+C:\ajx\ajx-ai\src\app\help\page.tsx
+C:\ajx\ajx-ai\src\app\test\page.tsx
+C:\ajx\ajx-ai\src\lib\i18n.ts
+C:\ajx\ajx-ai\src\lib\plans.ts
+C:\ajx\ajx-ai\src\lib\usage.ts
+C:\ajx\ajx-ai\src\lib\web.ts
+
+
+PS C:\ajx\ajx-ai> Get-ChildItem -Path .\src -Recurse -File | Where-Object { $_.FullName -match "chat|Chat|2030" } | Select-Object FullName
+
+FullName
+--------
+C:\ajx\ajx-ai\src\app\api\chat\ajxMemoryStore.ts
+C:\ajx\ajx-ai\src\app\api\chat\ajxUsageStore.ts
+C:\ajx\ajx-ai\src\app\api\chat\ajxUserId.ts
+C:\ajx\ajx-ai\src\app\api\chat\route.ts
+C:\ajx\ajx-ai\src\app\api\chat\stats\route.ts
+C:\ajx\ajx-ai\src\app\chat\chat2030.module.css
+C:\ajx\ajx-ai\src\app\chat\chat2030.module.css.bak
+C:\ajx\ajx-ai\src\app\chat\chat2030.module.css.bak_20260217_122654
+C:\ajx\ajx-ai\src\app\chat\chatStore.ts
+C:\ajx\ajx-ai\src\app\chat\chatStore.ts.bak
+C:\ajx\ajx-ai\src\app\chat\ImageButton.tsx
+C:\ajx\ajx-ai\src\app\chat\ImageButton.tsx.bak_20260217_122654
+C:\ajx\ajx-ai\src\app\chat\imageClient.ts
+C:\ajx\ajx-ai\src\app\chat\page.tsx
+C:\ajx\ajx-ai\src\app\chat\page.tsx.bak
+C:\ajx\ajx-ai\src\app\chat\page.tsx.bak_20260217_122654
+
+
+PS C:\ajx\ajx-ai> tree .\src /F
+Folder PATH listing for volume Acer
+Volume serial number is 3E30-7E87
+C:\AJX\AJX-AI\SRC
+├───app
+│   │   .env.local
+│   │   favicon.ico
+│   │   globals.css
+│   │   layout.tsx
+│   │   page.module.css
+│   │   page.tsx
+│   │
+│   ├───api
+│   │   ├───addons
+│   │   │   └───buy
+│   │   │           route.ts
+│   │   │
+│   │   ├───chat
+│   │   │   │   ajxMemoryStore.ts
+│   │   │   │   ajxUsageStore.ts
+│   │   │   │   ajxUserId.ts
+│   │   │   │   route.ts
+│   │   │   │
+│   │   │   └───stats
+│   │   │           route.ts
+│   │   │
+│   │   ├───image
+│   │   │   │   route.ts
+│   │   │   │   route.ts.bak_20260217_122654
+│   │   │   │
+│   │   │   └───file
+│   │   │       └───[id]
+│   │   │               route.ts
+│   │   │
+│   │   └───stats
+│   │           route.ts
+│   │
+│   ├───chat
+│   │       chat2030.module.css
+│   │       chat2030.module.css.bak
+│   │       chat2030.module.css.bak_20260217_122654
+│   │       chatStore.ts
+│   │       chatStore.ts.bak
+│   │       ImageButton.tsx
+│   │       ImageButton.tsx.bak_20260217_122654
+│   │       imageClient.ts
+│   │       page.tsx
+│   │       page.tsx.bak
+│   │       page.tsx.bak_20260217_122654
+│   │
+│   ├───help
+│   │       page.tsx
+│   │
+│   └───test
+│           page.tsx
+│
+├───lib
+│       i18n.ts
+│       plans.ts
+│       usage.ts
+│       web.ts
+│
+└───src
+    └───lib
+PS C:\ajx\ajx-ai>

@@ -77,9 +77,9 @@ function promptBudgetForPlan(plan: PlanId, usage: UsageRow): PromptBudget {
   }
 
   if (p === ("company" as any)) {
-    const used = Number(usage?.msgThisMonth || 0);
+    const proUsed = Number(usage?.proUsedThisMonth || 0);
 
-    if (used < COMPANY_PRO_REQUESTS_CAP) {
+    if (proUsed < COMPANY_PRO_REQUESTS_CAP) {
       return {
         maxLastUserChars: 15000,
         maxTranscriptChars: 65000,
@@ -202,6 +202,8 @@ type UsageRow = {
   dayKey?: string;
   reqToday?: number;
   imgToday?: number;
+
+  proUsedThisMonth?: number;
 };
 
 const usageMemoryFallback = new Map<string, UsageRow>();
@@ -217,6 +219,7 @@ function emptyUsageRow(): UsageRow {
     dayKey: undefined,
     reqToday: 0,
     imgToday: 0,
+    proUsedThisMonth: 0,
   };
 }
 
@@ -1792,22 +1795,125 @@ function sanitizeRoleForPlan(plan: PlanId, rolesEnabled: boolean, requested: Ajx
 }
 
 // ====== MODEL SELECTION ======
-function geminiModelForPlan(plan: PlanId, usage: UsageRow): string {
-  const p = plan === ("visual" as any) ? ("basic" as any) : plan;
+function needsCompanyProModel(args: {
+  role: AjxRoleId;
+  lastUserText: string;
+  hasTextFiles: boolean;
+  didWeb: boolean;
+}): { needsPro: boolean; reason: string } {
+  const text = String(args.lastUserText || "").toLowerCase().trim();
 
-  if (p === ("company" as any)) {
-    const used = Number(usage?.msgThisMonth || 0);
+  if (args.role === "analysis") return { needsPro: true, reason: "role-analysis" };
+  if (args.role === "strategy") return { needsPro: true, reason: "role-strategy" };
+  if (args.hasTextFiles) return { needsPro: true, reason: "text-files" };
+  if (args.didWeb) return { needsPro: true, reason: "web-context" };
+  if (text.length >= 700) return { needsPro: true, reason: "long-input" };
 
-    if (used < COMPANY_PRO_REQUESTS_CAP) {
-      if (ENABLE_COMPANY_GEMINI_3_PREVIEW) return GEMINI_3_FLASH_MODEL;
-      return GEMINI_PRO_MODEL;
+  const proHints = [
+    "analysoi",
+    "analyysi",
+    "analysis",
+    "strategia",
+    "strategy",
+    "vertaa",
+    "vertaa vaihtoehtoja",
+    "compare",
+    "comparison",
+    "trade-off",
+    "tradeoff",
+    "riski",
+    "risk",
+    "skenaario",
+    "scenario",
+    "ennuste",
+    "forecast",
+    "roadmap",
+    "go to market",
+    "go-to-market",
+    "liiketoimintasuunnitelma",
+    "business plan",
+    "hinnoittelu",
+    "pricing",
+    "due diligence",
+    "priorisoi",
+    "prioritize",
+    "suositus",
+    "recommendation",
+    "päätösrunko",
+    "decision framework",
+  ];
+
+  for (const hint of proHints) {
+    if (text.includes(hint)) {
+      return { needsPro: true, reason: `keyword-${hint}` };
     }
-
-    return GEMINI_FLASH_MODEL;
   }
 
-  if (p === ("pro" as any)) return GEMINI_FLASH_MODEL;
-  return GEMINI_FLASH_LITE_MODEL;
+  return { needsPro: false, reason: "flash-default" };
+}
+
+function geminiModelForRequest(args: {
+  plan: PlanId;
+  usage: UsageRow;
+  role: AjxRoleId;
+  lastUserText: string;
+  hasTextFiles: boolean;
+  didWeb: boolean;
+}): {
+  model: string;
+  companyNeedsPro: boolean;
+  companyCanUsePro: boolean;
+  companyUsesPro: boolean;
+  reason: string;
+} {
+  const p = args.plan === ("visual" as any) ? ("basic" as any) : args.plan;
+
+  if (p === ("company" as any)) {
+    const proUsed = Number(args.usage?.proUsedThisMonth || 0);
+    const companyCanUsePro = proUsed < COMPANY_PRO_REQUESTS_CAP;
+    const companyNeed = needsCompanyProModel({
+      role: args.role,
+      lastUserText: args.lastUserText,
+      hasTextFiles: args.hasTextFiles,
+      didWeb: args.didWeb,
+    });
+
+    if (companyNeed.needsPro && companyCanUsePro) {
+      return {
+        model: GEMINI_PRO_MODEL,
+        companyNeedsPro: true,
+        companyCanUsePro: true,
+        companyUsesPro: true,
+        reason: companyNeed.reason,
+      };
+    }
+
+    return {
+      model: GEMINI_FLASH_MODEL,
+      companyNeedsPro: companyNeed.needsPro,
+      companyCanUsePro,
+      companyUsesPro: false,
+      reason: companyNeed.needsPro ? "cap-reached-fallback-flash" : companyNeed.reason,
+    };
+  }
+
+  if (p === ("pro" as any)) {
+    return {
+      model: GEMINI_FLASH_MODEL,
+      companyNeedsPro: false,
+      companyCanUsePro: false,
+      companyUsesPro: false,
+      reason: "pro-plan-flash",
+    };
+  }
+
+  return {
+    model: GEMINI_FLASH_LITE_MODEL,
+    companyNeedsPro: false,
+    companyCanUsePro: false,
+    companyUsesPro: false,
+    reason: "lite-plan-flash-lite",
+  };
 }
 
 // ====== ROUTE ======
@@ -1872,6 +1978,7 @@ export async function POST(req: NextRequest) {
   if (typeof usage.extraWebThisMonth !== "number") usage.extraWebThisMonth = 0;
   if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
   if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
+  if (typeof usage.proUsedThisMonth !== "number") usage.proUsedThisMonth = 0;
 
   const todayKey = getDayKey();
   if (usage.dayKey !== todayKey) {
@@ -2076,8 +2183,8 @@ export async function POST(req: NextRequest) {
   const retrievalThreshold = useWeb
     ? WEB_DYNAMIC_THRESHOLD_FORCED
     : webBoost
-    ? WEB_DYNAMIC_THRESHOLD_FORCED
-    : WEB_DYNAMIC_THRESHOLD_DEFAULT;
+      ? WEB_DYNAMIC_THRESHOLD_FORCED
+      : WEB_DYNAMIC_THRESHOLD_DEFAULT;
 
   resHeaders.set("x-ajx-debug-useweb", String(useWeb));
   resHeaders.set("x-ajx-debug-web-requested", String(shouldTryWeb));
@@ -2094,6 +2201,11 @@ export async function POST(req: NextRequest) {
     "x-ajx-debug-company-preview-enabled",
     String(ENABLE_COMPANY_GEMINI_3_PREVIEW)
   );
+  resHeaders.set(
+    "x-ajx-debug-company-pro-used-month",
+    String(Number(usage.proUsedThisMonth || 0))
+  );
+  resHeaders.set("x-ajx-debug-company-pro-cap", String(COMPANY_PRO_REQUESTS_CAP));
 
   let webContext = "";
   let didWeb = false;
@@ -2305,10 +2417,10 @@ export async function POST(req: NextRequest) {
     (didWeb
       ? "- Fresh web context is provided below. Use it when answering time-sensitive or factual web questions.\n"
       : useWeb
-      ? "- Web search was required for this request, but if no fresh web context is present below, do not claim live web access.\n"
-      : shouldTryWeb
-      ? "- The user requested web search, but no usable web results were available.\n"
-      : "- Do not assume fresh web data.\n") +
+        ? "- Web search was required for this request, but if no fresh web context is present below, do not claim live web access.\n"
+        : shouldTryWeb
+          ? "- The user requested web search, but no usable web results were available.\n"
+          : "- Do not assume fresh web data.\n") +
     (imgCount > 0 ? "- One or more images are attached. Use them in your answer.\n" : "") +
     (trimmedMemory.truncated
       ? "- Conversation history included here is shortened to the most relevant recent context.\n"
@@ -2321,14 +2433,44 @@ export async function POST(req: NextRequest) {
     webContext;
 
   const primaryProvider = chooseProvider();
-  const requestedGeminiModel = geminiModelForPlan(plan, usage);
+
+  const geminiSelection = geminiModelForRequest({
+    plan,
+    usage,
+    role,
+    lastUserText: lastTextOriginal,
+    hasTextFiles: trimmedTextFiles.length > 0,
+    didWeb,
+  });
+
+  const requestedGeminiModel = geminiSelection.model;
 
   let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : OPENAI_MODEL;
   let actualModelName = requestedModelName;
   let fallbackUsed = "";
   let fallbackReason = "";
 
+  let companyProUsageRecorded = false;
+
+  async function recordCompanyProUsageIfNeeded() {
+    if (companyProUsageRecorded) return;
+    if (plan !== ("company" as any)) return;
+    if (actualModelName !== GEMINI_PRO_MODEL) return;
+
+    usage.proUsedThisMonth = Number(usage.proUsedThisMonth || 0) + 1;
+    await saveUsageRow(storeUserKey, monthKey, usage);
+    companyProUsageRecorded = true;
+    resHeaders.set(
+      "x-ajx-debug-company-pro-used-month",
+      String(Number(usage.proUsedThisMonth || 0))
+    );
+  }
+
   resHeaders.set("x-ajx-debug-requested-model", safeHeaderValue(requestedModelName));
+  resHeaders.set("x-ajx-debug-company-pro-needed", String(geminiSelection.companyNeedsPro));
+  resHeaders.set("x-ajx-debug-company-pro-available", String(geminiSelection.companyCanUsePro));
+  resHeaders.set("x-ajx-debug-company-pro-selected", String(geminiSelection.companyUsesPro));
+  resHeaders.set("x-ajx-debug-company-model-reason", safeHeaderValue(geminiSelection.reason));
 
   async function callViaGeminiNonStream(): Promise<string> {
     if (!process.env.GEMINI_API_KEY) {
@@ -2338,12 +2480,15 @@ export async function POST(req: NextRequest) {
     actualModelName = requestedGeminiModel;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
-    return await callGeminiGenerateContent({
+    const text = await callGeminiGenerateContent({
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
       promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
     });
+
+    await recordCompanyProUsageIfNeeded();
+    return text;
   }
 
   async function* callViaGeminiStream(): AsyncGenerator<string> {
@@ -2360,6 +2505,8 @@ export async function POST(req: NextRequest) {
       promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
     });
+
+    await recordCompanyProUsageIfNeeded();
   }
 
   async function callViaOpenAINonStream(): Promise<string> {
