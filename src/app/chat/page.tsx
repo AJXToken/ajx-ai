@@ -1088,8 +1088,11 @@ export default function ChatPage(): React.JSX.Element {
   const effectiveImageIntent: ImageIntentChoice = manualImageIntent ?? suggestedImageIntent;
 
   const quickActions = useMemo(() => quickActionsForLocale(locale), [locale]);
-  const showQuickActions =
-    messages.length <= 1 && !loading && pending.length === 0 && !input.trim();
+
+  // FIX 1:
+  // Pikatoiminnot pidetään näkyvissä myös ensimmäisen viestin jälkeen.
+  // Piilotetaan vain jos käyttäjä kirjoittaa, lataa tai on liitteitä auki.
+  const showQuickActions = !loading && pending.length === 0 && !input.trim();
 
   function closeSidebarOnMobile() {
     if (isMobile) setSidebarOpen(false);
@@ -1124,7 +1127,7 @@ export default function ChatPage(): React.JSX.Element {
       }, 1400);
     };
 
-    if (navigator.clipboard && window.isSecureContext) {
+    if (typeof navigator !== "undefined" && navigator.clipboard && window.isSecureContext) {
       navigator.clipboard
         .writeText(value)
         .then(() => {
@@ -1152,6 +1155,12 @@ export default function ChatPage(): React.JSX.Element {
 
     btn.click();
     return true;
+  }
+
+  function focusInputSoon() {
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+    });
   }
 
   useEffect(() => {
@@ -1223,9 +1232,14 @@ export default function ChatPage(): React.JSX.Element {
   }, [hasPendingImage]);
 
   function scrollToBottom(force = false) {
-    requestAnimationFrame(() =>
-      bottomRef.current?.scrollIntoView({ behavior: force ? "auto" : "smooth" })
-    );
+    const run = () => {
+      try {
+        bottomRef.current?.scrollIntoView({ behavior: force ? "auto" : "smooth", block: "end" });
+      } catch {}
+    };
+
+    requestAnimationFrame(run);
+    window.setTimeout(run, 40);
   }
 
   async function fetchStats(forPlan: Plan | null) {
@@ -1323,6 +1337,31 @@ export default function ChatPage(): React.JSX.Element {
     scrollToBottom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
+
+  // Mobiilikovennus:
+  // Reagoidaan mobile keyboard / visual viewport -muutoksiin,
+  // jotta plus-menu ja scrollaus eivät mene rikki.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const onViewportChange = () => {
+      if (plusOpen) {
+        computePlusMenuPos();
+      }
+      scrollToBottom(true);
+    };
+
+    vv.addEventListener("resize", onViewportChange);
+    vv.addEventListener("scroll", onViewportChange);
+
+    return () => {
+      vv.removeEventListener("resize", onViewportChange);
+      vv.removeEventListener("scroll", onViewportChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plusOpen]);
 
   function persistActive(nextMessages: ChatMsg[]) {
     if (!activeId) return;
@@ -1539,19 +1578,25 @@ export default function ChatPage(): React.JSX.Element {
 
   function computePlusMenuPos() {
     const btn = plusBtnRef.current;
-    if (!btn) return;
+    if (!btn || typeof window === "undefined") return;
+
     const rect = btn.getBoundingClientRect();
 
     const GAP = 10;
-    const MENU_W = 260;
+    const vw = window.innerWidth || 0;
+    const vh = window.innerHeight || 0;
+    const MENU_W = Math.min(260, Math.max(200, vw - 24));
 
     let left = rect.left;
     let top = rect.bottom + GAP;
 
-    const vw = window.innerWidth || 0;
-    if (left + MENU_W > vw - 12) left = Math.max(12, vw - MENU_W - 12);
+    if (left + MENU_W > vw - 12) {
+      left = Math.max(12, vw - MENU_W - 12);
+    }
+    if (left < 12) {
+      left = 12;
+    }
 
-    const vh = window.innerHeight || 0;
     const estimatedH = 170;
     if (top + estimatedH > vh - 12) {
       top = Math.max(12, rect.top - GAP - estimatedH);
@@ -1731,7 +1776,7 @@ export default function ChatPage(): React.JSX.Element {
     } catch (e: any) {
       const msg = e?.message ? String(e.message) : "Tuntematon virhe.";
       const nextMsgs = [
-        ...messages,
+        ...optimistic,
         { role: "assistant" as const, content: msg, ts: nowTs() },
       ];
       setMessages(nextMsgs);
@@ -1740,7 +1785,7 @@ export default function ChatPage(): React.JSX.Element {
     } finally {
       setLoading(false);
       scrollToBottom();
-      requestAnimationFrame(() => inputRef.current?.focus());
+      focusInputSoon();
     }
   }
 
@@ -1769,7 +1814,7 @@ export default function ChatPage(): React.JSX.Element {
             ? "Valitse ensin haluatko analysoida kuvan vai muokata sitä."
             : locale === "es"
               ? "Primero elige si quieres analizar la imagen o editarla."
-              : "First choose whether you want to analyze the image or edit it."
+              : "First choose whether you want to analyze or edit the image."
         );
         return;
       }
@@ -2524,8 +2569,8 @@ export default function ChatPage(): React.JSX.Element {
               <button
                 className={`${styles.btnGhost} ajxSidebarToggleBtn`}
                 onClick={() => setSidebarOpen((v) => !v)}
-                title={sidebarOpen ? chatsLabel : chatsLabel}
-                aria-label={sidebarOpen ? chatsLabel : chatsLabel}
+                title={chatsLabel}
+                aria-label={chatsLabel}
                 type="button"
               >
                 <span className="ajxSidebarToggleIcon">{sidebarOpen ? "✕" : "☰"}</span>
@@ -2748,10 +2793,16 @@ export default function ChatPage(): React.JSX.Element {
                           el.style.height = "auto";
                           el.style.height = `${Math.min(el.scrollHeight, 220)}px`;
                         }}
+                        onFocus={() => {
+                          if (isMobile) {
+                            window.setTimeout(() => scrollToBottom(true), 120);
+                          }
+                        }}
                         onKeyDown={onKeyDown}
                         placeholder={composerTextPlaceholder}
                         rows={1}
                         disabled={loading}
+                        enterKeyHint="send"
                       />
                     </div>
 
@@ -2875,7 +2926,7 @@ export default function ChatPage(): React.JSX.Element {
                         );
                       } finally {
                         setPlusOpen(false);
-                        requestAnimationFrame(() => inputRef.current?.focus());
+                        focusInputSoon();
                       }
                     }}
                   />
@@ -2900,7 +2951,7 @@ export default function ChatPage(): React.JSX.Element {
                         );
                       } finally {
                         setPlusOpen(false);
-                        requestAnimationFrame(() => inputRef.current?.focus());
+                        focusInputSoon();
                       }
                     }}
                   />
@@ -2941,6 +2992,7 @@ export default function ChatPage(): React.JSX.Element {
             top: plusMenuPos.top,
             zIndex: 9999,
             width: plusMenuPos.width,
+            maxWidth: "calc(100vw - 24px)",
           }}
         >
           {canAttachImagesForAnalysis ? (
@@ -2973,7 +3025,7 @@ export default function ChatPage(): React.JSX.Element {
               onClick={() => {
                 setPlusOpen(false);
                 setForceWebNext(true);
-                requestAnimationFrame(() => inputRef.current?.focus());
+                focusInputSoon();
               }}
               title={t(locale, "ui.web_search")}
               type="button"
