@@ -23,6 +23,7 @@ type Props = {
 };
 
 const LOCALE_STORAGE_KEY = "ajx_locale_v1";
+const DEFAULT_IMAGE_SIZE = "768x768";
 
 function clampLocale(v: string | null): Locale {
   const s = (v || "").toLowerCase().trim();
@@ -169,8 +170,15 @@ export default function ImageButton(props: Props) {
 
       const body: Record<string, any> = {
         prompt,
-        size: "1024x1024",
+        size: DEFAULT_IMAGE_SIZE,
         locale,
+
+        // Halvempi oletusprofiili backendille
+        preferredProvider: "gemini",
+        preferredModelFamily: "gemini-2.5-flash-image",
+        costTier: "low",
+        quality: "standard",
+        latencyTier: "fast",
       };
 
       // Tämä lähtee mukaan vain jos page.tsx antaa lähdekuvan.

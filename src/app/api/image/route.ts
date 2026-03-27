@@ -39,6 +39,8 @@ const GEMINI_IMAGE_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/
   GEMINI_IMAGE_MODEL
 )}:generateContent`;
 
+const DEFAULT_IMAGE_SIZE = "768x768";
+
 function ensureDataDir() {
   try {
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -242,11 +244,42 @@ function normalizeMimeType(mimeType: string): string {
 function sizeToAspectRatio(size: string): string {
   const s = String(size || "").trim().toLowerCase();
   if (s === "1024x1024") return "1:1";
+  if (s === "768x768") return "1:1";
   if (s === "1024x1536") return "2:3";
   if (s === "1536x1024") return "3:2";
   if (s === "768x1408") return "9:16";
   if (s === "1408x768") return "16:9";
   return "1:1";
+}
+
+function normalizeRequestedSize(
+  rawSize: string,
+  costTierRaw: string,
+  qualityRaw: string
+): string {
+  const size = String(rawSize || "").trim().toLowerCase();
+  const costTier = String(costTierRaw || "").trim().toLowerCase();
+  const quality = String(qualityRaw || "").trim().toLowerCase();
+
+  const allowed = new Set([
+    "768x768",
+    "1024x1024",
+    "1024x1536",
+    "1536x1024",
+    "768x1408",
+    "1408x768",
+  ]);
+
+  let normalized = allowed.has(size) ? size : DEFAULT_IMAGE_SIZE;
+
+  // Halpa profiili: pakotetaan pienempi oletus.
+  if (costTier === "low" || quality === "standard" || quality === "fast") {
+    if (normalized === "1024x1024") normalized = "768x768";
+    if (normalized === "1024x1536") normalized = "768x1408";
+    if (normalized === "1536x1024") normalized = "1408x768";
+  }
+
+  return normalized;
 }
 
 function extractImageBase64FromGeminiResponse(j: any): string {
@@ -330,16 +363,31 @@ export async function POST(req: NextRequest) {
 
   const baseLimits = canonicalImageGenLimits(plan);
 
+  const prompt = String(body?.prompt || "").trim();
+  const requestedSizeRaw = String(body?.size || DEFAULT_IMAGE_SIZE).trim();
+  const requestedCostTier = String(body?.costTier || "").trim().toLowerCase();
+  const requestedQuality = String(body?.quality || "").trim().toLowerCase();
+  const effectiveSize = normalizeRequestedSize(
+    requestedSizeRaw,
+    requestedCostTier,
+    requestedQuality
+  );
+
+  const editing = body?.editing === true;
+  const rawSourceImage: SourceImageInput | null =
+    body?.sourceImage && typeof body.sourceImage === "object" ? body.sourceImage : null;
+
+  // Käytetään lähdekuvaa vain oikeassa editointitilanteessa.
+  const sourceImage: SourceImageInput | null = editing ? rawSourceImage : null;
+
   resHeaders.set("x-ajx-debug-plan", String(plan));
   resHeaders.set("x-ajx-debug-image-model", GEMINI_IMAGE_MODEL);
   resHeaders.set("x-ajx-debug-image-data-dir", DATA_DIR);
   resHeaders.set("x-ajx-debug-imggen-month-limit-base", String(baseLimits.imgGenPerMonth));
   resHeaders.set("x-ajx-debug-imggen-day-limit", String(baseLimits.imgGenPerDay));
-
-  const prompt = String(body?.prompt || "").trim();
-  const requestedSize = String(body?.size || "1024x1024").trim();
-  const sourceImage: SourceImageInput | null =
-    body?.sourceImage && typeof body.sourceImage === "object" ? body.sourceImage : null;
+  resHeaders.set("x-ajx-debug-requested-size", requestedSizeRaw);
+  resHeaders.set("x-ajx-debug-effective-size", effectiveSize);
+  resHeaders.set("x-ajx-debug-editing", editing ? "1" : "0");
 
   if (!prompt) {
     return jsonError(400, "Prompt puuttuu.", { plan, limits: baseLimits }, resHeaders);
@@ -454,7 +502,7 @@ export async function POST(req: NextRequest) {
       generationConfig: {
         responseModalities: ["TEXT", "IMAGE"],
         imageConfig: {
-          aspectRatio: sizeToAspectRatio(requestedSize),
+          aspectRatio: sizeToAspectRatio(effectiveSize),
         },
       },
     };
@@ -479,6 +527,7 @@ export async function POST(req: NextRequest) {
           limits,
           usage,
           model: GEMINI_IMAGE_MODEL,
+          effectiveSize,
         },
         resHeaders
       );
@@ -497,6 +546,7 @@ export async function POST(req: NextRequest) {
           limits,
           usage,
           model: GEMINI_IMAGE_MODEL,
+          effectiveSize,
         },
         resHeaders
       );
@@ -521,8 +571,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           ok: true,
-          format: "png",
-          data: b64,
           source: "gemini-image",
           model: GEMINI_IMAGE_MODEL,
           edited: !!sourceImage?.dataUrl,
@@ -531,6 +579,8 @@ export async function POST(req: NextRequest) {
           usage,
           imageId: id,
           imageUrl,
+          requestedSize: requestedSizeRaw,
+          effectiveSize,
           text: textOut || "",
           markdown: `![AJX Image](${imageUrl})`,
         },
@@ -548,6 +598,7 @@ export async function POST(req: NextRequest) {
           model: GEMINI_IMAGE_MODEL,
           dataDir: DATA_DIR,
           imagesDir: IMAGES_DIR,
+          effectiveSize,
         },
         resHeaders
       );
@@ -568,6 +619,7 @@ export async function POST(req: NextRequest) {
         limits,
         dataDir: DATA_DIR,
         model: GEMINI_IMAGE_MODEL,
+        effectiveSize,
       },
       resHeaders
     );
