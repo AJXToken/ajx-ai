@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import os from "os";
 import crypto from "crypto";
 import { type PlanId } from "../../../lib/plans";
 
@@ -10,22 +11,36 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 // ====== CONFIG ======
-function resolveDataDir() {
-  const env = process.env.AJX_DATA_DIR;
-  if (env && String(env).trim()) return String(env).trim();
+function isProductionLikeRuntime() {
+  return (
+    process.env.VERCEL === "1" ||
+    !!process.env.VERCEL ||
+    !!process.env.VERCEL_ENV ||
+    process.env.NODE_ENV === "production"
+  );
+}
 
-  // Vercel/serverless-safe default:
-  // local project dir is often not writable in production/serverless.
-  if (process.env.VERCEL || process.env.VERCEL_ENV) {
-    return "/tmp/ajx-data";
+function buildSafeTmpDataDir() {
+  return path.join(os.tmpdir(), "ajx-data");
+}
+
+function resolveDataDir() {
+  const env = String(process.env.AJX_DATA_DIR || "").trim();
+
+  // Production / Vercel / serverless:
+  // always prefer tmp, never project dir.
+  if (isProductionLikeRuntime()) {
+    return buildSafeTmpDataDir();
   }
+
+  if (env) return env;
 
   return path.join(process.cwd(), ".ajx-data");
 }
 
-const DATA_DIR = resolveDataDir();
-const USAGE_FILE = path.join(DATA_DIR, "usage.json");
-const IMAGES_DIR = path.join(DATA_DIR, "images");
+let DATA_DIR = resolveDataDir();
+let USAGE_FILE = path.join(DATA_DIR, "usage.json");
+let IMAGES_DIR = path.join(DATA_DIR, "images");
 
 const COOKIE_NAME = "ajx_uid";
 const COOKIE_SECRET =
@@ -41,14 +56,41 @@ const GEMINI_IMAGE_ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/
 
 const DEFAULT_IMAGE_SIZE = "768x768";
 
+function switchDataDir(nextDir: string) {
+  DATA_DIR = nextDir;
+  USAGE_FILE = path.join(DATA_DIR, "usage.json");
+  IMAGES_DIR = path.join(DATA_DIR, "images");
+}
+
 function ensureDataDir() {
-  try {
-    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
-    if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
-  } catch (e: any) {
-    const msg = e?.message ? String(e.message) : "Unknown filesystem error";
-    throw new Error(`Failed to initialize image storage at "${DATA_DIR}": ${msg}`);
+  const candidates = Array.from(
+    new Set([
+      DATA_DIR,
+      buildSafeTmpDataDir(),
+    ].filter(Boolean))
+  );
+
+  let lastError: unknown = null;
+
+  for (const candidate of candidates) {
+    try {
+      const imagesDir = path.join(candidate, "images");
+      if (!fs.existsSync(candidate)) fs.mkdirSync(candidate, { recursive: true });
+      if (!fs.existsSync(imagesDir)) fs.mkdirSync(imagesDir, { recursive: true });
+
+      switchDataDir(candidate);
+      return;
+    } catch (e) {
+      lastError = e;
+    }
   }
+
+  const msg =
+    lastError && typeof lastError === "object" && "message" in lastError
+      ? String((lastError as any).message)
+      : "Unknown filesystem error";
+
+  throw new Error(`Failed to initialize image storage at "${DATA_DIR}": ${msg}`);
 }
 
 function getMonthKey(d = new Date()) {
@@ -272,7 +314,6 @@ function normalizeRequestedSize(
 
   let normalized = allowed.has(size) ? size : DEFAULT_IMAGE_SIZE;
 
-  // Halpa profiili: pakotetaan pienempi oletus.
   if (costTier === "low" || quality === "standard" || quality === "fast") {
     if (normalized === "1024x1024") normalized = "768x768";
     if (normalized === "1024x1536") normalized = "768x1408";
@@ -377,7 +418,6 @@ export async function POST(req: NextRequest) {
   const rawSourceImage: SourceImageInput | null =
     body?.sourceImage && typeof body.sourceImage === "object" ? body.sourceImage : null;
 
-  // Käytetään lähdekuvaa vain oikeassa editointitilanteessa.
   const sourceImage: SourceImageInput | null = editing ? rawSourceImage : null;
 
   resHeaders.set("x-ajx-debug-plan", String(plan));
@@ -460,8 +500,8 @@ export async function POST(req: NextRequest) {
   resHeaders.set("x-ajx-debug-imggen-used-today", String(genUsedToday));
   resHeaders.set("x-ajx-debug-imggen-extra-month", String(extraGen));
   resHeaders.set("x-ajx-debug-imggen-month-limit-effective", String(limits.imgGenPerMonth));
+  resHeaders.set("x-ajx-debug-image-data-dir-final", DATA_DIR);
 
-  // ====== Quota check ======
   const allowAnyGen = limits.imgGenPerMonth > 0 || limits.imgGenPerDay > 0;
   if (!allowAnyGen) {
     return jsonError(
@@ -492,7 +532,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ====== Gemini image generation / editing ======
   try {
     const ac = new AbortController();
     const to = setTimeout(() => ac.abort(), 120_000);
@@ -554,6 +593,7 @@ export async function POST(req: NextRequest) {
 
     try {
       ensureDataDir();
+
       const id = makeImageId();
       const outFile = path.join(IMAGES_DIR, `${id}.png`);
       fs.writeFileSync(outFile, Buffer.from(b64, "base64"));
