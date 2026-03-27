@@ -6,18 +6,18 @@ git add .
 git commit -m "update"
 git push
 
+varmistus koodi:
+git pull
+git add .
+git commit -m "update"
+git push
+
 
 bugi lista 2
 
-- kun vaihtaa kieltä tekstikentässä ei vaihdu kieli vaan siinä lukee edelleen "Kirjoita". samoin se pikku näppäin siellä yläkulmassa jossa on kolme viivaa päällekkäin. Olisiko järkevää että se olisi toisenlainen että käyttäjä ymmärtää että se avaa ja sulkee keskustelut valikon?
 
--kuvien generointia halvemmaksi. chat gpt kokoinen ja halpa riittää, pidetään kustannukset alhaalla
-
-- kuva generointi ei toimi
-
-- karuselli pikatoiminnoille ei näy ollenkaan. 
-
-- taso pitää näkyä selvemmin jossain, nyt se taso plus, pro, company näkyy vasemmassa alakulmassa. pitäisikö se näkyä ylhäällä jossain?
+- interface 2030 lukee. mitä se tarkoittaa ja miksi se pitää näkyä?
+- alakulmaan voitaisi pienellä lisätä teksti jossa lukee esim. AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina. lisätiedot. sitten lisätietoihin helvetilliset vastuuvapaus tekstit.
 
 
 

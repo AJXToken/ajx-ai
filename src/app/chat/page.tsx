@@ -48,6 +48,14 @@ type ChatErrJson = {
 
 const LOCALE_STORAGE_KEY = "ajx_locale_v1";
 
+// ===== image payload safety =====
+const MAX_IMAGE_DIMENSION = 1024;
+const INITIAL_JPEG_QUALITY = 0.75;
+const MIN_JPEG_QUALITY = 0.45;
+const TARGET_IMAGE_BYTES = 900_000;
+const HARD_MAX_IMAGE_BYTES = 1_200_000;
+const MAX_NON_IMAGE_FILE_BYTES = 4_000_000;
+
 // ====== Canonical plans (UI) ======
 type CanonicalPlan = "free" | "basic" | "plus" | "pro" | "company";
 const FREE_DISPLAY_LIMIT = 20;
@@ -983,6 +991,162 @@ type PlusMenuPos = {
   width: number;
 };
 
+function estimateDataUrlBytes(dataUrl: string): number {
+  const commaIndex = dataUrl.indexOf(",");
+  if (commaIndex === -1) return 0;
+  const base64 = dataUrl.slice(commaIndex + 1);
+  const padding = (base64.match(/=+$/)?.[0].length ?? 0);
+  return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error("FileReader error"));
+    fr.onload = () => resolve(String(fr.result || ""));
+    fr.readAsDataURL(blob);
+  });
+}
+
+function loadImageElementFromFile(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(img);
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Kuvan lukeminen epäonnistui."));
+    };
+
+    img.src = objectUrl;
+  });
+}
+
+function canvasToJpegBlob(
+  canvas: HTMLCanvasElement,
+  quality: number
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error("Kuvan pakkaus epäonnistui."));
+          return;
+        }
+        resolve(blob);
+      },
+      "image/jpeg",
+      quality
+    );
+  });
+}
+
+async function compressImageFile(file: File): Promise<{
+  name: string;
+  type: string;
+  dataUrl: string;
+}> {
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Tiedosto ei ole kuva.");
+  }
+
+  if (file.type === "image/svg+xml") {
+    if (file.size > HARD_MAX_IMAGE_BYTES) {
+      throw new Error("SVG-kuva on liian suuri. Käytä pienempää kuvaa.");
+    }
+    const dataUrl = await new Promise<string>((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onerror = () => reject(new Error("FileReader error"));
+      fr.onload = () => resolve(String(fr.result || ""));
+      fr.readAsDataURL(file);
+    });
+
+    return {
+      name: file.name,
+      type: file.type,
+      dataUrl,
+    };
+  }
+
+  const img = await loadImageElementFromFile(file);
+
+  let width = img.naturalWidth || img.width;
+  let height = img.naturalHeight || img.height;
+
+  if (!width || !height) {
+    throw new Error("Kuvan kokoa ei voitu lukea.");
+  }
+
+  const scale = Math.min(1, MAX_IMAGE_DIMENSION / Math.max(width, height));
+  width = Math.max(1, Math.round(width * scale));
+  height = Math.max(1, Math.round(height * scale));
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    throw new Error("Canvas ei ole käytettävissä.");
+  }
+
+  let currentWidth = width;
+  let currentHeight = height;
+  let quality = INITIAL_JPEG_QUALITY;
+  let bestBlob: Blob | null = null;
+
+  for (let pass = 0; pass < 6; pass += 1) {
+    canvas.width = currentWidth;
+    canvas.height = currentHeight;
+
+    ctx.clearRect(0, 0, currentWidth, currentHeight);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, currentWidth, currentHeight);
+    ctx.drawImage(img, 0, 0, currentWidth, currentHeight);
+
+    quality = INITIAL_JPEG_QUALITY;
+
+    for (let q = 0; q < 4; q += 1) {
+      const blob = await canvasToJpegBlob(canvas, quality);
+
+      if (!bestBlob || blob.size < bestBlob.size) {
+        bestBlob = blob;
+      }
+
+      if (blob.size <= TARGET_IMAGE_BYTES) {
+        const dataUrl = await blobToDataUrl(blob);
+        return {
+          name: file.name.replace(/\.[^.]+$/, "") + ".jpg",
+          type: "image/jpeg",
+          dataUrl,
+        };
+      }
+
+      quality = Math.max(MIN_JPEG_QUALITY, quality - 0.1);
+    }
+
+    currentWidth = Math.max(320, Math.round(currentWidth * 0.85));
+    currentHeight = Math.max(320, Math.round(currentHeight * 0.85));
+  }
+
+  if (!bestBlob) {
+    throw new Error("Kuvan pakkaus epäonnistui.");
+  }
+
+  if (bestBlob.size > HARD_MAX_IMAGE_BYTES) {
+    throw new Error("Kuva on liian suuri. Valitse pienempi kuva.");
+  }
+
+  const dataUrl = await blobToDataUrl(bestBlob);
+  return {
+    name: file.name.replace(/\.[^.]+$/, "") + ".jpg",
+    type: "image/jpeg",
+    dataUrl,
+  };
+}
+
 export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
 
@@ -1089,9 +1253,6 @@ export default function ChatPage(): React.JSX.Element {
 
   const quickActions = useMemo(() => quickActionsForLocale(locale), [locale]);
 
-  // FIX 1:
-  // Pikatoiminnot pidetään näkyvissä myös ensimmäisen viestin jälkeen.
-  // Piilotetaan vain jos käyttäjä kirjoittaa, lataa tai on liitteitä auki.
   const showQuickActions = !loading && pending.length === 0 && !input.trim();
 
   function closeSidebarOnMobile() {
@@ -1338,9 +1499,6 @@ export default function ChatPage(): React.JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  // Mobiilikovennus:
-  // Reagoidaan mobile keyboard / visual viewport -muutoksiin,
-  // jotta plus-menu ja scrollaus eivät mene rikki.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const vv = window.visualViewport;
@@ -1558,6 +1716,43 @@ export default function ChatPage(): React.JSX.Element {
   }
 
   async function addAttachmentFromFile(file: File, kind: "image" | "file") {
+    if (kind === "image") {
+      const compressed = await compressImageFile(file);
+
+      if (estimateDataUrlBytes(compressed.dataUrl) > HARD_MAX_IMAGE_BYTES) {
+        throw new Error(
+          locale === "fi"
+            ? "Kuva on liian suuri. Valitse pienempi kuva."
+            : locale === "es"
+              ? "La imagen es demasiado grande. Elige una imagen más pequeña."
+              : "The image is too large. Choose a smaller image."
+        );
+      }
+
+      setPending((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
+          kind,
+          name: compressed.name || file.name || "image.jpg",
+          type: compressed.type || "image/jpeg",
+          dataUrl: compressed.dataUrl,
+        },
+      ]);
+      setManualImageIntent(null);
+      return;
+    }
+
+    if (file.size > MAX_NON_IMAGE_FILE_BYTES) {
+      throw new Error(
+        locale === "fi"
+          ? "Tiedosto on liian suuri."
+          : locale === "es"
+            ? "El archivo es demasiado grande."
+            : "The file is too large."
+      );
+    }
+
     const dataUrl = await readFileAsDataUrl(file);
     setPending((prev) => [
       ...prev,
@@ -2916,13 +3111,15 @@ export default function ChatPage(): React.JSX.Element {
                       if (!f) return;
                       try {
                         await addAttachmentFromFile(f, "image");
-                      } catch {
+                      } catch (err: any) {
                         appendAssistantMessage(
-                          locale === "fi"
-                            ? "Kuvan liittäminen epäonnistui."
-                            : locale === "es"
-                              ? "No se pudo adjuntar la imagen."
-                              : "Failed to attach image."
+                          err?.message
+                            ? String(err.message)
+                            : locale === "fi"
+                              ? "Kuvan liittäminen epäonnistui."
+                              : locale === "es"
+                                ? "No se pudo adjuntar la imagen."
+                                : "Failed to attach image."
                         );
                       } finally {
                         setPlusOpen(false);
@@ -2941,13 +3138,15 @@ export default function ChatPage(): React.JSX.Element {
                       if (!f) return;
                       try {
                         await addAttachmentFromFile(f, "file");
-                      } catch {
+                      } catch (err: any) {
                         appendAssistantMessage(
-                          locale === "fi"
-                            ? "Tiedoston liittäminen epäonnistui."
-                            : locale === "es"
-                              ? "No se pudo adjuntar el archivo."
-                              : "Failed to attach file."
+                          err?.message
+                            ? String(err.message)
+                            : locale === "fi"
+                              ? "Tiedoston liittäminen epäonnistui."
+                              : locale === "es"
+                                ? "No se pudo adjuntar el archivo."
+                                : "Failed to attach file."
                         );
                       } finally {
                         setPlusOpen(false);
