@@ -68,6 +68,12 @@ type QuickAction = {
   mode: AjxMode;
 };
 
+type ExtractedCopyBox = {
+  mainText: string;
+  copyText: string;
+  label: string;
+} | null;
+
 function clampLocale(v: string | null): Locale | null {
   if (!v) return null;
   const s = v.toLowerCase();
@@ -428,6 +434,147 @@ function openImageLabel(locale: Locale) {
   return "Avaa kuva";
 }
 
+function outputBoxLabel(locale: Locale) {
+  if (locale === "es") return "Texto listo";
+  if (locale === "en") return "Ready text";
+  return "Valmis teksti";
+}
+
+function normalizeOutputBoxLabel(raw: string, locale: Locale) {
+  const s = raw.trim().replace(/\*+/g, "").replace(/:+$/, "").trim().toLowerCase();
+
+  if (!s) return outputBoxLabel(locale);
+
+  if (locale === "fi") {
+    if (s.includes("käännös")) return "Käännös";
+    if (s.includes("sähköposti")) return "Sähköposti";
+    if (s.includes("viesti")) return "Viesti";
+    if (s.includes("tarjous")) return "Tarjous";
+    if (s.includes("mainosteksti")) return "Mainosteksti";
+    if (s.includes("caption")) return "Caption";
+    if (s.includes("valmis")) return "Valmis teksti";
+    return raw.trim().replace(/:+$/, "");
+  }
+
+  if (locale === "es") {
+    if (s.includes("traducción")) return "Traducción";
+    if (s.includes("correo")) return "Correo";
+    if (s.includes("mensaje")) return "Mensaje";
+    if (s.includes("oferta")) return "Oferta";
+    if (s.includes("texto publicitario")) return "Texto publicitario";
+    if (s.includes("caption")) return "Caption";
+    if (s.includes("texto final")) return "Texto final";
+    return raw.trim().replace(/:+$/, "");
+  }
+
+  if (s.includes("translation")) return "Translation";
+  if (s.includes("email")) return "Email";
+  if (s.includes("message")) return "Message";
+  if (s.includes("offer")) return "Offer";
+  if (s.includes("ad copy")) return "Ad copy";
+  if (s.includes("caption")) return "Caption";
+  if (s.includes("final text")) return "Final text";
+  return raw.trim().replace(/:+$/, "");
+}
+
+function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
+  const source = stripMarkdownImages(text || "");
+  if (!source) return null;
+  if (source.includes("```")) return null;
+
+  const normalized = source.replace(/\r\n/g, "\n").trim();
+  if (!normalized) return null;
+
+  const explicitLabels = [
+    "käännös",
+    "translation",
+    "traducción",
+    "valmis teksti",
+    "final text",
+    "texto final",
+    "sähköposti",
+    "email",
+    "correo",
+    "viesti",
+    "message",
+    "mensaje",
+    "tarjous",
+    "offer",
+    "oferta",
+    "mainosteksti",
+    "ad copy",
+    "texto publicitario",
+    "caption",
+    "copy-paste",
+    "copy paste",
+  ];
+
+  const lines = normalized.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i] ?? "";
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    const lower = line.toLowerCase().replace(/\*+/g, "");
+    const matched = explicitLabels.find(
+      (label) => lower === label || lower === `${label}:` || lower.startsWith(`${label}: `)
+    );
+
+    if (!matched) continue;
+
+    let label = normalizeOutputBoxLabel(line, locale);
+    let body = "";
+
+    if (line.includes(":") && line.split(":").slice(1).join(":").trim()) {
+      body = line.split(":").slice(1).join(":").trim();
+      const tail = lines.slice(i + 1).join("\n").trim();
+      if (tail) {
+        body = `${body}\n${tail}`.trim();
+      }
+    } else {
+      body = lines.slice(i + 1).join("\n").trim();
+    }
+
+    if (!body || body.length < 12) return null;
+
+    const mainText = lines.slice(0, i).join("\n").trim();
+
+    return {
+      mainText,
+      copyText: body,
+      label,
+    };
+  }
+
+  const blocks = normalized
+    .split(/\n{2,}/)
+    .map((b) => b.trim())
+    .filter(Boolean);
+
+  if (blocks.length >= 2) {
+    const first = blocks[0];
+    const last = blocks[blocks.length - 1];
+
+    const firstLooksIntro = first.length <= 260;
+    const lastLooksFinal =
+      last.length >= 80 &&
+      last.split("\n").length >= 2 &&
+      !/[?？]$/.test(last) &&
+      !/^[-*•]\s/.test(last);
+
+    if (firstLooksIntro && lastLooksFinal) {
+      const mainText = blocks.slice(0, -1).join("\n\n").trim();
+      return {
+        mainText,
+        copyText: last,
+        label: outputBoxLabel(locale),
+      };
+    }
+  }
+
+  return null;
+}
+
 function renderPlainRichText(text: string, locale: Locale) {
   const content = stripMarkdownImages(text || "");
   if (!content) return null;
@@ -727,8 +874,34 @@ function RichMessage({
     <div className={styles.bubbleText}>
       {segments.map((segment, idx) => {
         if (segment.type === "text") {
-          const rendered = renderPlainRichText(segment.value, locale);
-          return <React.Fragment key={`seg-text-${idx}`}>{rendered}</React.Fragment>;
+          const extracted = extractCopyBox(segment.value, locale);
+          const mainText = extracted?.mainText ?? segment.value;
+          const rendered = renderPlainRichText(mainText, locale);
+          const boxCopyKey = extracted
+            ? `copybox-${idx}-${extracted.label}-${extracted.copyText.length}`
+            : "";
+
+          return (
+            <React.Fragment key={`seg-text-${idx}`}>
+              {rendered}
+              {extracted ? (
+                <div className="ajxOutputBox">
+                  <div className="ajxOutputTop">
+                    <span className="ajxOutputTitle">{extracted.label}</span>
+                    <button
+                      type="button"
+                      className="ajxCopyBtn"
+                      onClick={() => onCopy(extracted.copyText, boxCopyKey)}
+                      title={copyLabel(locale, copiedKey === boxCopyKey)}
+                    >
+                      {copyLabel(locale, copiedKey === boxCopyKey)}
+                    </button>
+                  </div>
+                  <pre className="ajxOutputBody">{extracted.copyText}</pre>
+                </div>
+              ) : null}
+            </React.Fragment>
+          );
         }
 
         const langLabel = segment.language || "code";
@@ -1443,7 +1616,72 @@ export default function ChatPage(): React.JSX.Element {
 
   function handleOpenImage(url: string) {
     if (!url) return;
-    window.open(url, "_blank", "noopener,noreferrer");
+
+    try {
+      const safeUrl = String(url)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      const win = window.open("", "_blank");
+      if (!win) {
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        return;
+      }
+
+      win.document.open();
+      win.document.write(`
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>AJX Image</title>
+            <style>
+              html, body {
+                margin: 0;
+                padding: 0;
+                background: #111;
+                width: 100%;
+                height: 100%;
+              }
+              body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              }
+              img {
+                display: block;
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${safeUrl}" alt="AJX Image" />
+          </body>
+        </html>
+      `);
+      win.document.close();
+    } catch {
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch {}
+    }
   }
 
   function triggerImageButton() {
@@ -2696,6 +2934,50 @@ export default function ChatPage(): React.JSX.Element {
             monospace;
         }
 
+        .ajxOutputBox {
+          margin: 8px 0 16px 0;
+          border: 1px solid rgba(11, 13, 18, 0.1);
+          border-radius: 16px;
+          overflow: hidden;
+          background: rgba(255, 255, 255, 0.72);
+          box-shadow: 0 10px 22px rgba(11, 13, 18, 0.06);
+        }
+
+        .ajxOutputTop {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          padding: 10px 12px;
+          border-bottom: 1px solid rgba(11, 13, 18, 0.08);
+          background: rgba(11, 13, 18, 0.04);
+        }
+
+        .ajxOutputTitle {
+          font-size: 12px;
+          font-weight: 950;
+          letter-spacing: 0.2px;
+          opacity: 0.78;
+          text-transform: uppercase;
+        }
+
+        .ajxOutputBody {
+          margin: 0;
+          padding: 14px 16px;
+          white-space: pre-wrap;
+          line-height: 1.7;
+          font-size: 14px;
+          font-family:
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            "Liberation Mono",
+            "Courier New",
+            monospace;
+        }
+
         .ajxImageIntentBar {
           margin-top: 8px;
           display: flex;
@@ -2834,7 +3116,8 @@ export default function ChatPage(): React.JSX.Element {
             line-height: 1.72;
           }
 
-          .ajxCodePre {
+          .ajxCodePre,
+          .ajxOutputBody {
             font-size: 12px;
           }
 
