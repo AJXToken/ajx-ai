@@ -1,4 +1,3 @@
-// src/app/chat/page.tsx
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -220,11 +219,18 @@ function isQuestionLine(line: string | undefined) {
   return /[?？]$/.test(s);
 }
 
+function normalizeDetachedOrderedMarkers(text: string): string {
+  if (!text) return "";
+
+  return text.replace(/(^|\n)(\d+[\.\)])\s*\n+(?=\S)/g, "$1$2 ");
+}
+
 function normalizeInlineListSequences(text: string): string {
   if (!text) return "";
 
-  return text
-    .replace(/([^\n])\s+(\d+[\.\)]\s)/g, "$1\n$2")
+  return normalizeDetachedOrderedMarkers(text)
+    .replace(/:\s+(\d+[\.\)]\s)/g, ":\n\n$1")
+    .replace(/([?？!])\s+(\d+[\.\)]\s)/g, "$1\n\n$2")
     .replace(/([^\n])\s+(•\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\-\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\*\s)/g, "$1\n$2");

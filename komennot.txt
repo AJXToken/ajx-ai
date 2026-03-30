@@ -25,6 +25,7 @@ bugi lista 2
 
 
 - voisiko vastauksia jäsennellä paremmin. nyt kun painan esim. Luo tarjous nappia, niin kysymykset tulee pötköön. olisi selkeää jos ne tulisi omille riveille
+- onko pikatoiminnot kytketty agentteihin kun painaa pikanäppäintä niin agenttikin vaihtuu?
 
 
 
