@@ -620,10 +620,12 @@ function RichMessage({
   text,
   locale,
   onCopy,
+  copiedKey,
 }: {
   text: string;
   locale: Locale;
   onCopy: (value: string, key: string) => void;
+  copiedKey: string;
 }) {
   const content = stripMarkdownImages(text || "");
   if (!content) return null;
@@ -649,9 +651,9 @@ function RichMessage({
                 type="button"
                 className="ajxCopyBtn"
                 onClick={() => onCopy(segment.code, copyKey)}
-                title={copyLabel(locale, false)}
+                title={copyLabel(locale, copiedKey === copyKey)}
               >
-                {copyLabel(locale, false)}
+                {copyLabel(locale, copiedKey === copyKey)}
               </button>
             </div>
             <pre className="ajxCodePre">
@@ -975,6 +977,42 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
   ];
 }
 
+function quickActionQuestionInstruction(action: QuickAction, locale: Locale): string {
+  if (locale === "es") {
+    return [
+      `MODO_PIKATOIMINTO: ${action.id}`,
+      "No des una respuesta larga ni un plan final todavía.",
+      "Haz primero exactamente 3–5 preguntas cortas y concretas para recopilar la información necesaria.",
+      "Presenta solo esas preguntas, numeradas.",
+      "No expliques tu razonamiento.",
+      "No añadas resumen, introducción larga ni propuesta final todavía.",
+      "Cuando el usuario responda, entonces crea la oferta, el plan o la solución basándote en sus respuestas.",
+    ].join("\n");
+  }
+
+  if (locale === "en") {
+    return [
+      `QUICK_ACTION_MODE: ${action.id}`,
+      "Do not give a long answer or a final plan yet.",
+      "First ask exactly 3–5 short, concrete questions needed to complete the task.",
+      "Output only those questions as a numbered list.",
+      "Do not explain your reasoning.",
+      "Do not add a summary, long intro, or final proposal yet.",
+      "After the user answers, then create the offer, plan, or solution based on those answers.",
+    ].join("\n");
+  }
+
+  return [
+    `PIKATOIMINTO_TILA: ${action.id}`,
+    "Älä anna vielä pitkää vastausta tai valmista suunnitelmaa.",
+    "Kysy ensin täsmälleen 3–5 lyhyttä ja konkreettista kysymystä, joilla keräät tarvittavat tiedot.",
+    "Tulosta vain nuo kysymykset numeroituna listana.",
+    "Älä selitä ajatteluasi.",
+    "Älä lisää yhteenvetoa, pitkää johdantoa tai lopullista tarjousta vielä.",
+    "Kun käyttäjä vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
+  ].join("\n");
+}
+
 // ====== Attachments UI ======
 type PendingAttachment = {
   id: string;
@@ -995,7 +1033,7 @@ function estimateDataUrlBytes(dataUrl: string): number {
   const commaIndex = dataUrl.indexOf(",");
   if (commaIndex === -1) return 0;
   const base64 = dataUrl.slice(commaIndex + 1);
-  const padding = (base64.match(/=+$/)?.[0].length ?? 0);
+  const padding = base64.match(/=+$/)?.[0].length ?? 0;
   return Math.max(0, Math.floor((base64.length * 3) / 4) - padding);
 }
 
@@ -1027,10 +1065,7 @@ function loadImageElementFromFile(file: File): Promise<HTMLImageElement> {
   });
 }
 
-function canvasToJpegBlob(
-  canvas: HTMLCanvasElement,
-  quality: number
-): Promise<Blob> {
+function canvasToJpegBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
@@ -1217,6 +1252,7 @@ export default function ChatPage(): React.JSX.Element {
     if (typeof window === "undefined") return 0;
     return window.innerHeight || 0;
   });
+  const [composerHeight, setComposerHeight] = useState<number>(120);
 
   const effectivePlanRaw: Plan = (devPlan ?? plan) as any;
   const effectiveCanonical: CanonicalPlan = toCanonicalPlan(effectivePlanRaw);
@@ -1260,7 +1296,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const quickActions = useMemo(() => quickActionsForLocale(locale), [locale]);
 
-  const showQuickActions = !loading && pending.length === 0 && !input.trim();
+  const showQuickActions = !loading && pending.length === 0;
 
   function closeSidebarOnMobile() {
     if (isMobile) setSidebarOpen(false);
@@ -1527,7 +1563,7 @@ export default function ChatPage(): React.JSX.Element {
 
       const nextViewportHeight = Math.max(0, Math.round(vv.height));
       const rawInset = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
-      const nextInset = rawInset > 80 ? Math.round(rawInset) : 0;
+      const nextInset = rawInset > 120 ? Math.round(rawInset) : 0;
 
       setViewportHeight(nextViewportHeight || window.innerHeight || 0);
       setKeyboardInset(nextInset);
@@ -1556,6 +1592,18 @@ export default function ChatPage(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
+    const measure = () => {
+      const h = composerRef.current?.offsetHeight || 120;
+      setComposerHeight(h);
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+
+    return () => window.removeEventListener("resize", measure);
+  }, [input, pending.length, locale, loading, showQuickActions, keyboardInset, plan]);
+
+  useEffect(() => {
     if (!isMobile || !inputFocused) return;
 
     const id = window.setTimeout(() => {
@@ -1564,7 +1612,7 @@ export default function ChatPage(): React.JSX.Element {
 
     return () => window.clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile, inputFocused, keyboardInset]);
+  }, [isMobile, inputFocused, keyboardInset, composerHeight]);
 
   function persistActive(nextMessages: ChatMsg[]) {
     if (!activeId) return;
@@ -1734,7 +1782,14 @@ export default function ChatPage(): React.JSX.Element {
       );
     }
 
-    return <RichMessage text={stripped} locale={locale} onCopy={handleCopy} />;
+    return (
+      <RichMessage
+        text={stripped}
+        locale={locale}
+        onCopy={handleCopy}
+        copiedKey={copiedKey}
+      />
+    );
   }
 
   function setLocaleAndPersist(next: Locale) {
@@ -1804,7 +1859,7 @@ export default function ChatPage(): React.JSX.Element {
       {
         id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
         kind,
-       name: file.name || "file",
+        name: file.name || "file",
         type: file.type || "application/octet-stream",
         dataUrl,
       },
@@ -2065,7 +2120,11 @@ export default function ChatPage(): React.JSX.Element {
 
   async function runQuickAction(action: QuickAction) {
     setMode(action.mode);
-    await sendTextDirect(action.prompt, action.mode);
+    await sendTextDirect(
+      action.prompt,
+      action.mode,
+      quickActionQuestionInstruction(action, locale)
+    );
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -2139,6 +2198,11 @@ export default function ChatPage(): React.JSX.Element {
       }
     : {};
 
+  const planMiniText =
+    effectiveCanonical === "free"
+      ? `${planLabel} · ${Number(usage?.msgThisMonth || 0)}/${FREE_DISPLAY_LIMIT}`
+      : planLabel;
+
   return (
     <div className={styles.shell} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
@@ -2165,48 +2229,12 @@ export default function ChatPage(): React.JSX.Element {
           max-width: 100%;
         }
 
-        .ajxControlGroupPlan {
-          padding: 8px 12px;
-          gap: 10px;
-          border: 1px solid rgba(11, 13, 18, 0.1);
-          background: rgba(255, 255, 255, 0.86);
-        }
-
         .ajxControlLabel {
           font-size: 12px;
           font-weight: 950;
           letter-spacing: 0.2px;
           color: rgba(11, 13, 18, 0.62);
           padding-left: 8px;
-          white-space: nowrap;
-        }
-
-        .ajxPlanTopLabel {
-          font-size: 12px;
-          font-weight: 950;
-          letter-spacing: 0.2px;
-          color: rgba(11, 13, 18, 0.62);
-          white-space: nowrap;
-        }
-
-        .ajxPlanBadge {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 8px 12px;
-          border-radius: 999px;
-          background: #0b0d12;
-          color: #ffffff;
-          font-size: 12px;
-          font-weight: 950;
-          letter-spacing: 0.3px;
-          min-width: 74px;
-        }
-
-        .ajxFreeMini {
-          font-size: 12px;
-          font-weight: 800;
-          color: rgba(11, 13, 18, 0.72);
           white-space: nowrap;
         }
 
@@ -2619,7 +2647,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxQuickActionsWrap {
-          padding: 0 20px 16px 20px;
+          padding: 0 20px 12px 20px;
         }
 
         .ajxQuickActionsTitle {
@@ -2681,6 +2709,15 @@ export default function ChatPage(): React.JSX.Element {
           color: #0b0d12;
           font-weight: 900;
           text-decoration: none;
+        }
+
+        .ajxPlanMiniRow {
+          margin-top: 6px;
+          text-align: center;
+          font-size: 10px;
+          line-height: 1.2;
+          color: rgba(11, 13, 18, 0.48);
+          letter-spacing: 0.12px;
         }
 
         @media (max-width: 980px) {
@@ -2747,10 +2784,14 @@ export default function ChatPage(): React.JSX.Element {
           }
 
           .ajxQuickActionsWrap {
-            padding: 0 14px 14px 14px;
+            padding: 0 14px 10px 14px;
           }
 
           .ajxDisclaimerRow {
+            padding-bottom: 0;
+          }
+
+          .ajxPlanMiniRow {
             padding-bottom: env(safe-area-inset-bottom, 0px);
           }
         }
@@ -2889,16 +2930,6 @@ export default function ChatPage(): React.JSX.Element {
             </div>
 
             <div className="ajxTopControls">
-              <div className="ajxControlGroup ajxControlGroupPlan" aria-label="Plan">
-                <span className="ajxPlanTopLabel">Plan</span>
-                <span className="ajxPlanBadge">{planLabel}</span>
-                {effectiveCanonical === "free" ? (
-                  <span className="ajxFreeMini">
-                    {Number(usage?.msgThisMonth || 0)}/{FREE_DISPLAY_LIMIT}
-                  </span>
-                ) : null}
-              </div>
-
               <a
                 href={`/help?lang=${locale}`}
                 className="ajxHelpLink ajxTopHelp"
@@ -2977,9 +3008,12 @@ export default function ChatPage(): React.JSX.Element {
                         minHeight: 0,
                         overflowY: "auto",
                         WebkitOverflowScrolling: "touch",
-                        paddingBottom: keyboardInset > 0 ? 20 : undefined,
+                        paddingBottom:
+                          composerHeight + (showQuickActions ? 72 : 24) + (keyboardInset > 0 ? 24 : 0),
                       }
-                    : undefined
+                    : {
+                        paddingBottom: composerHeight + (showQuickActions ? 72 : 24),
+                      }
                 }
               >
                 {messages.map((m, idx) => {
@@ -3053,8 +3087,8 @@ export default function ChatPage(): React.JSX.Element {
                 ref={composerRef}
                 className={styles.composer}
                 style={{
-                  bottom: isMobile ? `${keyboardInset}px` : undefined,
-                  transition: "bottom 120ms ease",
+                  bottom: 0,
+                  transition: "none",
                   zIndex: isMobile ? 40 : undefined,
                   paddingBottom: isMobile ? "max(0px, env(safe-area-inset-bottom, 0px))" : undefined,
                 }}
@@ -3157,9 +3191,6 @@ export default function ChatPage(): React.JSX.Element {
                         rows={1}
                         disabled={loading}
                         enterKeyHint="send"
-                        style={{
-                          scrollMarginBottom: isMobile ? keyboardInset + 24 : undefined,
-                        }}
                       />
                     </div>
 
@@ -3343,6 +3374,8 @@ export default function ChatPage(): React.JSX.Element {
                       {detailsLabel}
                     </a>
                   </div>
+
+                  <div className="ajxPlanMiniRow">{planMiniText}</div>
                 </div>
               </div>
             </section>
