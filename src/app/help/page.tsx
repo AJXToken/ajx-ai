@@ -1,13 +1,12 @@
-// src/app/help/page.tsx
+"use client";
+
+import React, { useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 type HelpLocale = "fi" | "en" | "es";
 
-type SearchParamsLike =
-  | Record<string, string | string[] | undefined>
-  | Promise<Record<string, string | string[] | undefined>>;
-
-function normalizeLang(value: string | string[] | undefined): HelpLocale {
-  const raw = Array.isArray(value) ? value[0] : value;
-  const s = String(raw || "").toLowerCase().trim();
+function normalizeLang(value: string | null | undefined): HelpLocale {
+  const s = String(value || "").toLowerCase().trim();
   if (s === "en") return "en";
   if (s === "es") return "es";
   return "fi";
@@ -252,10 +251,50 @@ const copy = {
   },
 };
 
-export default async function HelpPage(props: { searchParams?: SearchParamsLike }) {
-  const rawParams = props.searchParams ? await props.searchParams : {};
-  const lang = normalizeLang(rawParams?.lang);
+export default function HelpPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const lang = normalizeLang(searchParams.get("lang"));
   const c = copy[lang];
+
+  const chatHref = useMemo(() => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.delete("lang");
+
+    const qs = params.toString();
+    return qs ? `/chat?${qs}` : "/chat";
+  }, [searchParams]);
+
+  function buildHelpLangHref(nextLang: HelpLocale) {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("lang", nextLang);
+    return `/help?${params.toString()}`;
+  }
+
+  function handleBackToChat(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+
+    if (typeof window !== "undefined") {
+      try {
+        const ref = document.referrer || "";
+        const sameOrigin = ref.startsWith(window.location.origin);
+
+        if (sameOrigin) {
+          const refUrl = new URL(ref);
+          if (refUrl.pathname === "/chat" && window.history.length > 1) {
+            window.history.back();
+            return;
+          }
+        }
+      } catch {
+        // fall through to router.push
+      }
+    }
+
+    router.push(chatHref);
+  }
 
   return (
     <main
@@ -285,18 +324,27 @@ export default async function HelpPage(props: { searchParams?: SearchParamsLike 
             marginBottom: 16,
           }}
         >
-          <a href="/chat" style={topLinkStyle}>
+          <a href={chatHref} onClick={handleBackToChat} style={topLinkStyle}>
             {c.backToChat}
           </a>
 
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <a href="/help?lang=fi" style={lang === "fi" ? topLinkActiveStyle : topLinkStyle}>
+            <a
+              href={buildHelpLangHref("fi")}
+              style={lang === "fi" ? topLinkActiveStyle : topLinkStyle}
+            >
               {c.langFi}
             </a>
-            <a href="/help?lang=en" style={lang === "en" ? topLinkActiveStyle : topLinkStyle}>
+            <a
+              href={buildHelpLangHref("en")}
+              style={lang === "en" ? topLinkActiveStyle : topLinkStyle}
+            >
               {c.langEn}
             </a>
-            <a href="/help?lang=es" style={lang === "es" ? topLinkActiveStyle : topLinkStyle}>
+            <a
+              href={buildHelpLangHref("es")}
+              style={lang === "es" ? topLinkActiveStyle : topLinkStyle}
+            >
               {c.langEs}
             </a>
           </div>
