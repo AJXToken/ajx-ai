@@ -622,10 +622,19 @@ function renderPlainRichText(text: string, locale: Locale) {
             margin: "0 0 16px 0",
             paddingLeft: 20,
             lineHeight: 1.68,
+            listStyle: "decimal outside",
           }}
         >
           {items.map((item, idx) => (
-            <li key={idx} style={{ margin: "0 0 6px 0" }}>
+            <li
+              key={idx}
+              className="ajxRichListOrderedItem"
+              style={{
+                margin: "0 0 6px 0",
+                display: "list-item",
+                listStyle: "decimal",
+              }}
+            >
               {renderInlineFormatting(item)}
             </li>
           ))}
@@ -2561,6 +2570,25 @@ export default function ChatPage(): React.JSX.Element {
         .ajxRichList li,
         .ajxRichListOrdered li {
           margin: 0 0 6px 0;
+        }
+
+        .ajxRichListOrdered {
+          list-style: decimal outside !important;
+          counter-reset: none !important;
+        }
+
+        .ajxRichListOrderedItem {
+          display: list-item !important;
+          list-style: decimal !important;
+        }
+
+        .ajxRichListOrderedItem::before {
+          content: none !important;
+          display: none !important;
+        }
+
+        .ajxRichListOrderedItem::marker {
+          font-weight: 900;
         }
 
         .ajxQuestionList {
