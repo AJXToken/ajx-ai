@@ -142,7 +142,15 @@ function renderImagesFromContent(text: string) {
   return (
     <div className="ajxInlineImages">
       {urls.map((u, i) => (
-        <img key={`${u}-${i}`} src={u} alt="AJX Image" className={styles.inlineImage} />
+        <a
+          key={`${u}-${i}`}
+          href={u}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "block" }}
+        >
+          <img src={u} alt="AJX Image" className={styles.inlineImage} />
+        </a>
       ))}
     </div>
   );
@@ -412,6 +420,12 @@ function copyLabel(locale: Locale, copied: boolean) {
   if (locale === "es") return "Copiar";
   if (locale === "en") return "Copy";
   return "Kopioi";
+}
+
+function openImageLabel(locale: Locale) {
+  if (locale === "es") return "Abrir imagen";
+  if (locale === "en") return "Open image";
+  return "Avaa kuva";
 }
 
 function renderPlainRichText(text: string, locale: Locale) {
@@ -1427,6 +1441,11 @@ export default function ChatPage(): React.JSX.Element {
     }
   }
 
+  function handleOpenImage(url: string) {
+    if (!url) return;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
   function triggerImageButton() {
     const root = imageButtonWrapRef.current;
     if (!root) return false;
@@ -2196,12 +2215,7 @@ export default function ChatPage(): React.JSX.Element {
   }
 
   async function runQuickAction(action: QuickAction) {
-    setMode(action.mode);
-    await sendTextDirect(
-      action.prompt,
-      action.mode,
-      quickActionQuestionInstruction(action, locale)
-    );
+    await sendTextDirect(action.prompt, undefined, quickActionQuestionInstruction(action, locale));
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -2609,6 +2623,7 @@ export default function ChatPage(): React.JSX.Element {
           display: flex;
           justify-content: flex-end;
           align-items: center;
+          gap: 8px;
           margin-bottom: 8px;
         }
 
@@ -3099,6 +3114,9 @@ export default function ChatPage(): React.JSX.Element {
                   const isUser = m.role === "user";
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
                   const messageTextForCopy = stripMarkdownImages(m.content || "");
+                  const imageUrls = extractMarkdownImageUrls(m.content || "");
+                  const hasCopyableText = !!messageTextForCopy.trim();
+                  const hasImages = imageUrls.length > 0;
 
                   return (
                     <div
@@ -3116,16 +3134,31 @@ export default function ChatPage(): React.JSX.Element {
                           isUser ? styles.bubbleUser : styles.bubbleAi
                         }`}
                       >
-                        <div className="ajxBubbleTop">
-                          <button
-                            type="button"
-                            className="ajxCopyBtn"
-                            onClick={() => handleCopy(messageTextForCopy, messageCopyKey)}
-                            title={copyLabel(locale, copiedKey === messageCopyKey)}
-                          >
-                            {copyLabel(locale, copiedKey === messageCopyKey)}
-                          </button>
-                        </div>
+                        {(hasCopyableText || hasImages) && (
+                          <div className="ajxBubbleTop">
+                            {hasCopyableText ? (
+                              <button
+                                type="button"
+                                className="ajxCopyBtn"
+                                onClick={() => handleCopy(messageTextForCopy, messageCopyKey)}
+                                title={copyLabel(locale, copiedKey === messageCopyKey)}
+                              >
+                                {copyLabel(locale, copiedKey === messageCopyKey)}
+                              </button>
+                            ) : null}
+
+                            {hasImages ? (
+                              <button
+                                type="button"
+                                className="ajxCopyBtn"
+                                onClick={() => handleOpenImage(imageUrls[0])}
+                                title={openImageLabel(locale)}
+                              >
+                                {openImageLabel(locale)}
+                              </button>
+                            ) : null}
+                          </div>
+                        )}
 
                         {renderMessageContent(m.content, isUser)}
                         {renderImagesFromContent(m.content)}
