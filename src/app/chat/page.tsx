@@ -165,7 +165,14 @@ function isBulletLine(line: string) {
 }
 
 function isOrderedLine(line: string) {
-  return /^\d+[\.\)]\s+/.test(line.trim());
+  const s = line.trim();
+  if (!s) return false;
+  if (!/^\d+[\.\)]\s+/.test(s)) return false;
+
+  const withoutMarker = s.replace(/^\d+[\.\)]\s+/, "").trim();
+  if (/[?？]$/.test(withoutMarker)) return false;
+
+  return true;
 }
 
 function isDividerLine(line: string) {
@@ -221,16 +228,13 @@ function isQuestionLine(line: string | undefined) {
 
 function normalizeDetachedOrderedMarkers(text: string): string {
   if (!text) return "";
-
-  return text.replace(/(^|\n)(\d+[\.\)])\s*\n+(?=\S)/g, "$1$2 ");
+  return text;
 }
 
 function normalizeInlineListSequences(text: string): string {
   if (!text) return "";
 
   return normalizeDetachedOrderedMarkers(text)
-    .replace(/:\s+(\d+[\.\)]\s)/g, ":\n\n$1")
-    .replace(/([?？!])\s+(\d+[\.\)]\s)/g, "$1\n\n$2")
     .replace(/([^\n])\s+(•\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\-\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\*\s)/g, "$1\n$2");
@@ -622,19 +626,10 @@ function renderPlainRichText(text: string, locale: Locale) {
             margin: "0 0 16px 0",
             paddingLeft: 20,
             lineHeight: 1.68,
-            listStyle: "decimal outside",
           }}
         >
           {items.map((item, idx) => (
-            <li
-              key={idx}
-              className="ajxRichListOrderedItem"
-              style={{
-                margin: "0 0 6px 0",
-                display: "list-item",
-                listStyle: "decimal",
-              }}
-            >
+            <li key={idx} style={{ margin: "0 0 6px 0" }}>
               {renderInlineFormatting(item)}
             </li>
           ))}
@@ -654,7 +649,7 @@ function renderPlainRichText(text: string, locale: Locale) {
       while (j < rawLines.length) {
         const candidate = rawLines[j]?.trim() ?? "";
         if (!candidate || !isQuestionLine(candidate)) break;
-        items.push(candidate);
+        items.push(candidate.replace(/^\d+[\.\)]\s+/, "").trim());
         j += 1;
       }
 
@@ -1065,7 +1060,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
       `MODO_PIKATOIMINTO: ${action.id}`,
       "No des una respuesta larga ni un plan final todavía.",
       "Haz primero exactamente 3–5 preguntas cortas y concretas para recopilar la información necesaria.",
-      "Presenta solo esas preguntas, numeradas.",
+      "Presenta solo esas preguntas, cada una en su propia línea, sin numeración ni viñetas.",
       "No expliques tu razonamiento.",
       "No añadas resumen, introducción larga ni propuesta final todavía.",
       "Cuando el usuario responda, entonces crea la oferta, el plan o la solución basándote en sus respuestas.",
@@ -1077,7 +1072,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
       `QUICK_ACTION_MODE: ${action.id}`,
       "Do not give a long answer or a final plan yet.",
       "First ask exactly 3–5 short, concrete questions needed to complete the task.",
-      "Output only those questions as a numbered list.",
+      "Output only those questions, each on its own line, without numbering or bullet points.",
       "Do not explain your reasoning.",
       "Do not add a summary, long intro, or final proposal yet.",
       "After the user answers, then create the offer, plan, or solution based on those answers.",
@@ -1088,7 +1083,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     `PIKATOIMINTO_TILA: ${action.id}`,
     "Älä anna vielä pitkää vastausta tai valmista suunnitelmaa.",
     "Kysy ensin täsmälleen 3–5 lyhyttä ja konkreettista kysymystä, joilla keräät tarvittavat tiedot.",
-    "Tulosta vain nuo kysymykset numeroituna listana.",
+    "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejä.",
     "Älä selitä ajatteluasi.",
     "Älä lisää yhteenvetoa, pitkää johdantoa tai lopullista tarjousta vielä.",
     "Kun käyttäjä vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
@@ -2572,25 +2567,6 @@ export default function ChatPage(): React.JSX.Element {
           margin: 0 0 6px 0;
         }
 
-        .ajxRichListOrdered {
-          list-style: decimal outside !important;
-          counter-reset: none !important;
-        }
-
-        .ajxRichListOrderedItem {
-          display: list-item !important;
-          list-style: decimal !important;
-        }
-
-        .ajxRichListOrderedItem::before {
-          content: none !important;
-          display: none !important;
-        }
-
-        .ajxRichListOrderedItem::marker {
-          font-weight: 900;
-        }
-
         .ajxQuestionList {
           margin: 0 0 16px 0;
         }
@@ -3186,7 +3162,9 @@ export default function ChatPage(): React.JSX.Element {
                   bottom: 0,
                   transition: "none",
                   zIndex: isMobile ? 40 : undefined,
-                  paddingBottom: isMobile ? "max(0px, env(safe-area-inset-bottom, 0px))" : undefined,
+                  paddingBottom: isMobile
+                    ? "max(0px, env(safe-area-inset-bottom, 0px))"
+                    : undefined,
                 }}
               >
                 <div className={styles.composerInner}>
