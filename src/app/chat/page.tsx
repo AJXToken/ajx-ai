@@ -3060,14 +3060,7 @@ export default function ChatPage(): React.JSX.Element {
               </div>
 
               {showQuickActions ? (
-                <div className="ajxQuickActionsWrap">
-                  <div className="ajxQuickActionsTitle">
-                    {locale === "fi"
-                      ? "Pikatoiminnot"
-                      : locale === "es"
-                        ? "Acciones rápidas"
-                        : "Quick actions"}
-                  </div>
+
                   <div className="ajxQuickActionsRow">
                     {quickActions.map((action) => (
                       <button
