@@ -2,31 +2,19 @@ import fs from "fs/promises";
 import path from "path";
 
 export type AjxUsage = {
-  // Viestit / kk
-  msgMonth: string; // esim "2026-01"
+  msgMonth: string;
   msgCount: number;
-
-  // Kuvat / kk
   imgMonth: string;
   imgCount: number;
-
-  // Web-haut / kk
   webMonth: string;
   webCount: number;
-
-  updatedAt: number; // unix ms
+  updatedAt: number;
 };
 
 type StoreShape = {
   version: 1;
   users: Record<string, AjxUsage>;
 };
-
-const IS_VERCEL =
-  process.env.VERCEL === "1" ||
-  !!process.env.VERCEL_ENV ||
-  !!process.env.AWS_REGION ||
-  process.cwd().startsWith("/var/task");
 
 const DATA_DIR = process.env.AJX_DATA_DIR || path.join(process.cwd(), ".ajx-data");
 const STORE_FILE = path.join(DATA_DIR, "usage.json");
@@ -36,14 +24,17 @@ const memoryStore: StoreShape = {
   users: {},
 };
 
-// Kevyt prosessilukko (riittää MVP/dev)
 let mutex = Promise.resolve();
 
 async function withLock<T>(fn: () => Promise<T>): Promise<T> {
   const prev = mutex;
   let release: () => void = () => {};
-  mutex = new Promise<void>((res) => (release = res));
+  mutex = new Promise<void>((res) => {
+    release = res;
+  });
+
   await prev;
+
   try {
     return await fn();
   } finally {
@@ -64,8 +55,36 @@ function cloneStore(store: StoreShape): StoreShape {
   };
 }
 
+function isServerlessLikeRuntime() {
+  const cwd = process.cwd().replace(/\\/g, "/");
+
+  return (
+    process.env.VERCEL === "1" ||
+    !!process.env.VERCEL_ENV ||
+    !!process.env.VERCEL_URL ||
+    !!process.env.AWS_REGION ||
+    cwd.startsWith("/var/task") ||
+    cwd.startsWith("/vercel/path0")
+  );
+}
+
 function canUseFilesystem() {
-  return !IS_VERCEL;
+  return !isServerlessLikeRuntime();
+}
+
+function isFsUnavailableError(err: unknown) {
+  if (!err || typeof err !== "object") return false;
+
+  const maybe = err as NodeJS.ErrnoException;
+  const code = String(maybe.code || "");
+
+  return (
+    code === "ENOENT" ||
+    code === "EROFS" ||
+    code === "EACCES" ||
+    code === "EPERM" ||
+    code === "ENOTDIR"
+  );
 }
 
 async function ensureStore(): Promise<StoreShape> {
@@ -83,22 +102,34 @@ async function ensureStore(): Promise<StoreShape> {
     }
 
     return parsed;
-  } catch {
+  } catch (err) {
+    if (isFsUnavailableError(err)) {
+      return cloneStore(memoryStore);
+    }
+
     return { version: 1, users: {} };
   }
 }
 
 async function writeStore(store: StoreShape) {
+  memoryStore.version = 1;
+  memoryStore.users = { ...store.users };
+
   if (!canUseFilesystem()) {
-    memoryStore.version = 1;
-    memoryStore.users = { ...store.users };
     return;
   }
 
-  await fs.mkdir(DATA_DIR, { recursive: true });
-  const tmp = `${STORE_FILE}.tmp`;
-  await fs.writeFile(tmp, JSON.stringify(store, null, 2), "utf8");
-  await fs.rename(tmp, STORE_FILE);
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    const tmp = `${STORE_FILE}.tmp`;
+    await fs.writeFile(tmp, JSON.stringify(store, null, 2), "utf8");
+    await fs.rename(tmp, STORE_FILE);
+  } catch (err) {
+    if (isFsUnavailableError(err)) {
+      return;
+    }
+    throw err;
+  }
 }
 
 export async function getUsage(uid: string): Promise<AjxUsage> {
@@ -117,6 +148,7 @@ export async function getUsage(uid: string): Promise<AjxUsage> {
         webCount: 0,
         updatedAt: Date.now(),
       };
+
       store.users[uid] = fresh;
       await writeStore(store);
       return fresh;
@@ -126,10 +158,12 @@ export async function getUsage(uid: string): Promise<AjxUsage> {
       existing.msgMonth = mk;
       existing.msgCount = 0;
     }
+
     if (existing.imgMonth !== mk) {
       existing.imgMonth = mk;
       existing.imgCount = 0;
     }
+
     if (existing.webMonth !== mk) {
       existing.webMonth = mk;
       existing.webCount = 0;
@@ -165,10 +199,12 @@ export async function incrementUsage(
       existing.msgMonth = mk;
       existing.msgCount = 0;
     }
+
     if (existing.imgMonth !== mk) {
       existing.imgMonth = mk;
       existing.imgCount = 0;
     }
+
     if (existing.webMonth !== mk) {
       existing.webMonth = mk;
       existing.webCount = 0;
