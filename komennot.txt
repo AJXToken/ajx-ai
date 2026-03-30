@@ -22,11 +22,10 @@ git push
 bugi lista 2
 
 
-- interface 2030 lukee. mitä se tarkoittaa ja miksi se pitää näkyä?
-- alakulmaan voitaisi pienellä lisätä teksti jossa lukee esim. AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina. lisätiedot. sitten lisätietoihin helvetilliset vastuuvapaus tekstit.
-- mobiilissa aina kun rupee kirjoittamaan niin tesktikenttä häviää näppäimistökentän yläpuolelta kun alkaa kirjoittamaan. itseasiassa se tekstikenttä johon kirjoitetaan näkyy näppäimistön yläpuolella niin pitkään kunnes painaa jotain näppäimistöstä.
--pikatoiminnot ei toimi niin kuin ne alunperin suunniteltiin. kun painaa esim "luo tarjous" tai "kasvata myyntiä" niin ai pitäisi kysyä kysymyksiä 3 - 5 kpl ja niiden perusteella tehdä toiminta suunnitelma tai luoda se tarjous jne. nyt sieltä tulee heti alkuun kilometrin pitkä teksti jota kukaan ei jaksa lukea.
--yläreunan Plan ja taso pitää jättää pois ja lisätä pienen pieni teksti keskusteluikkunan alle. sen interface//2030 tilalle. näin saamme tilaa itse chatille enemmän
+
+
+- voisiko vastauksia jäsennellä paremmin. nyt kun painan esim. Luo tarjous nappia, niin kysymykset tulee pötköön. olisi selkeää jos ne tulisi omille riveille
+
 
 
 

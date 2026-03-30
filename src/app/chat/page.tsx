@@ -212,6 +212,14 @@ function isPlainTextLine(line: string | undefined) {
   return !isStructuralLine(s);
 }
 
+function isQuestionLine(line: string | undefined) {
+  const s = String(line || "").trim();
+  if (!s) return false;
+  if (isStructuralLine(s)) return false;
+  if (s.length > 220) return false;
+  return /[?？]$/.test(s);
+}
+
 function normalizeInlineListSequences(text: string): string {
   if (!text) return "";
 
@@ -246,8 +254,10 @@ function normalizePlainTextBreaks(lines: string[]): string[] {
 
     const prevPlain = isPlainTextLine(prev);
     const nextPlain = isPlainTextLine(next);
+    const prevQuestion = isQuestionLine(prev);
+    const nextQuestion = isQuestionLine(next);
 
-    if (blankCount === 1 && prevPlain && nextPlain) {
+    if (blankCount === 1 && prevPlain && nextPlain && !prevQuestion && !nextQuestion) {
       i = j;
       continue;
     }
@@ -618,6 +628,51 @@ function renderPlainRichText(text: string, locale: Locale) {
 
       i = j - 1;
       continue;
+    }
+
+    if (isQuestionLine(line)) {
+      flushParagraph();
+
+      const items: string[] = [];
+      let j = i;
+
+      while (j < rawLines.length) {
+        const candidate = rawLines[j]?.trim() ?? "";
+        if (!candidate || !isQuestionLine(candidate)) break;
+        items.push(candidate);
+        j += 1;
+      }
+
+      if (items.length >= 2) {
+        out.push(
+          <div
+            key={`questions-${i}`}
+            className="ajxQuestionList"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              margin: "0 0 16px 0",
+            }}
+          >
+            {items.map((item, idx) => (
+              <div
+                key={idx}
+                className="ajxQuestionRow"
+                style={{
+                  lineHeight: 1.68,
+                  fontWeight: 700,
+                }}
+              >
+                {renderInlineFormatting(item)}
+              </div>
+            ))}
+          </div>
+        );
+
+        i = j - 1;
+        continue;
+      }
     }
 
     paragraphBuffer.push(line);
@@ -2502,6 +2557,15 @@ export default function ChatPage(): React.JSX.Element {
           margin: 0 0 6px 0;
         }
 
+        .ajxQuestionList {
+          margin: 0 0 16px 0;
+        }
+
+        .ajxQuestionRow {
+          line-height: 1.68;
+          font-weight: 700;
+        }
+
         .ajxSummaryBox {
           margin: 4px 0 16px 0;
           padding: 10px 12px;
@@ -2740,7 +2804,8 @@ export default function ChatPage(): React.JSX.Element {
           .ajxParagraph,
           .ajxRichList,
           .ajxRichListOrdered,
-          .ajxSummaryText {
+          .ajxSummaryText,
+          .ajxQuestionRow {
             line-height: 1.72;
           }
 

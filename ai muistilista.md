@@ -284,9 +284,15 @@ Gemini 1.5 Flash-Liten. $0,15n. 0,14 €"Säästäjä": hyvin yksinkertaiset teh
 
 
 
+
+
+
+
 💰 AJX AI – Hinnasto
 
 ⚪ Free – 0 €
+
+kaikki kuvat generoidaan: - Gemini 2.5 Flash Image
 
 
 
