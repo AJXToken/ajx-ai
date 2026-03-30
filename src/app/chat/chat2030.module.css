@@ -505,11 +505,7 @@
 }
 
 :global(.ajxQuickActionsTitle) {
-  font-size: 12px;
-  font-weight: 950;
-  letter-spacing: 0.2px;
-  color: var(--muted);
-  margin-bottom: 10px;
+  display: none;
 }
 
 :global(.ajxQuickActionsRow) {
@@ -568,7 +564,8 @@
 :global(.ajxComposerText),
 :global(.ajxChips),
 :global(.ajxInlineImages),
-:global(.ajxImageIntentBar) {
+:global(.ajxImageIntentBar),
+:global(.ajxDisclaimerRow) {
   min-width: 0;
   box-sizing: border-box;
 }
@@ -586,6 +583,35 @@
 :global(.ajxChips) {
   max-width: 100%;
   overflow-x: hidden;
+}
+
+:global(.ajxDisclaimerRow) {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+:global(.ajxDisclaimerPlan) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.2px;
+  box-shadow: var(--shadowSm);
 }
 
 /* =========
@@ -989,6 +1015,10 @@
     position: relative;
     z-index: 41;
     padding-bottom: 2px;
+  }
+
+  :global(.ajxDisclaimerRow) {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 }
 

@@ -212,6 +212,16 @@ function isPlainTextLine(line: string | undefined) {
   return !isStructuralLine(s);
 }
 
+function normalizeInlineListSequences(text: string): string {
+  if (!text) return "";
+
+  return text
+    .replace(/([^\n])\s+(\d+[\.\)]\s)/g, "$1\n$2")
+    .replace(/([^\n])\s+(•\s)/g, "$1\n$2")
+    .replace(/([^\n])\s+(\-\s)/g, "$1\n$2")
+    .replace(/([^\n])\s+(\*\s)/g, "$1\n$2");
+}
+
 function normalizePlainTextBreaks(lines: string[]): string[] {
   const out: string[] = [];
   let i = 0;
@@ -388,7 +398,9 @@ function renderPlainRichText(text: string, locale: Locale) {
   const content = stripMarkdownImages(text || "");
   if (!content) return null;
 
-  const normalized = content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\n— — —\n");
+  const normalized = normalizeInlineListSequences(
+    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\n— — —\n")
+  );
 
   const rawLines = normalizePlainTextBreaks(normalized.split("\n"));
   const out: React.ReactNode[] = [];
@@ -2108,7 +2120,7 @@ export default function ChatPage(): React.JSX.Element {
           locale === "fi"
             ? "Valitse ensin haluatko analysoida kuvan vai muokata sitä."
             : locale === "es"
-              ? "Primero elige si quieres analizar la imagen o editarla."
+              ? "Primero elige si quieres analizar o editar la imagen."
               : "First choose whether you want to analyze or edit the image."
         );
         return;
@@ -2155,8 +2167,6 @@ export default function ChatPage(): React.JSX.Element {
     }
     return "AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina.";
   }, [locale]);
-
-  const detailsLabel = locale === "fi" ? "Lisätiedot" : locale === "es" ? "Más info" : "More info";
 
   const imageIntentHint = useMemo(() => {
     if (!hasPendingImage) return "";
@@ -2651,11 +2661,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxQuickActionsTitle {
-          font-size: 12px;
-          font-weight: 950;
-          letter-spacing: 0.2px;
-          color: rgba(11, 13, 18, 0.62);
-          margin-bottom: 10px;
+          display: none;
         }
 
         .ajxQuickActionsRow {
@@ -2705,19 +2711,19 @@ export default function ChatPage(): React.JSX.Element {
           color: rgba(11, 13, 18, 0.62);
         }
 
-        .ajxDisclaimerLink {
+        .ajxDisclaimerPlan {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px 10px;
+          border-radius: 999px;
+          border: 1px solid rgba(11, 13, 18, 0.1);
+          background: rgba(255, 255, 255, 0.9);
           color: #0b0d12;
-          font-weight: 900;
-          text-decoration: none;
-        }
-
-        .ajxPlanMiniRow {
-          margin-top: 6px;
-          text-align: center;
-          font-size: 10px;
-          line-height: 1.2;
-          color: rgba(11, 13, 18, 0.48);
-          letter-spacing: 0.12px;
+          font-size: 11px;
+          font-weight: 950;
+          letter-spacing: 0.2px;
+          box-shadow: 0 10px 22px rgba(11, 13, 18, 0.08);
         }
 
         @media (max-width: 980px) {
@@ -2788,10 +2794,6 @@ export default function ChatPage(): React.JSX.Element {
           }
 
           .ajxDisclaimerRow {
-            padding-bottom: 0;
-          }
-
-          .ajxPlanMiniRow {
             padding-bottom: env(safe-area-inset-bottom, 0px);
           }
         }
@@ -3009,7 +3011,9 @@ export default function ChatPage(): React.JSX.Element {
                         overflowY: "auto",
                         WebkitOverflowScrolling: "touch",
                         paddingBottom:
-                          composerHeight + (showQuickActions ? 72 : 24) + (keyboardInset > 0 ? 24 : 0),
+                          composerHeight +
+                          (showQuickActions ? 72 : 24) +
+                          (keyboardInset > 0 ? 24 : 0),
                       }
                     : {
                         paddingBottom: composerHeight + (showQuickActions ? 72 : 24),
@@ -3061,13 +3065,6 @@ export default function ChatPage(): React.JSX.Element {
 
               {showQuickActions ? (
                 <div className="ajxQuickActionsWrap">
-                  <div className="ajxQuickActionsTitle">
-                    {locale === "fi"
-                      ? "Pikatoiminnot"
-                      : locale === "es"
-                        ? "Acciones rápidas"
-                        : "Quick actions"}
-                  </div>
                   <div className="ajxQuickActionsRow">
                     {quickActions.map((action) => (
                       <button
@@ -3370,12 +3367,8 @@ export default function ChatPage(): React.JSX.Element {
 
                   <div className="ajxDisclaimerRow">
                     <span>{disclaimerText}</span>
-                    <a href={`/help?lang=${locale}`} className="ajxDisclaimerLink">
-                      {detailsLabel}
-                    </a>
+                    <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
-
-                  <div className="ajxPlanMiniRow">{planMiniText}</div>
                 </div>
               </div>
             </section>
