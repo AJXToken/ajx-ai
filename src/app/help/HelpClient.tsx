@@ -19,9 +19,6 @@ const copy = {
     intro:
       "AJX AI auttaa yrittäjiä ratkaisemaan ongelmia, kehittämään liiketoimintaa, luomaan sisältöä ja jäsentämään päätöksiä. Mitä tarkempi kysymys, sitä parempi vastaus.",
     backToChat: "← Takaisin chattiin",
-    langFi: "Suomi",
-    langEn: "English",
-    langEs: "Español",
 
     s1: "1. Miten aloittaa",
     s1p1: "Kirjoita chattiin mahdollisimman selkeästi mitä haluat saada aikaan.",
@@ -98,9 +95,6 @@ const copy = {
     intro:
       "AJX AI helps entrepreneurs solve problems, improve business, create content, and structure decisions. The more precise your question is, the better the answer will be.",
     backToChat: "← Back to chat",
-    langFi: "Suomi",
-    langEn: "English",
-    langEs: "Español",
 
     s1: "1. How to start",
     s1p1: "Write as clearly as possible what you want to achieve.",
@@ -177,9 +171,6 @@ const copy = {
     intro:
       "AJX AI ayuda a emprendedores a resolver problemas, desarrollar el negocio, crear contenido y estructurar decisiones. Cuanto más precisa sea tu pregunta, mejor será la respuesta.",
     backToChat: "← Volver al chat",
-    langFi: "Suomi",
-    langEn: "English",
-    langEs: "Español",
 
     s1: "1. Cómo empezar",
     s1p1: "Escribe lo más claramente posible lo que quieres conseguir.",
@@ -265,12 +256,6 @@ export default function HelpClient() {
     return qs ? `/chat?${qs}` : "/chat";
   }, [searchParams]);
 
-  function buildHelpLangHref(nextLang: HelpLocale) {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("lang", nextLang);
-    return `/help?${params.toString()}`;
-  }
-
   function handleBack(e: React.MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();
 
@@ -323,27 +308,6 @@ export default function HelpClient() {
           <a href={chatHref} onClick={handleBack} style={topLinkStyle}>
             {c.backToChat}
           </a>
-
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <a
-              href={buildHelpLangHref("fi")}
-              style={lang === "fi" ? topLinkActiveStyle : topLinkStyle}
-            >
-              {c.langFi}
-            </a>
-            <a
-              href={buildHelpLangHref("en")}
-              style={lang === "en" ? topLinkActiveStyle : topLinkStyle}
-            >
-              {c.langEn}
-            </a>
-            <a
-              href={buildHelpLangHref("es")}
-              style={lang === "es" ? topLinkActiveStyle : topLinkStyle}
-            >
-              {c.langEs}
-            </a>
-          </div>
         </div>
 
         <div
@@ -594,9 +558,4 @@ const topLinkStyle: React.CSSProperties = {
   fontSize: 14,
   fontWeight: 900,
   boxShadow: "0 10px 24px rgba(11,13,18,0.08)",
-};
-
-const topLinkActiveStyle: React.CSSProperties = {
-  ...topLinkStyle,
-  background: "rgba(11,13,18,0.08)",
 };
