@@ -1804,7 +1804,7 @@ export default function ChatPage(): React.JSX.Element {
       {
         id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
         kind,
-        name: file.name || (kind === "image" ? "image" : "file"),
+       name: file.name || "file",
         type: file.type || "application/octet-stream",
         dataUrl,
       },
