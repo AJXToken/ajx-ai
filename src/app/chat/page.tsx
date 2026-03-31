@@ -484,15 +484,6 @@ function normalizeCopyBoxSource(text: string) {
   return stripMarkdownImages(text || "").replace(/\r\n/g, "\n").trim();
 }
 
-function looksLikeOutputBlock(block: string) {
-  const s = block.trim();
-  if (!s) return false;
-  if (/[?？]$/.test(s)) return false;
-  if (/^[-*•]\s/.test(s)) return false;
-  if (/^\d+[\.\)]\s/.test(s)) return false;
-  return true;
-}
-
 function cleanCopyLabelLine(line: string) {
   return line
     .trim()
@@ -500,6 +491,20 @@ function cleanCopyLabelLine(line: string) {
     .replace(/\*+$/, "")
     .replace(/^[_`>#\-\s•]+/, "")
     .trim();
+}
+
+function isSummaryLikeLabel(line: string, locale: Locale) {
+  const cleaned = cleanCopyLabelLine(line).toLowerCase().replace(/:+$/, "").trim();
+
+  if (locale === "fi") {
+    return cleaned === "yhteenveto" || cleaned === "tiivistelmä" || cleaned === "lyhyesti";
+  }
+
+  if (locale === "es") {
+    return cleaned === "resumen" || cleaned === "en resumen" || cleaned === "brevemente";
+  }
+
+  return cleaned === "summary" || cleaned === "in short" || cleaned === "briefly";
 }
 
 function getExplicitCopyLabelMatch(line: string): string | null {
@@ -605,6 +610,7 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     const rawLine = lines[i] ?? "";
     const line = rawLine.trim();
     if (!line) continue;
+    if (isSummaryLikeLabel(line, locale) || isSummaryLine(line, locale)) continue;
 
     const matched = getExplicitCopyLabelMatch(line);
     if (!matched) continue;
@@ -634,34 +640,16 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     };
   }
 
-  const blocks = normalized
-    .split(/\n{2,}/)
-    .map((b) => b.trim())
-    .filter(Boolean);
-
-  if (blocks.length >= 2) {
-    const first = blocks[0];
-    const last = blocks[blocks.length - 1];
-
-    const firstLooksIntro = first.length <= 320;
-    const lastLooksFinal =
-      looksLikeOutputBlock(last) && (last.length >= 2 || last.split("\n").length >= 1);
-
-    if (firstLooksIntro && lastLooksFinal) {
-      const mainText = blocks.slice(0, -1).join("\n\n").trim();
-      return {
-        mainText,
-        copyText: last,
-        label: outputBoxLabel(locale),
-      };
-    }
-  }
-
   if (lines.length >= 2) {
     const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
     if (firstNonEmptyIndex >= 0 && firstNonEmptyIndex < lines.length - 1) {
-      const firstLine = lines[firstNonEmptyIndex].trim().toLowerCase().replace(/\*+/g, "");
+      const rawFirstLine = lines[firstNonEmptyIndex];
+      const firstLine = rawFirstLine.trim().toLowerCase().replace(/\*+/g, "");
       const rest = lines.slice(firstNonEmptyIndex + 1).join("\n").trim();
+
+      if (isSummaryLikeLabel(rawFirstLine, locale) || isSummaryLine(rawFirstLine, locale)) {
+        return null;
+      }
 
       const introLooksLikeLabel =
         firstLine.includes("käännös") ||
@@ -683,7 +671,7 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
         firstLine.includes("offer") ||
         firstLine.includes("oferta");
 
-      if (introLooksLikeLabel && rest && looksLikeOutputBlock(rest)) {
+      if (introLooksLikeLabel && rest) {
         return {
           mainText: lines.slice(0, firstNonEmptyIndex).join("\n").trim(),
           copyText: rest,
