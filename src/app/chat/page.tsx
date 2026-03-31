@@ -447,8 +447,11 @@ function normalizeOutputBoxLabel(raw: string, locale: Locale) {
 
   if (locale === "fi") {
     if (s.includes("käännös")) return "Käännös";
+    if (s.includes("sähköpostipohja")) return "Sähköposti";
     if (s.includes("sähköposti")) return "Sähköposti";
+    if (s.includes("viestipohja")) return "Viesti";
     if (s.includes("viesti")) return "Viesti";
+    if (s.includes("tarjouspohja")) return "Tarjous";
     if (s.includes("tarjous")) return "Tarjous";
     if (s.includes("mainosteksti")) return "Mainosteksti";
     if (s.includes("caption")) return "Caption";
@@ -458,8 +461,11 @@ function normalizeOutputBoxLabel(raw: string, locale: Locale) {
 
   if (locale === "es") {
     if (s.includes("traducción")) return "Traducción";
+    if (s.includes("plantilla de correo")) return "Correo";
     if (s.includes("correo")) return "Correo";
+    if (s.includes("plantilla de mensaje")) return "Mensaje";
     if (s.includes("mensaje")) return "Mensaje";
+    if (s.includes("plantilla de oferta")) return "Oferta";
     if (s.includes("oferta")) return "Oferta";
     if (s.includes("texto publicitario")) return "Texto publicitario";
     if (s.includes("caption")) return "Caption";
@@ -468,8 +474,11 @@ function normalizeOutputBoxLabel(raw: string, locale: Locale) {
   }
 
   if (s.includes("translation")) return "Translation";
+  if (s.includes("email template")) return "Email";
   if (s.includes("email")) return "Email";
+  if (s.includes("message template")) return "Message";
   if (s.includes("message")) return "Message";
+  if (s.includes("offer template")) return "Offer";
   if (s.includes("offer")) return "Offer";
   if (s.includes("ad copy")) return "Ad copy";
   if (s.includes("caption")) return "Caption";
@@ -496,7 +505,6 @@ function cleanCopyLabelLine(line: string) {
     .replace(/^\*+/, "")
     .replace(/\*+$/, "")
     .replace(/^[_`>#\-\s•]+/, "")
-    .replace(/^[—–-]+\s*/, "")
     .trim();
 }
 
@@ -514,14 +522,30 @@ function getExplicitCopyLabelMatch(line: string): string | null {
     "final text",
     "texto final",
     "sähköposti",
+    "sähköpostipohja",
+    "valmis sähköposti",
+    "valmis sähköpostipohja",
     "email",
+    "email template",
+    "ready email",
     "correo",
+    "plantilla de correo",
     "viesti",
+    "viestipohja",
+    "valmis viesti",
+    "valmis viestipohja",
     "message",
+    "message template",
     "mensaje",
+    "plantilla de mensaje",
     "tarjous",
+    "tarjouspohja",
+    "valmis tarjous",
+    "valmis tarjouspohja",
     "offer",
+    "offer template",
     "oferta",
+    "plantilla de oferta",
     "mainosteksti",
     "ad copy",
     "texto publicitario",
@@ -537,21 +561,43 @@ function getExplicitCopyLabelMatch(line: string): string | null {
     if (
       cleaned === label ||
       cleaned === `${label}:` ||
-      cleaned === `${label}：` ||
       cleaned.startsWith(`${label}: `) ||
-      cleaned.startsWith(`${label}：`) ||
       cleaned === `${label} -` ||
-      cleaned.startsWith(`${label} - `) ||
-      cleaned === `${label} –` ||
-      cleaned.startsWith(`${label} – `) ||
-      cleaned === `${label} —` ||
-      cleaned.startsWith(`${label} — `)
+      cleaned.startsWith(`${label} - `)
     ) {
       return label;
     }
   }
 
+  for (const label of labels) {
+    const idx = cleaned.indexOf(label);
+    if (idx === -1) continue;
+
+    const hasColonAfter = cleaned.indexOf(":", idx + label.length) !== -1;
+    const hasDashAfter = cleaned.indexOf(" - ", idx + label.length) !== -1;
+
+    if (hasColonAfter || hasDashAfter) {
+      return label;
+    }
+  }
+
   return null;
+}
+
+function extractBodyFromMatchedLabelLine(line: string): string {
+  const cleaned = cleanCopyLabelLine(line);
+
+  const colonIndex = cleaned.lastIndexOf(":");
+  if (colonIndex >= 0 && colonIndex < cleaned.length - 1) {
+    return cleaned.slice(colonIndex + 1).trim();
+  }
+
+  const dashIndex = cleaned.lastIndexOf(" - ");
+  if (dashIndex >= 0 && dashIndex < cleaned.length - 3) {
+    return cleaned.slice(dashIndex + 3).trim();
+  }
+
+  return "";
 }
 
 function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
@@ -569,23 +615,19 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     const matched = getExplicitCopyLabelMatch(line);
     if (!matched) continue;
 
-    const cleanedLine = cleanCopyLabelLine(line);
-    const label = normalizeOutputBoxLabel(cleanedLine, locale);
+    const label = normalizeOutputBoxLabel(line, locale);
 
-    let inlineBody = "";
-    const colonMatch = cleanedLine.match(/^[^:：]+[:：]\s*(.*)$/);
-    if (colonMatch) {
-      inlineBody = (colonMatch[1] || "").trim();
+    const inlineBody = extractBodyFromMatchedLabelLine(line);
+    const tail = lines.slice(i + 1).join("\n").trim();
+
+    let body = "";
+    if (inlineBody && tail) {
+      body = `${inlineBody}\n${tail}`.trim();
+    } else if (inlineBody) {
+      body = inlineBody.trim();
     } else {
-      const dashMatch = cleanedLine.match(/^[^-–—]+[-–—]\s*(.*)$/);
-      if (dashMatch) {
-        inlineBody = (dashMatch[1] || "").trim();
-      }
+      body = tail.trim();
     }
-
-    const tailLines = lines.slice(i + 1);
-    const tailText = tailLines.join("\n");
-    const body = [inlineBody, tailText].filter(Boolean).join("\n").trim();
 
     if (!body || body.trim().length < 2) return null;
 
@@ -624,8 +666,7 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
   if (lines.length >= 2) {
     const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
     if (firstNonEmptyIndex >= 0 && firstNonEmptyIndex < lines.length - 1) {
-      const firstLineRaw = lines[firstNonEmptyIndex].trim();
-      const firstLine = cleanCopyLabelLine(firstLineRaw).toLowerCase();
+      const firstLine = lines[firstNonEmptyIndex].trim().toLowerCase().replace(/\*+/g, "");
       const rest = lines.slice(firstNonEmptyIndex + 1).join("\n").trim();
 
       const introLooksLikeLabel =
@@ -636,12 +677,15 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
         firstLine.includes("final text") ||
         firstLine.includes("texto final") ||
         firstLine.includes("sähköposti") ||
+        firstLine.includes("sähköpostipohja") ||
         firstLine.includes("email") ||
         firstLine.includes("correo") ||
         firstLine.includes("viesti") ||
+        firstLine.includes("viestipohja") ||
         firstLine.includes("message") ||
         firstLine.includes("mensaje") ||
         firstLine.includes("tarjous") ||
+        firstLine.includes("tarjouspohja") ||
         firstLine.includes("offer") ||
         firstLine.includes("oferta");
 
@@ -649,7 +693,7 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
         return {
           mainText: lines.slice(0, firstNonEmptyIndex).join("\n").trim(),
           copyText: rest,
-          label: normalizeOutputBoxLabel(firstLineRaw, locale),
+          label: normalizeOutputBoxLabel(lines[firstNonEmptyIndex], locale),
         };
       }
     }
