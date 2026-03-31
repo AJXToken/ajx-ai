@@ -490,12 +490,20 @@ function looksLikeOutputBlock(block: string) {
   return true;
 }
 
-function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
-  const normalized = normalizeCopyBoxSource(text);
-  if (!normalized) return null;
-  if (normalized.includes("```")) return null;
+function cleanCopyLabelLine(line: string) {
+  return line
+    .trim()
+    .replace(/^\*+/, "")
+    .replace(/\*+$/, "")
+    .replace(/^[_`>#\-\s•]+/, "")
+    .replace(/^[—–-]+\s*/, "")
+    .trim();
+}
 
-  const explicitLabels = [
+function getExplicitCopyLabelMatch(line: string): string | null {
+  const cleaned = cleanCopyLabelLine(line).toLowerCase();
+
+  const labels = [
     "käännös",
     "tässä käännös",
     "translation",
@@ -525,6 +533,32 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     "copia desde aquí",
   ];
 
+  for (const label of labels) {
+    if (
+      cleaned === label ||
+      cleaned === `${label}:` ||
+      cleaned === `${label}：` ||
+      cleaned.startsWith(`${label}: `) ||
+      cleaned.startsWith(`${label}：`) ||
+      cleaned === `${label} -` ||
+      cleaned.startsWith(`${label} - `) ||
+      cleaned === `${label} –` ||
+      cleaned.startsWith(`${label} – `) ||
+      cleaned === `${label} —` ||
+      cleaned.startsWith(`${label} — `)
+    ) {
+      return label;
+    }
+  }
+
+  return null;
+}
+
+function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
+  const normalized = normalizeCopyBoxSource(text);
+  if (!normalized) return null;
+  if (normalized.includes("```")) return null;
+
   const lines = normalized.split("\n");
 
   for (let i = 0; i < lines.length; i++) {
@@ -532,36 +566,26 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     const line = rawLine.trim();
     if (!line) continue;
 
-    const lower = line.toLowerCase().replace(/\*+/g, "").trim();
-    const matched = explicitLabels.find(
-      (label) =>
-        lower === label ||
-        lower === `${label}:` ||
-        lower.startsWith(`${label}: `) ||
-        lower === `${label} -` ||
-        lower.startsWith(`${label} - `)
-    );
-
+    const matched = getExplicitCopyLabelMatch(line);
     if (!matched) continue;
 
-    const label = normalizeOutputBoxLabel(line, locale);
-    let body = "";
+    const cleanedLine = cleanCopyLabelLine(line);
+    const label = normalizeOutputBoxLabel(cleanedLine, locale);
 
-    if (line.includes(":") && line.split(":").slice(1).join(":").trim()) {
-      body = line.split(":").slice(1).join(":").trim();
-      const tail = lines.slice(i + 1).join("\n").trim();
-      if (tail) {
-        body = `${body}\n${tail}`.trim();
-      }
-    } else if (line.includes(" - ") && line.split(" - ").slice(1).join(" - ").trim()) {
-      body = line.split(" - ").slice(1).join(" - ").trim();
-      const tail = lines.slice(i + 1).join("\n").trim();
-      if (tail) {
-        body = `${body}\n${tail}`.trim();
-      }
+    let inlineBody = "";
+    const colonMatch = cleanedLine.match(/^[^:：]+[:：]\s*(.*)$/);
+    if (colonMatch) {
+      inlineBody = (colonMatch[1] || "").trim();
     } else {
-      body = lines.slice(i + 1).join("\n").trim();
+      const dashMatch = cleanedLine.match(/^[^-–—]+[-–—]\s*(.*)$/);
+      if (dashMatch) {
+        inlineBody = (dashMatch[1] || "").trim();
+      }
     }
+
+    const tailLines = lines.slice(i + 1);
+    const tailText = tailLines.join("\n");
+    const body = [inlineBody, tailText].filter(Boolean).join("\n").trim();
 
     if (!body || body.trim().length < 2) return null;
 
@@ -600,7 +624,8 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
   if (lines.length >= 2) {
     const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
     if (firstNonEmptyIndex >= 0 && firstNonEmptyIndex < lines.length - 1) {
-      const firstLine = lines[firstNonEmptyIndex].trim().toLowerCase().replace(/\*+/g, "");
+      const firstLineRaw = lines[firstNonEmptyIndex].trim();
+      const firstLine = cleanCopyLabelLine(firstLineRaw).toLowerCase();
       const rest = lines.slice(firstNonEmptyIndex + 1).join("\n").trim();
 
       const introLooksLikeLabel =
@@ -624,7 +649,7 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
         return {
           mainText: lines.slice(0, firstNonEmptyIndex).join("\n").trim(),
           copyText: rest,
-          label: normalizeOutputBoxLabel(lines[firstNonEmptyIndex], locale),
+          label: normalizeOutputBoxLabel(firstLineRaw, locale),
         };
       }
     }
