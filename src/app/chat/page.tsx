@@ -428,12 +428,6 @@ function copyLabel(locale: Locale, copied: boolean) {
   return "Kopioi";
 }
 
-function openImageLabel(locale: Locale) {
-  if (locale === "es") return "Abrir imagen";
-  if (locale === "en") return "Open image";
-  return "Avaa kuva";
-}
-
 function outputBoxLabel(locale: Locale) {
   if (locale === "es") return "Texto listo";
   if (locale === "en") return "Ready text";
@@ -700,17 +694,6 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
   }
 
   return null;
-}
-
-function hasDedicatedCopyBox(text: string, locale: Locale) {
-  const content = stripMarkdownImages(text || "");
-  if (!content) return false;
-
-  const segments = parseCodeBlocks(content);
-  return segments.some((segment) => {
-    if (segment.type !== "text") return false;
-    return !!extractCopyBox(segment.value, locale);
-  });
 }
 
 function renderPlainRichText(text: string, locale: Locale) {
@@ -995,13 +978,9 @@ function renderPlainRichText(text: string, locale: Locale) {
 function RichMessage({
   text,
   locale,
-  onCopy,
-  copiedKey,
 }: {
   text: string;
   locale: Locale;
-  onCopy: (value: string, key: string) => void;
-  copiedKey: string;
 }) {
   const content = stripMarkdownImages(text || "");
   if (!content) return null;
@@ -1015,9 +994,6 @@ function RichMessage({
           const extracted = extractCopyBox(segment.value, locale);
           const mainText = extracted?.mainText ?? segment.value;
           const rendered = renderPlainRichText(mainText, locale);
-          const boxCopyKey = extracted
-            ? `copybox-${idx}-${extracted.label}-${extracted.copyText.length}`
-            : "";
 
           return (
             <React.Fragment key={`seg-text-${idx}`}>
@@ -1026,14 +1002,6 @@ function RichMessage({
                 <div className="ajxOutputBox">
                   <div className="ajxOutputTop">
                     <span className="ajxOutputTitle">{extracted.label}</span>
-                    <button
-                      type="button"
-                      className="ajxCopyBtn"
-                      onClick={() => onCopy(extracted.copyText, boxCopyKey)}
-                      title={copyLabel(locale, copiedKey === boxCopyKey)}
-                    >
-                      {copyLabel(locale, copiedKey === boxCopyKey)}
-                    </button>
                   </div>
                   <pre className="ajxOutputBody">{extracted.copyText}</pre>
                 </div>
@@ -1043,20 +1011,11 @@ function RichMessage({
         }
 
         const langLabel = segment.language || "code";
-        const copyKey = `code-${idx}-${langLabel}-${segment.code.length}`;
 
         return (
           <div key={`seg-code-${idx}`} className="ajxCodeBlockWrap">
             <div className="ajxCodeToolbar">
               <span className="ajxCodeLang">{langLabel}</span>
-              <button
-                type="button"
-                className="ajxCopyBtn"
-                onClick={() => onCopy(segment.code, copyKey)}
-                title={copyLabel(locale, copiedKey === copyKey)}
-              >
-                {copyLabel(locale, copiedKey === copyKey)}
-              </button>
             </div>
             <pre className="ajxCodePre">
               <code>{segment.code}</code>
@@ -1752,76 +1711,6 @@ export default function ChatPage(): React.JSX.Element {
     }
   }
 
-  function handleOpenImage(url: string) {
-    if (!url) return;
-
-    try {
-      const safeUrl = String(url)
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-
-      const win = window.open("", "_blank");
-      if (!win) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        return;
-      }
-
-      win.document.open();
-      win.document.write(`
-        <!doctype html>
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <title>AJX Image</title>
-            <style>
-              html, body {
-                margin: 0;
-                padding: 0;
-                background: #111;
-                width: 100%;
-                height: 100%;
-              }
-              body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              }
-              img {
-                display: block;
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="${safeUrl}" alt="AJX Image" />
-          </body>
-        </html>
-      `);
-      win.document.close();
-    } catch {
-      try {
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } catch {}
-    }
-  }
-
   function triggerImageButton() {
     const root = imageButtonWrapRef.current;
     if (!root) return false;
@@ -2254,14 +2143,7 @@ export default function ChatPage(): React.JSX.Element {
       );
     }
 
-    return (
-      <RichMessage
-        text={stripped}
-        locale={locale}
-        onCopy={handleCopy}
-        copiedKey={copiedKey}
-      />
-    );
+    return <RichMessage text={stripped} locale={locale} />;
   }
 
   function setLocaleAndPersist(next: Locale) {
@@ -3039,7 +2921,7 @@ export default function ChatPage(): React.JSX.Element {
         .ajxCodeToolbar {
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          justify-content: flex-start;
           gap: 8px;
           padding: 8px 10px;
           border-bottom: 1px solid rgba(11, 13, 18, 0.08);
@@ -3084,7 +2966,7 @@ export default function ChatPage(): React.JSX.Element {
         .ajxOutputTop {
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          justify-content: flex-start;
           gap: 8px;
           padding: 10px 12px;
           border-bottom: 1px solid rgba(11, 13, 18, 0.08);
@@ -3535,12 +3417,7 @@ export default function ChatPage(): React.JSX.Element {
                   const isUser = m.role === "user";
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
                   const messageTextForCopy = stripMarkdownImages(m.content || "");
-                  const imageUrls = extractMarkdownImageUrls(m.content || "");
-                  const assistantHasDedicatedCopyBox =
-                    !isUser && hasDedicatedCopyBox(m.content || "", locale);
-                  const hasCopyableText =
-                    !!messageTextForCopy.trim() && (isUser || !assistantHasDedicatedCopyBox);
-                  const hasImages = imageUrls.length > 0;
+                  const hasCopyableText = !!messageTextForCopy.trim();
 
                   return (
                     <div
@@ -3558,31 +3435,18 @@ export default function ChatPage(): React.JSX.Element {
                           isUser ? styles.bubbleUser : styles.bubbleAi
                         }`}
                       >
-                        {(hasCopyableText || hasImages) && (
+                        {hasCopyableText ? (
                           <div className="ajxBubbleTop">
-                            {hasCopyableText ? (
-                              <button
-                                type="button"
-                                className="ajxCopyBtn"
-                                onClick={() => handleCopy(messageTextForCopy, messageCopyKey)}
-                                title={copyLabel(locale, copiedKey === messageCopyKey)}
-                              >
-                                {copyLabel(locale, copiedKey === messageCopyKey)}
-                              </button>
-                            ) : null}
-
-                            {hasImages ? (
-                              <button
-                                type="button"
-                                className="ajxCopyBtn"
-                                onClick={() => handleOpenImage(imageUrls[0])}
-                                title={openImageLabel(locale)}
-                              >
-                                {openImageLabel(locale)}
-                              </button>
-                            ) : null}
+                            <button
+                              type="button"
+                              className="ajxCopyBtn"
+                              onClick={() => handleCopy(messageTextForCopy, messageCopyKey)}
+                              title={copyLabel(locale, copiedKey === messageCopyKey)}
+                            >
+                              {copyLabel(locale, copiedKey === messageCopyKey)}
+                            </button>
                           </div>
-                        )}
+                        ) : null}
 
                         {renderMessageContent(m.content, isUser)}
                         {renderImagesFromContent(m.content)}
