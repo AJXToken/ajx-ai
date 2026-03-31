@@ -477,18 +477,31 @@ function normalizeOutputBoxLabel(raw: string, locale: Locale) {
   return raw.trim().replace(/:+$/, "");
 }
 
-function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
-  const source = stripMarkdownImages(text || "");
-  if (!source) return null;
-  if (source.includes("```")) return null;
+function normalizeCopyBoxSource(text: string) {
+  return stripMarkdownImages(text || "").replace(/\r\n/g, "\n").trim();
+}
 
-  const normalized = source.replace(/\r\n/g, "\n").trim();
+function looksLikeOutputBlock(block: string) {
+  const s = block.trim();
+  if (!s) return false;
+  if (/[?？]$/.test(s)) return false;
+  if (/^[-*•]\s/.test(s)) return false;
+  if (/^\d+[\.\)]\s/.test(s)) return false;
+  return true;
+}
+
+function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
+  const normalized = normalizeCopyBoxSource(text);
   if (!normalized) return null;
+  if (normalized.includes("```")) return null;
 
   const explicitLabels = [
     "käännös",
+    "tässä käännös",
     "translation",
+    "here is the translation",
     "traducción",
+    "aquí tienes la traducción",
     "valmis teksti",
     "final text",
     "texto final",
@@ -507,22 +520,31 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     "caption",
     "copy-paste",
     "copy paste",
+    "kopioi tästä",
+    "copy from here",
+    "copia desde aquí",
   ];
 
   const lines = normalized.split("\n");
+
   for (let i = 0; i < lines.length; i++) {
     const rawLine = lines[i] ?? "";
     const line = rawLine.trim();
     if (!line) continue;
 
-    const lower = line.toLowerCase().replace(/\*+/g, "");
+    const lower = line.toLowerCase().replace(/\*+/g, "").trim();
     const matched = explicitLabels.find(
-      (label) => lower === label || lower === `${label}:` || lower.startsWith(`${label}: `)
+      (label) =>
+        lower === label ||
+        lower === `${label}:` ||
+        lower.startsWith(`${label}: `) ||
+        lower === `${label} -` ||
+        lower.startsWith(`${label} - `)
     );
 
     if (!matched) continue;
 
-    let label = normalizeOutputBoxLabel(line, locale);
+    const label = normalizeOutputBoxLabel(line, locale);
     let body = "";
 
     if (line.includes(":") && line.split(":").slice(1).join(":").trim()) {
@@ -531,11 +553,17 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
       if (tail) {
         body = `${body}\n${tail}`.trim();
       }
+    } else if (line.includes(" - ") && line.split(" - ").slice(1).join(" - ").trim()) {
+      body = line.split(" - ").slice(1).join(" - ").trim();
+      const tail = lines.slice(i + 1).join("\n").trim();
+      if (tail) {
+        body = `${body}\n${tail}`.trim();
+      }
     } else {
       body = lines.slice(i + 1).join("\n").trim();
     }
 
-    if (!body || body.length < 12) return null;
+    if (!body || body.trim().length < 2) return null;
 
     const mainText = lines.slice(0, i).join("\n").trim();
 
@@ -555,12 +583,9 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     const first = blocks[0];
     const last = blocks[blocks.length - 1];
 
-    const firstLooksIntro = first.length <= 260;
+    const firstLooksIntro = first.length <= 320;
     const lastLooksFinal =
-      last.length >= 80 &&
-      last.split("\n").length >= 2 &&
-      !/[?？]$/.test(last) &&
-      !/^[-*•]\s/.test(last);
+      looksLikeOutputBlock(last) && (last.length >= 2 || last.split("\n").length >= 1);
 
     if (firstLooksIntro && lastLooksFinal) {
       const mainText = blocks.slice(0, -1).join("\n\n").trim();
@@ -572,7 +597,51 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
     }
   }
 
+  if (lines.length >= 2) {
+    const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
+    if (firstNonEmptyIndex >= 0 && firstNonEmptyIndex < lines.length - 1) {
+      const firstLine = lines[firstNonEmptyIndex].trim().toLowerCase().replace(/\*+/g, "");
+      const rest = lines.slice(firstNonEmptyIndex + 1).join("\n").trim();
+
+      const introLooksLikeLabel =
+        firstLine.includes("käännös") ||
+        firstLine.includes("translation") ||
+        firstLine.includes("traducción") ||
+        firstLine.includes("valmis teksti") ||
+        firstLine.includes("final text") ||
+        firstLine.includes("texto final") ||
+        firstLine.includes("sähköposti") ||
+        firstLine.includes("email") ||
+        firstLine.includes("correo") ||
+        firstLine.includes("viesti") ||
+        firstLine.includes("message") ||
+        firstLine.includes("mensaje") ||
+        firstLine.includes("tarjous") ||
+        firstLine.includes("offer") ||
+        firstLine.includes("oferta");
+
+      if (introLooksLikeLabel && rest && looksLikeOutputBlock(rest)) {
+        return {
+          mainText: lines.slice(0, firstNonEmptyIndex).join("\n").trim(),
+          copyText: rest,
+          label: normalizeOutputBoxLabel(lines[firstNonEmptyIndex], locale),
+        };
+      }
+    }
+  }
+
   return null;
+}
+
+function hasDedicatedCopyBox(text: string, locale: Locale) {
+  const content = stripMarkdownImages(text || "");
+  if (!content) return false;
+
+  const segments = parseCodeBlocks(content);
+  return segments.some((segment) => {
+    if (segment.type !== "text") return false;
+    return !!extractCopyBox(segment.value, locale);
+  });
 }
 
 function renderPlainRichText(text: string, locale: Locale) {
@@ -3398,7 +3467,10 @@ export default function ChatPage(): React.JSX.Element {
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
                   const messageTextForCopy = stripMarkdownImages(m.content || "");
                   const imageUrls = extractMarkdownImageUrls(m.content || "");
-                  const hasCopyableText = !!messageTextForCopy.trim();
+                  const assistantHasDedicatedCopyBox =
+                    !isUser && hasDedicatedCopyBox(m.content || "", locale);
+                  const hasCopyableText =
+                    !!messageTextForCopy.trim() && (isUser || !assistantHasDedicatedCopyBox);
                   const hasImages = imageUrls.length > 0;
 
                   return (
