@@ -141,6 +141,13 @@ function pickPrompt(props: Props, locale: Locale, hasSourceImage: boolean): stri
   return (asked || "").trim();
 }
 
+function dismissMobileKeyboard() {
+  try {
+    const active = document.activeElement as HTMLElement | null;
+    active?.blur?.();
+  } catch {}
+}
+
 export default function ImageButton(props: Props) {
   const [busy, setBusy] = React.useState(false);
 
@@ -149,6 +156,8 @@ export default function ImageButton(props: Props) {
 
   async function onClick() {
     if (busy || props.disabled) return;
+
+    dismissMobileKeyboard();
 
     const sourceImage = props.getSourceImage?.() || null;
     const hasSourceImage = !!sourceImage?.dataUrl;

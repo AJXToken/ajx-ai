@@ -232,12 +232,12 @@ export function getMessageLimitReachedText(planId: PlanId, locale: Locale): stri
   if (id === "basic") {
     switch (locale) {
       case "fi":
-        return "Olet saavuttanut kuukausittaisen viestirajan. Päivitä Pro-versioon tai osta lisäpaketti jatkaaksesi.";
+        return "Olet saavuttanut kuukausittaisen viestirajan. Päivitä Plus-versioon tai osta lisäpaketti jatkaaksesi.";
       case "es":
-        return "Has alcanzado tu límite mensual de mensajes. Actualiza a Pro o compra un paquete adicional para continuar.";
+        return "Has alcanzado tu límite mensual de mensajes. Actualiza a Plus o compra un paquete adicional para continuar.";
       case "en":
       default:
-        return "You have reached your monthly message limit. Upgrade to Pro or buy an extra pack to continue.";
+        return "You have reached your monthly message limit. Upgrade to Plus or buy an extra pack to continue.";
     }
   }
 

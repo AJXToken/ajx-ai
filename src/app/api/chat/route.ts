@@ -676,6 +676,12 @@ function debugReasonFromError(err: unknown): string {
   return `${provider}-fallback`;
 }
 
+function sseEncode(data: unknown): Uint8Array {
+  const payload =
+    typeof data === "string" ? data : JSON.stringify(data);
+  return new TextEncoder().encode(`data: ${payload}\n\n`);
+}
+
 // ====== SAFETY / RESPONSIBILITY ======
 type SafetyFlags = {
   asksTherapistRole: boolean;
@@ -2286,7 +2292,7 @@ export async function POST(req: NextRequest) {
 
   resHeaders.set("x-ajx-debug-didweb", String(didWeb));
   resHeaders.set("x-ajx-debug-web-query", safeHeaderValue(webQueryUsed || "none", "none", 200));
-  resHeaders.set("x-ajx-debug-web-failure", safeHeaderValue(webFailureReason, "none", 200));
+  resHeaders.set("x-ajx-debug-web-failure", safeHeaderValue(webFailureReason, "none", "none".length));
 
   usage.msgThisMonth = (usage.msgThisMonth || 0) + requestCost;
   usage.reqToday = (usage.reqToday || 0) + requestCost;
@@ -2326,10 +2332,29 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const encoder = new TextEncoder();
     const readable = new ReadableStream({
       start(controller) {
-        controller.enqueue(encoder.encode(text));
+        controller.enqueue(
+          sseEncode({
+            type: "delta",
+            delta: text,
+          })
+        );
+        controller.enqueue(
+          sseEncode({
+            type: "final",
+            fullText: text,
+            plan,
+            limits: {
+              ...limits,
+              reqPerMonth: effectiveReqLimit,
+              imgAnalysesPerMonth: effectiveImgLimit,
+              webPerMonth: effectiveWebLimit,
+            },
+            usage,
+          })
+        );
+        controller.enqueue(sseEncode("[DONE]"));
         controller.close();
       },
     });
@@ -2338,8 +2363,10 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: new Headers({
         ...Object.fromEntries(resHeaders.entries()),
-        "Content-Type": "text/plain; charset=utf-8",
-        "Cache-Control": "no-cache",
+        "Content-Type": "text/event-stream; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        Connection: "keep-alive",
+        "X-Accel-Buffering": "no",
       }),
     });
   }
@@ -2593,14 +2620,27 @@ export async function POST(req: NextRequest) {
 
   try {
     if (stream) {
-      const encoder = new TextEncoder();
+      const streamLimits = {
+        ...limits,
+        reqPerMonth: effectiveReqLimit,
+        imgAnalysesPerMonth: effectiveImgLimit,
+        webPerMonth: effectiveWebLimit,
+      };
+
       const readable = new ReadableStream({
         async start(controller) {
           try {
             let full = "";
 
             for await (const delta of callTextStream()) {
+              if (!delta) continue;
               full += delta;
+              controller.enqueue(
+                sseEncode({
+                  type: "delta",
+                  delta,
+                })
+              );
             }
 
             if (!isUsableModelText(full)) {
@@ -2609,7 +2649,18 @@ export async function POST(req: NextRequest) {
                 fallbackReason = "gemini-stream-empty-text";
                 resHeaders.set("x-ajx-debug-fallback", safeHeaderValue(fallbackUsed));
                 resHeaders.set("x-ajx-debug-fallback-reason", safeHeaderValue(fallbackReason));
-                full = await callViaOpenAINonStream();
+
+                full = "";
+                for await (const delta of callViaOpenAIStream()) {
+                  if (!delta) continue;
+                  full += delta;
+                  controller.enqueue(
+                    sseEncode({
+                      type: "delta",
+                      delta,
+                    })
+                  );
+                }
               } else {
                 throw new Error("Malli palautti tyhjän vastauksen.");
               }
@@ -2626,10 +2677,40 @@ export async function POST(req: NextRequest) {
               throw new Error("Vastaus jäi tyhjäksi jälkikäsittelyn jälkeen.");
             }
 
-            controller.enqueue(encoder.encode(finalText));
+            resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
+            resHeaders.set("x-ajx-debug-fallback", safeHeaderValue(fallbackUsed || "none"));
+            resHeaders.set(
+              "x-ajx-debug-fallback-reason",
+              safeHeaderValue(fallbackReason || "none")
+            );
+
+            controller.enqueue(
+              sseEncode({
+                type: "final",
+                fullText: finalText,
+                plan,
+                limits: streamLimits,
+                usage,
+                web: {
+                  requested: shouldTryWeb,
+                  didWeb,
+                  query: webQueryUsed || "",
+                },
+                actualModel: actualModelName,
+                fallbackUsed: fallbackUsed || "none",
+                fallbackReason: fallbackReason || "none",
+              })
+            );
+
+            controller.enqueue(sseEncode("[DONE]"));
           } catch (e: any) {
             const msg = e?.message ? String(e.message) : "Virhe streamissä.";
-            controller.enqueue(encoder.encode(`\n\n[Virhe] ${msg}`));
+            controller.enqueue(
+              sseEncode({
+                type: "error",
+                error: msg,
+              })
+            );
           } finally {
             controller.close();
           }
@@ -2640,8 +2721,10 @@ export async function POST(req: NextRequest) {
         status: 200,
         headers: new Headers({
           ...Object.fromEntries(resHeaders.entries()),
-          "Content-Type": "text/plain; charset=utf-8",
-          "Cache-Control": "no-cache",
+          "Content-Type": "text/event-stream; charset=utf-8",
+          "Cache-Control": "no-cache, no-transform",
+          Connection: "keep-alive",
+          "X-Accel-Buffering": "no",
         }),
       });
     }

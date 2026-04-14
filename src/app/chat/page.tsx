@@ -1716,6 +1716,14 @@ export default function ChatPage(): React.JSX.Element {
     });
   }
 
+  function dismissMobileComposer() {
+    if (!isMobile) return;
+    setInputFocused(false);
+    try {
+      inputRef.current?.blur();
+    } catch {}
+  }
+
   useEffect(() => {
     try {
       setMode(loadMode(MODE_KEY, "general"));
@@ -1988,6 +1996,22 @@ export default function ChatPage(): React.JSX.Element {
     const msg: ChatMsg = { role: "assistant", content: text, ts: nowTs() };
     setMessages((prev) => {
       const next = [...prev, msg];
+      persistActive(next);
+      return next;
+    });
+  }
+
+  function upsertAssistantStreamMessage(streamTs: number, text: string) {
+    setMessages((prev) => {
+      const idx = prev.findIndex((m) => m.role === "assistant" && m.ts === streamTs);
+      let next: ChatMsg[];
+
+      if (idx === -1) {
+        next = [...prev, { role: "assistant", content: text, ts: streamTs }];
+      } else {
+        next = prev.map((m, i) => (i === idx ? { ...m, content: text } : m));
+      }
+
       persistActive(next);
       return next;
     });
@@ -2291,6 +2315,7 @@ export default function ChatPage(): React.JSX.Element {
     const useWebComputed = forceWebNext;
     const usedMode = forcedMode ?? mode;
 
+    dismissMobileComposer();
     setInput("");
     setPlusOpen(false);
     setLoading(true);
@@ -2314,8 +2339,15 @@ export default function ChatPage(): React.JSX.Element {
     const optimistic = [...messages, userMsg];
     setMessages(optimistic);
     persistActive(optimistic);
+    scrollToBottom(true);
 
     const convoForBackend = buildBackendMessages(backendUserContent);
+    const attachmentsForRequest = pending.map((p) => ({
+      kind: p.kind,
+      name: p.name,
+      type: p.type,
+      dataUrl: p.dataUrl,
+    }));
 
     try {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -2329,19 +2361,14 @@ export default function ChatPage(): React.JSX.Element {
         method: "POST",
         headers,
         body: JSON.stringify({
-          stream: false,
+          stream: true,
           useWeb: useWebComputed,
           imagesRequested: 0,
           messages: convoForBackend,
           locale,
           rolesEnabled: true,
           role: modeToRole(usedMode),
-          attachments: pending.map((p) => ({
-            kind: p.kind,
-            name: p.name,
-            type: p.type,
-            dataUrl: p.dataUrl,
-          })),
+          attachments: attachmentsForRequest,
         }),
       });
 
@@ -2382,13 +2409,28 @@ export default function ChatPage(): React.JSX.Element {
         return;
       }
 
-      if (!ct.includes("application/json")) {
+      if (ct.includes("application/json")) {
+        const j = (await res.json()) as ChatOkJson;
+        const nextMsgs = [
+          ...optimistic,
+          { role: "assistant" as const, content: j?.text ?? "", ts: nowTs() },
+        ];
+        setMessages(nextMsgs);
+        persistActive(nextMsgs);
+
+        setPlan(j.plan);
+        setLimits(j.limits);
+        setUsage(j.usage);
+        return;
+      }
+
+      if (!res.body) {
         const tt = await res.text().catch(() => "");
         const nextMsgs = [
           ...optimistic,
           {
             role: "assistant" as const,
-            content: tt || "(Virhe: odotettiin JSON)",
+            content: tt || "(Virhe: stream puuttuu)",
             ts: nowTs(),
           },
         ];
@@ -2398,18 +2440,202 @@ export default function ChatPage(): React.JSX.Element {
         return;
       }
 
-      const j = (await res.json()) as ChatOkJson;
-      const nextMsgs = [
-        ...optimistic,
-        { role: "assistant" as const, content: j?.text ?? "", ts: nowTs() },
-      ];
-      setMessages(nextMsgs);
-      persistActive(nextMsgs);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      const streamTs = nowTs() + 1;
 
-      setPlan(j.plan);
-      setLimits(j.limits);
-      setUsage(j.usage);
-      return;
+      let textSoFar = "";
+      let sseBuffer = "";
+      let lineBuffer = "";
+      let finalPlan: Plan | undefined;
+      let finalLimits: Limits | undefined;
+      let finalUsage: Usage | undefined;
+      let streamError = "";
+      let sawStructuredStream = false;
+
+      const applyText = (nextText: string) => {
+        textSoFar = nextText;
+        upsertAssistantStreamMessage(streamTs, textSoFar);
+        scrollToBottom(true);
+      };
+
+      const appendDelta = (delta: string) => {
+        if (!delta) return;
+        applyText(textSoFar + delta);
+      };
+
+      const applyMeta = (obj: any) => {
+        if (obj?.plan) finalPlan = obj.plan;
+        if (obj?.limits) finalLimits = obj.limits;
+        if (obj?.usage) finalUsage = obj.usage;
+      };
+
+      const handleStructuredPayload = (payload: string) => {
+        const trimmed = String(payload || "").trim();
+        if (!trimmed) return;
+
+        if (trimmed === "[DONE]") {
+          sawStructuredStream = true;
+          return;
+        }
+
+        try {
+          const obj = JSON.parse(trimmed);
+          sawStructuredStream = true;
+          applyMeta(obj);
+
+          if (obj?.error) {
+            streamError = String(obj.error);
+          }
+
+          if (typeof obj?.delta === "string") {
+            appendDelta(obj.delta);
+          }
+
+          if (typeof obj?.text === "string" && obj?.type === "delta") {
+            appendDelta(obj.text);
+          }
+
+          if (typeof obj?.content === "string" && obj?.type === "delta") {
+            appendDelta(obj.content);
+          }
+
+          const explicitFull =
+            typeof obj?.fullText === "string"
+              ? obj.fullText
+              : typeof obj?.text === "string" && (obj?.type === "final" || obj?.done)
+                ? obj.text
+                : typeof obj?.content === "string" && (obj?.type === "final" || obj?.done)
+                  ? obj.content
+                  : null;
+
+          if (typeof explicitFull === "string") {
+            applyText(explicitFull);
+          }
+
+          return;
+        } catch {
+          // fall through to raw text append
+        }
+
+        appendDelta(trimmed);
+      };
+
+      const processSseChunk = (chunk: string) => {
+        sseBuffer += chunk;
+
+        while (true) {
+          const sepIndex = sseBuffer.indexOf("\n\n");
+          if (sepIndex === -1) break;
+
+          const block = sseBuffer.slice(0, sepIndex);
+          sseBuffer = sseBuffer.slice(sepIndex + 2);
+
+          const lines = block
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter(Boolean);
+
+          const dataLines = lines
+            .filter((line) => line.startsWith("data:"))
+            .map((line) => line.replace(/^data:\s?/, ""));
+
+          if (dataLines.length === 0) continue;
+          handleStructuredPayload(dataLines.join("\n"));
+        }
+      };
+
+      const processNdjsonChunk = (chunk: string) => {
+        lineBuffer += chunk;
+
+        while (true) {
+          const newlineIndex = lineBuffer.indexOf("\n");
+          if (newlineIndex === -1) break;
+
+          const line = lineBuffer.slice(0, newlineIndex);
+          lineBuffer = lineBuffer.slice(newlineIndex + 1);
+          handleStructuredPayload(line);
+        }
+      };
+
+      const isEventStream = ct.includes("text/event-stream");
+      const isNdjson =
+        ct.includes("application/x-ndjson") ||
+        ct.includes("application/jsonl") ||
+        ct.includes("application/ndjson");
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        if (!chunk) continue;
+
+        if (isEventStream) {
+          processSseChunk(chunk);
+          continue;
+        }
+
+        if (isNdjson) {
+          processNdjsonChunk(chunk);
+          continue;
+        }
+
+        appendDelta(chunk);
+      }
+
+      const tail = decoder.decode();
+      if (tail) {
+        if (isEventStream) {
+          processSseChunk(tail);
+          if (sseBuffer.trim()) {
+            const leftover = sseBuffer
+              .split(/\r?\n/)
+              .map((line) => line.trim())
+              .filter((line) => line.startsWith("data:"))
+              .map((line) => line.replace(/^data:\s?/, ""))
+              .join("\n");
+            if (leftover) handleStructuredPayload(leftover);
+          }
+        } else if (isNdjson) {
+          processNdjsonChunk(tail);
+          if (lineBuffer.trim()) {
+            handleStructuredPayload(lineBuffer);
+          }
+        } else {
+          appendDelta(tail);
+        }
+      } else {
+        if (isEventStream && sseBuffer.trim()) {
+          const leftover = sseBuffer
+            .split(/\r?\n/)
+            .map((line) => line.trim())
+            .filter((line) => line.startsWith("data:"))
+            .map((line) => line.replace(/^data:\s?/, ""))
+            .join("\n");
+          if (leftover) handleStructuredPayload(leftover);
+        }
+
+        if (isNdjson && lineBuffer.trim()) {
+          handleStructuredPayload(lineBuffer);
+        }
+      }
+
+      if (streamError) {
+        applyText(streamError);
+      }
+
+      if (!sawStructuredStream && !textSoFar.trim()) {
+        applyText(locale === "fi" ? "(Tyhjä vastaus)" : locale === "es" ? "(Respuesta vacía)" : "(Empty response)");
+      }
+
+      if (finalPlan && finalLimits && finalUsage) {
+        setPlan(finalPlan);
+        setLimits(finalLimits);
+        setUsage(finalUsage);
+      } else {
+        await fetchStats(devPlan).catch(() => {});
+      }
     } catch (e: any) {
       const msg = e?.message ? String(e.message) : "Tuntematon virhe.";
       const nextMsgs = [
@@ -2421,8 +2647,10 @@ export default function ChatPage(): React.JSX.Element {
       await fetchStats(devPlan).catch(() => {});
     } finally {
       setLoading(false);
-      scrollToBottom();
-      focusInputSoon();
+      scrollToBottom(true);
+      if (!isMobile) {
+        focusInputSoon();
+      }
     }
   }
 
