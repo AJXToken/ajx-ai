@@ -32,6 +32,11 @@ const REDIS_REST_URL = process.env.AJX_UPSTASH_REDIS_REST_URL || "";
 const REDIS_REST_TOKEN = process.env.AJX_UPSTASH_REDIS_REST_TOKEN || "";
 const USAGE_KEY_PREFIX = "ajx:usage:v1";
 
+const PLUS_PRIMARY_LIMIT = 2000;
+const PLUS_SAVINGS_EXTRA_LIMIT = 1000;
+const PLUS_SAVINGS_TOTAL_LIMIT = PLUS_PRIMARY_LIMIT + PLUS_SAVINGS_EXTRA_LIMIT;
+const PLUS_SAVINGS_MAX_OUTPUT_TOKENS = 500;
+
 type Msg = { role: "system" | "user" | "assistant"; content: string };
 
 // ====== COST GUARDS ======
@@ -422,6 +427,42 @@ function l(locale: Locale, fi: string, en: string, es: string) {
   return fi;
 }
 
+function plusSavingsModeActivationText(locale: Locale) {
+  return l(
+    locale,
+    `Huikeaa ideointia! 🚀
+
+Olet saavuttanut Plus-paketin 2000 viestin tehorajan. Jotta voit jatkaa keskeytyksettä, olemme siirtäneet sinut Säästöliekille loppukuun ajaksi.
+Säästöliekillä vastaukset pidetään hieman tiiviimpinä kustannusten hallitsemiseksi.`,
+    `Amazing ideation! 🚀
+
+You have reached the Plus plan's 2000-message performance limit. To keep you going without interruption, you have been moved to Savings Flame for the rest of the month.
+In Savings Flame, replies are kept a bit shorter to keep costs under control.`,
+    `¡Qué nivel de ideas! 🚀
+
+Has alcanzado el límite de rendimiento de 2000 mensajes del plan Plus. Para que puedas seguir sin interrupciones, te hemos movido a Modo Ahorro hasta final de mes.
+En Modo Ahorro, las respuestas se mantienen un poco más breves para controlar los costes.`
+  );
+}
+
+function plusSavingsModeActiveText(locale: Locale) {
+  return l(
+    locale,
+    "Säästöliekki on käytössä tämän kuun loppuun. Vastaukset pidetään hieman tiiviimpinä kustannusten hallitsemiseksi.",
+    "Savings Flame is active until the end of this month. Replies are kept a bit shorter to control costs.",
+    "El Modo Ahorro está activo hasta final de mes. Las respuestas se mantienen algo más breves para controlar los costes."
+  );
+}
+
+function plusSavingsModeLimitReachedText(locale: Locale) {
+  return l(
+    locale,
+    "Olet käyttänyt tämän kuun Plus-paketin 2000 viestin tehorajan sekä Säästöliekki-vaiheen 1000 lisäviestiä. Uusi kuukausi avaa viestit taas normaalisti.",
+    "You have used this month's Plus 2000-message performance limit and the additional 1000 Savings Flame messages. A new month will reopen messages normally.",
+    "Has usado el límite de rendimiento mensual de 2000 mensajes del plan Plus y los 1000 mensajes adicionales del Modo Ahorro. El nuevo mes volverá a abrir los mensajes con normalidad."
+  );
+}
+
 function messageLimitReachedText(plan: PlanId, locale: Locale) {
   if (plan === "free") {
     return l(
@@ -435,10 +476,14 @@ function messageLimitReachedText(plan: PlanId, locale: Locale) {
   if (plan === "basic") {
     return l(
       locale,
-      "Olet saavuttanut kuukausittaisen viestirajan. Päivitä Plus-versioon tai osta lisäpaketti jatkaaksesi.",
-      "You have reached your monthly message limit. Upgrade to Plus or buy an extra pack to continue.",
-      "Has alcanzado tu límite mensual de mensajes. Actualiza a Plus o compra un paquete adicional para continuar."
+      "Olet saavuttanut kuukausittaisen viestirajan. Päivitä Plus-versioon jatkaaksesi.",
+      "You have reached your monthly message limit. Upgrade to Plus to continue.",
+      "Has alcanzado tu límite mensual de mensajes. Actualiza a Plus para continuar."
     );
+  }
+
+  if (plan === "plus") {
+    return plusSavingsModeLimitReachedText(locale);
   }
 
   return l(
@@ -680,6 +725,46 @@ function sseEncode(data: unknown): Uint8Array {
   const payload =
     typeof data === "string" ? data : JSON.stringify(data);
   return new TextEncoder().encode(`data: ${payload}\n\n`);
+}
+
+function plusSavingsNoticeState(args: {
+  plan: PlanId;
+  usageBefore: UsageRow;
+  usageAfter: UsageRow;
+}) {
+  if (args.plan !== ("plus" as any)) {
+    return {
+      activeForThisRequest: false,
+      justActivated: false,
+    };
+  }
+
+  const before = Number(args.usageBefore?.msgThisMonth || 0);
+  const after = Number(args.usageAfter?.msgThisMonth || 0);
+
+  return {
+    activeForThisRequest: before >= PLUS_PRIMARY_LIMIT && before < PLUS_SAVINGS_TOTAL_LIMIT,
+    justActivated: before < PLUS_PRIMARY_LIMIT && after >= PLUS_PRIMARY_LIMIT,
+  };
+}
+
+function prependPlusSavingsNotice(
+  text: string,
+  locale: Locale,
+  state: { activeForThisRequest: boolean; justActivated: boolean }
+): string {
+  const body = String(text || "").trim();
+  if (!body) return body;
+
+  if (state.justActivated) {
+    return `${plusSavingsModeActivationText(locale)}\n\n${body}`.trim();
+  }
+
+  if (state.activeForThisRequest) {
+    return `${plusSavingsModeActiveText(locale)}\n\n${body}`.trim();
+  }
+
+  return body;
 }
 
 // ====== SAFETY / RESPONSIBILITY ======
@@ -1194,7 +1279,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
 
     case "plus":
       return {
-        reqPerMonth: 1000,
+        reqPerMonth: PLUS_PRIMARY_LIMIT,
         reqPerDay: 0,
         imgAnalysesPerMonth: 120,
         imgAnalysesPerDay: 0,
@@ -1412,6 +1497,7 @@ async function callOpenAIResponses(opts: {
   instructions: string;
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
+  maxOutputTokens?: number;
 }): Promise<string> {
   const input: any[] = [
     {
@@ -1435,6 +1521,10 @@ async function callOpenAIResponses(opts: {
     instructions: opts.instructions,
     input,
   };
+
+  if (typeof opts.maxOutputTokens === "number" && opts.maxOutputTokens > 0) {
+    body.max_output_tokens = opts.maxOutputTokens;
+  }
 
   const res = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -1470,6 +1560,7 @@ async function* callOpenAIResponsesStream(opts: {
   instructions: string;
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
+  maxOutputTokens?: number;
 }): AsyncGenerator<string> {
   const input: any[] = [
     {
@@ -1494,6 +1585,10 @@ async function* callOpenAIResponsesStream(opts: {
     input,
     stream: true,
   };
+
+  if (typeof opts.maxOutputTokens === "number" && opts.maxOutputTokens > 0) {
+    body.max_output_tokens = opts.maxOutputTokens;
+  }
 
   const res = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
@@ -1573,14 +1668,22 @@ async function callGeminiGenerateContent(opts: {
   model: string;
   promptText: string;
   images?: { mime: string; base64: string }[];
+  maxOutputTokens?: number;
 }): Promise<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
     opts.model
   )}:generateContent`;
 
-  const body = {
+  const body: any = {
     contents: [{ role: "user", parts: buildGeminiParts(opts.promptText, opts.images) }],
   };
+
+  if (typeof opts.maxOutputTokens === "number" && opts.maxOutputTokens > 0) {
+    body.generationConfig = {
+      ...(body.generationConfig || {}),
+      maxOutputTokens: opts.maxOutputTokens,
+    };
+  }
 
   const res = await fetch(url, {
     method: "POST",
@@ -1614,14 +1717,22 @@ async function* callGeminiStreamGenerateContent(opts: {
   model: string;
   promptText: string;
   images?: { mime: string; base64: string }[];
+  maxOutputTokens?: number;
 }): AsyncGenerator<string> {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
     opts.model
   )}:streamGenerateContent?alt=sse&key=${encodeURIComponent(opts.apiKey)}`;
 
-  const body = {
+  const body: any = {
     contents: [{ role: "user", parts: buildGeminiParts(opts.promptText, opts.images) }],
   };
+
+  if (typeof opts.maxOutputTokens === "number" && opts.maxOutputTokens > 0) {
+    body.generationConfig = {
+      ...(body.generationConfig || {}),
+      maxOutputTokens: opts.maxOutputTokens,
+    };
+  }
 
   const res = await fetch(url, {
     method: "POST",
@@ -1865,6 +1976,7 @@ function geminiModelForRequest(args: {
   lastUserText: string;
   hasTextFiles: boolean;
   didWeb: boolean;
+  plusSavingsActive: boolean;
 }): {
   model: string;
   companyNeedsPro: boolean;
@@ -1910,6 +2022,26 @@ function geminiModelForRequest(args: {
       companyCanUsePro: false,
       companyUsesPro: false,
       reason: "pro-plan-flash",
+    };
+  }
+
+  if (p === ("plus" as any)) {
+    if (args.plusSavingsActive) {
+      return {
+        model: GEMINI_FLASH_LITE_MODEL,
+        companyNeedsPro: false,
+        companyCanUsePro: false,
+        companyUsesPro: false,
+        reason: "plus-savings-flash-lite",
+      };
+    }
+
+    return {
+      model: GEMINI_FLASH_MODEL,
+      companyNeedsPro: false,
+      companyCanUsePro: false,
+      companyUsesPro: false,
+      reason: "plus-plan-flash",
     };
   }
 
@@ -1980,6 +2112,10 @@ export async function POST(req: NextRequest) {
 
   const monthKey = getMonthKey();
   const usage = await loadUsageRow(storeUserKey, monthKey);
+  const usageBeforeRequest: UsageRow = {
+    ...emptyUsageRow(),
+    ...usage,
+  };
 
   if (typeof usage.extraWebThisMonth !== "number") usage.extraWebThisMonth = 0;
   if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
@@ -1995,7 +2131,13 @@ export async function POST(req: NextRequest) {
 
   const budget = promptBudgetForPlan(plan, usage);
 
-  const effectiveReqLimit = Number(limits.reqPerMonth || 0) + Number(usage.extraMsgThisMonth || 0);
+  const plusAutoSavingsExtra =
+    plan === ("plus" as any) ? PLUS_SAVINGS_EXTRA_LIMIT : 0;
+
+  const effectiveReqLimit =
+    Number(limits.reqPerMonth || 0) +
+    Number(usage.extraMsgThisMonth || 0) +
+    plusAutoSavingsExtra;
   const effectiveImgLimit =
     Number(limits.imgAnalysesPerMonth || 0) + Number(usage.extraImgThisMonth || 0);
   const effectiveWebLimit = Number(limits.webPerMonth || 0) + Number(usage.extraWebThisMonth || 0);
@@ -2026,6 +2168,24 @@ export async function POST(req: NextRequest) {
       {
         ok: false,
         error: messageLimitReachedText(plan, locale),
+        plan,
+        limits: {
+          ...limits,
+          reqPerMonth: effectiveReqLimit,
+          imgAnalysesPerMonth: effectiveImgLimit,
+          webPerMonth: effectiveWebLimit,
+        },
+        usage,
+      },
+      { status: 403, headers: resHeaders }
+    );
+  }
+
+  if (plan === ("plus" as any) && (usage.msgThisMonth || 0) + requestCost > PLUS_SAVINGS_TOTAL_LIMIT) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: plusSavingsModeLimitReachedText(locale),
         plan,
         limits: {
           ...limits,
@@ -2153,14 +2313,6 @@ export async function POST(req: NextRequest) {
           webPerMonth: effectiveWebLimit,
         },
         usage,
-        upsell: {
-          message: l(
-            locale,
-            "Verkkohaku on käytössä Pro- ja Company-tasoilla.",
-            "Web search is available on Pro and Company plans.",
-            "La búsqueda web está disponible en los planes Pro y Company."
-          ),
-        },
       },
       { status: 403, headers: resHeaders }
     );
@@ -2192,6 +2344,20 @@ export async function POST(req: NextRequest) {
       ? WEB_DYNAMIC_THRESHOLD_FORCED
       : WEB_DYNAMIC_THRESHOLD_DEFAULT;
 
+  const plusSavingsStateBeforeCall = plusSavingsNoticeState({
+    plan,
+    usageBefore: usageBeforeRequest,
+    usageAfter: {
+      ...usage,
+      msgThisMonth: Number(usage.msgThisMonth || 0) + requestCost,
+    },
+  });
+
+  const maxOutputTokens =
+    plan === ("plus" as any) && plusSavingsStateBeforeCall.activeForThisRequest
+      ? PLUS_SAVINGS_MAX_OUTPUT_TOKENS
+      : undefined;
+
   resHeaders.set("x-ajx-debug-useweb", String(useWeb));
   resHeaders.set("x-ajx-debug-web-requested", String(shouldTryWeb));
   resHeaders.set("x-ajx-debug-role", safeHeaderValue(String(role)));
@@ -2202,6 +2368,12 @@ export async function POST(req: NextRequest) {
   resHeaders.set("x-ajx-debug-memory-trimmed", String(trimmedMemory.truncated));
   resHeaders.set("x-ajx-debug-effective-web-limit", String(effectiveWebLimit));
   resHeaders.set("x-ajx-debug-effective-img-limit", String(effectiveImgLimit));
+  resHeaders.set("x-ajx-debug-effective-req-limit", String(effectiveReqLimit));
+  resHeaders.set("x-ajx-debug-plus-primary-limit", String(PLUS_PRIMARY_LIMIT));
+  resHeaders.set("x-ajx-debug-plus-savings-extra", String(PLUS_SAVINGS_EXTRA_LIMIT));
+  resHeaders.set("x-ajx-debug-plus-savings-active", String(plusSavingsStateBeforeCall.activeForThisRequest));
+  resHeaders.set("x-ajx-debug-plus-savings-just-activated", String(plusSavingsStateBeforeCall.justActivated));
+  resHeaders.set("x-ajx-debug-max-output-tokens", String(maxOutputTokens || 0));
   resHeaders.set("x-ajx-debug-responsibility-reminder", String(injectResponsibilityReminder));
   resHeaders.set(
     "x-ajx-debug-company-preview-enabled",
@@ -2306,13 +2478,21 @@ export async function POST(req: NextRequest) {
 
   await saveUsageRow(storeUserKey, monthKey, usage);
 
+  const plusSavingsStateAfterUsage = plusSavingsNoticeState({
+    plan,
+    usageBefore: usageBeforeRequest,
+    usageAfter: usage,
+  });
+
   if (lastTextOriginal && isModelQuestion(lastTextOriginal)) {
-    const text = l(
+    let text = l(
       locale,
       "Olen AJX AI. En paljasta käytössä olevia malliversioita, koulutuspäivämääriä tai sisäisiä järjestelmätietoja.",
       "I am AJX AI. I do not reveal model versions, training cut-off dates, or internal system details.",
       "Soy AJX AI. No revelo versiones de modelo, fechas de corte de entrenamiento ni detalles internos del sistema."
     );
+
+    text = prependPlusSavingsNotice(text, locale, plusSavingsStateAfterUsage);
 
     if (!stream) {
       return NextResponse.json(
@@ -2441,6 +2621,12 @@ export async function POST(req: NextRequest) {
     "\n" +
     buildSafetyInstruction(locale, safetyFlags, injectResponsibilityReminder) +
     "\n" +
+    (plusSavingsStateBeforeCall.activeForThisRequest
+      ? "- Plus Savings Flame mode is active for this request.\n" +
+        "- Keep the answer useful but more compact than usual.\n" +
+        "- Prioritize the most important points first.\n" +
+        "- Avoid long introductions and unnecessary expansion.\n"
+      : "") +
     (didWeb
       ? "- Fresh web context is provided below. Use it when answering time-sensitive or factual web questions.\n"
       : useWeb
@@ -2468,6 +2654,7 @@ export async function POST(req: NextRequest) {
     lastUserText: lastTextOriginal,
     hasTextFiles: trimmedTextFiles.length > 0,
     didWeb,
+    plusSavingsActive: plusSavingsStateBeforeCall.activeForThisRequest,
   });
 
   const requestedGeminiModel = geminiSelection.model;
@@ -2512,6 +2699,7 @@ export async function POST(req: NextRequest) {
       model: requestedGeminiModel,
       promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
+      maxOutputTokens,
     });
 
     await recordCompanyProUsageIfNeeded();
@@ -2531,6 +2719,7 @@ export async function POST(req: NextRequest) {
       model: requestedGeminiModel,
       promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
+      maxOutputTokens,
     });
 
     await recordCompanyProUsageIfNeeded();
@@ -2553,6 +2742,7 @@ export async function POST(req: NextRequest) {
         base64: im.base64,
         name: im.name,
       })),
+      maxOutputTokens,
     });
   }
 
@@ -2573,6 +2763,7 @@ export async function POST(req: NextRequest) {
         base64: im.base64,
         name: im.name,
       })),
+      maxOutputTokens,
     });
   }
 
@@ -2666,12 +2857,14 @@ export async function POST(req: NextRequest) {
               }
             }
 
-            const finalText = applySafetyPostProcessing(
+            let finalText = applySafetyPostProcessing(
               full,
               locale,
               safetyFlags,
               injectResponsibilityReminder
             );
+
+            finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
 
             if (!isUsableModelText(finalText)) {
               throw new Error("Vastaus jäi tyhjäksi jälkikäsittelyn jälkeen.");
@@ -2730,12 +2923,14 @@ export async function POST(req: NextRequest) {
     }
 
     const outTextRaw = await callTextNonStream();
-    const outText = applySafetyPostProcessing(
+    let outText = applySafetyPostProcessing(
       outTextRaw,
       locale,
       safetyFlags,
       injectResponsibilityReminder
     );
+
+    outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjän vastauksen.");

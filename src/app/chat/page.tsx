@@ -153,7 +153,7 @@ function renderImagesFromContent(text: string) {
           href={u}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ display: "block" }}
+          style={{ display: "block", maxWidth: "100%" }}
         >
           <img src={u} alt="AJX Image" className={styles.inlineImage} />
         </a>
@@ -718,6 +718,10 @@ function renderPlainRichText(text: string, locale: Locale) {
         style={{
           margin: "0 0 18px 0",
           lineHeight: 1.72,
+          maxWidth: "100%",
+          minWidth: 0,
+          overflowWrap: "anywhere",
+          wordBreak: "break-word",
         }}
       >
         {renderInlineFormatting(paragraphText)}
@@ -785,6 +789,10 @@ function renderPlainRichText(text: string, locale: Locale) {
             style={{
               lineHeight: 1.55,
               fontWeight: 700,
+              maxWidth: "100%",
+              minWidth: 0,
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {renderInlineFormatting(line.replace(/^[^:]+:\s*/, ""))}
@@ -835,6 +843,10 @@ function renderPlainRichText(text: string, locale: Locale) {
               fontSize: 15,
               fontWeight: 950,
               lineHeight: 1.35,
+              maxWidth: "100%",
+              minWidth: 0,
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {renderInlineFormatting(cleanHeadingText(line))}
@@ -863,10 +875,19 @@ function renderPlainRichText(text: string, locale: Locale) {
             margin: "0 0 16px 0",
             paddingLeft: 20,
             lineHeight: 1.68,
+            maxWidth: "100%",
+            minWidth: 0,
           }}
         >
           {items.map((item, idx) => (
-            <li key={idx} style={{ margin: "0 0 6px 0" }}>
+            <li
+              key={idx}
+              style={{
+                margin: "0 0 6px 0",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}
+            >
               {renderInlineFormatting(item)}
             </li>
           ))}
@@ -896,10 +917,19 @@ function renderPlainRichText(text: string, locale: Locale) {
             margin: "0 0 16px 0",
             paddingLeft: 20,
             lineHeight: 1.68,
+            maxWidth: "100%",
+            minWidth: 0,
           }}
         >
           {items.map((item, idx) => (
-            <li key={idx} style={{ margin: "0 0 6px 0" }}>
+            <li
+              key={idx}
+              style={{
+                margin: "0 0 6px 0",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
+              }}
+            >
               {renderInlineFormatting(item)}
             </li>
           ))}
@@ -933,6 +963,8 @@ function renderPlainRichText(text: string, locale: Locale) {
               flexDirection: "column",
               gap: 10,
               margin: "0 0 16px 0",
+              maxWidth: "100%",
+              minWidth: 0,
             }}
           >
             {items.map((item, idx) => (
@@ -942,6 +974,10 @@ function renderPlainRichText(text: string, locale: Locale) {
                 style={{
                   lineHeight: 1.68,
                   fontWeight: 700,
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
                 }}
               >
                 {renderInlineFormatting(item)}
@@ -960,7 +996,19 @@ function renderPlainRichText(text: string, locale: Locale) {
 
   flushParagraph();
 
-  return <div className={styles.bubbleText}>{out}</div>;
+  return (
+    <div
+      className={styles.bubbleText}
+      style={{
+        minWidth: 0,
+        maxWidth: "100%",
+        overflowWrap: "anywhere",
+        wordBreak: "break-word",
+      }}
+    >
+      {out}
+    </div>
+  );
 }
 
 function RichMessage({
@@ -976,7 +1024,15 @@ function RichMessage({
   const segments = parseCodeBlocks(content);
 
   return (
-    <div className={styles.bubbleText}>
+    <div
+      className={styles.bubbleText}
+      style={{
+        minWidth: 0,
+        maxWidth: "100%",
+        overflowWrap: "anywhere",
+        wordBreak: "break-word",
+      }}
+    >
       {segments.map((segment, idx) => {
         if (segment.type === "text") {
           const extracted = extractCopyBox(segment.value, locale);
@@ -1531,6 +1587,18 @@ async function compressImageFile(file: File): Promise<{
   };
 }
 
+function imageEditStartedText(locale: Locale): string {
+  if (locale === "es") return "Muokataan kuvaa…";
+  if (locale === "en") return "Editing image…";
+  return "Muokataan kuvaa…";
+}
+
+function imageQueuedText(locale: Locale): string {
+  if (locale === "es") return "Kuva lisätty. Valitse analysointi tai muokkaus ja lähetä pyyntö.";
+  if (locale === "en") return "Image attached. Choose analyze or edit, then send your request.";
+  return "Kuva lisätty. Valitse analyysi tai muokkaus ja lähetä pyyntö.";
+}
+
 export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
 
@@ -1575,7 +1643,7 @@ export default function ChatPage(): React.JSX.Element {
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const composerRef = useRef<HTMLDivElement | null>(null);
 
-  const [, setImageStatus] = useState<string>("");
+  const [imageStatus, setImageStatus] = useState<string>("");
 
   const [pending, setPending] = useState<PendingAttachment[]>([]);
   const imgInputRef = useRef<HTMLInputElement | null>(null);
@@ -1790,6 +1858,7 @@ export default function ChatPage(): React.JSX.Element {
   useEffect(() => {
     if (!hasPendingImage) {
       setManualImageIntent(null);
+      setImageStatus("");
     }
   }, [hasPendingImage]);
 
@@ -1958,7 +2027,7 @@ export default function ChatPage(): React.JSX.Element {
     window.addEventListener("resize", measure);
 
     return () => window.removeEventListener("resize", measure);
-  }, [input, pending.length, locale, loading, showQuickActions, keyboardInset, plan]);
+  }, [input, pending.length, locale, loading, showQuickActions, keyboardInset, plan, imageStatus]);
 
   useEffect(() => {
     if (!isMobile || !inputFocused) return;
@@ -2149,7 +2218,16 @@ export default function ChatPage(): React.JSX.Element {
 
     if (isUser) {
       return (
-        <div className={styles.bubbleText} style={{ whiteSpace: "pre-wrap" }}>
+        <div
+          className={styles.bubbleText}
+          style={{
+            whiteSpace: "pre-wrap",
+            maxWidth: "100%",
+            minWidth: 0,
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
+          }}
+        >
           {stripped || ""}
         </div>
       );
@@ -2206,6 +2284,7 @@ export default function ChatPage(): React.JSX.Element {
         },
       ]);
       setManualImageIntent(null);
+      setImageStatus(imageQueuedText(locale));
       return;
     }
 
@@ -2377,6 +2456,7 @@ export default function ChatPage(): React.JSX.Element {
       setPending([]);
       setForceWebNext(false);
       setManualImageIntent(null);
+      setImageStatus("");
 
       if (!res.ok) {
         if (ct.includes("application/json")) {
@@ -2626,7 +2706,9 @@ export default function ChatPage(): React.JSX.Element {
       }
 
       if (!sawStructuredStream && !textSoFar.trim()) {
-        applyText(locale === "fi" ? "(Tyhjä vastaus)" : locale === "es" ? "(Respuesta vacía)" : "(Empty response)");
+        applyText(
+          locale === "fi" ? "(Tyhjä vastaus)" : locale === "es" ? "(Respuesta vacía)" : "(Empty response)"
+        );
       }
 
       if (finalPlan && finalLimits && finalUsage) {
@@ -2660,8 +2742,12 @@ export default function ChatPage(): React.JSX.Element {
 
     if (hasPendingImage && text) {
       if (effectiveImageIntent === "edit") {
+        setImageStatus(imageEditStartedText(locale));
+        scrollToBottom(true);
+
         const ok = triggerImageButton();
         if (!ok) {
+          setImageStatus("");
           appendAssistantMessage(
             locale === "fi"
               ? "Kuvan muokkausnappia ei löytynyt. Kokeile painaa kuvan generointinappia kerran."
@@ -2777,6 +2863,8 @@ export default function ChatPage(): React.JSX.Element {
           align-items: center;
           flex-wrap: wrap;
           justify-content: flex-end;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxControlGroup {
@@ -2790,6 +2878,7 @@ export default function ChatPage(): React.JSX.Element {
           backdrop-filter: blur(12px);
           box-shadow: 0 10px 24px rgba(11, 13, 18, 0.08);
           max-width: 100%;
+          min-width: 0;
         }
 
         .ajxControlLabel {
@@ -2806,6 +2895,7 @@ export default function ChatPage(): React.JSX.Element {
           display: inline-flex;
           align-items: center;
           max-width: 100%;
+          min-width: 0;
         }
 
         .ajxSelect {
@@ -2828,6 +2918,7 @@ export default function ChatPage(): React.JSX.Element {
             background 0.12s ease,
             transform 0.12s ease;
           max-width: 100%;
+          min-width: 0;
         }
 
         .ajxSelect:hover {
@@ -2857,6 +2948,8 @@ export default function ChatPage(): React.JSX.Element {
           display: flex;
           flex-direction: column;
           gap: 10px;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxChips {
@@ -2864,6 +2957,8 @@ export default function ChatPage(): React.JSX.Element {
           display: flex;
           gap: 8px;
           flex-wrap: wrap;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxChip {
@@ -2878,7 +2973,8 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 12px;
           font-weight: 900;
           box-shadow: 0 10px 22px rgba(11, 13, 18, 0.08);
-          max-width: 420px;
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxChipName {
@@ -2886,6 +2982,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+          min-width: 0;
         }
 
         .ajxMenuCard {
@@ -2917,6 +3014,8 @@ export default function ChatPage(): React.JSX.Element {
           align-items: end;
           gap: 10px;
           width: 100%;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxComposerLeft {
@@ -2926,6 +3025,8 @@ export default function ChatPage(): React.JSX.Element {
           align-items: center;
           flex-wrap: wrap;
           align-self: end;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxComposerCenter {
@@ -2942,11 +3043,14 @@ export default function ChatPage(): React.JSX.Element {
           justify-content: flex-end;
           flex-wrap: wrap;
           align-self: end;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxComposerText {
           width: 100%;
           min-width: 0;
+          max-width: 100%;
         }
 
         .ajxActionBtn {
@@ -2973,6 +3077,7 @@ export default function ChatPage(): React.JSX.Element {
           gap: 8px;
           font-size: 14px;
           font-weight: 900;
+          max-width: 100%;
         }
 
         .ajxSidebarToggleIcon {
@@ -3014,6 +3119,8 @@ export default function ChatPage(): React.JSX.Element {
             box-shadow 0.12s ease,
             background 0.12s ease,
             transform 0.12s ease;
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxHelpLink:hover {
@@ -3034,6 +3141,10 @@ export default function ChatPage(): React.JSX.Element {
         .ajxParagraph {
           margin: 0 0 18px 0;
           line-height: 1.72;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxHeadingBlock {
@@ -3041,6 +3152,10 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 15px;
           font-weight: 950;
           line-height: 1.35;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxRichList,
@@ -3048,20 +3163,30 @@ export default function ChatPage(): React.JSX.Element {
           margin: 0 0 16px 0;
           padding-left: 20px;
           line-height: 1.68;
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxRichList li,
         .ajxRichListOrdered li {
           margin: 0 0 6px 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxQuestionList {
           margin: 0 0 16px 0;
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxQuestionRow {
           line-height: 1.68;
           font-weight: 700;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxSummaryBox {
@@ -3070,6 +3195,9 @@ export default function ChatPage(): React.JSX.Element {
           border-radius: 14px;
           border: 1px solid rgba(11, 13, 18, 0.08);
           background: rgba(11, 13, 18, 0.04);
+          max-width: 100%;
+          min-width: 0;
+          overflow: hidden;
         }
 
         .ajxSummaryTitle {
@@ -3084,6 +3212,10 @@ export default function ChatPage(): React.JSX.Element {
         .ajxSummaryText {
           line-height: 1.55;
           font-weight: 700;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxDivider {
@@ -3099,6 +3231,8 @@ export default function ChatPage(): React.JSX.Element {
           align-items: center;
           gap: 8px;
           margin-bottom: 8px;
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxCopyBtn {
@@ -3132,6 +3266,8 @@ export default function ChatPage(): React.JSX.Element {
           border-radius: 16px;
           overflow: hidden;
           background: rgba(11, 13, 18, 0.04);
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxCodeToolbar {
@@ -3142,6 +3278,8 @@ export default function ChatPage(): React.JSX.Element {
           padding: 8px 10px;
           border-bottom: 1px solid rgba(11, 13, 18, 0.08);
           background: rgba(255, 255, 255, 0.5);
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxCodeLang {
@@ -3150,12 +3288,17 @@ export default function ChatPage(): React.JSX.Element {
           letter-spacing: 0.2px;
           opacity: 0.72;
           text-transform: uppercase;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxCodePre {
           margin: 0;
           padding: 12px 14px;
           overflow-x: auto;
+          max-width: 100%;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -3177,6 +3320,8 @@ export default function ChatPage(): React.JSX.Element {
           overflow: hidden;
           background: rgba(255, 255, 255, 0.72);
           box-shadow: 0 10px 22px rgba(11, 13, 18, 0.06);
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxOutputTop {
@@ -3187,6 +3332,8 @@ export default function ChatPage(): React.JSX.Element {
           padding: 10px 12px;
           border-bottom: 1px solid rgba(11, 13, 18, 0.08);
           background: rgba(11, 13, 18, 0.04);
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxOutputTitle {
@@ -3195,6 +3342,10 @@ export default function ChatPage(): React.JSX.Element {
           letter-spacing: 0.2px;
           opacity: 0.78;
           text-transform: uppercase;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxOutputBody {
@@ -3203,15 +3354,11 @@ export default function ChatPage(): React.JSX.Element {
           white-space: pre-wrap;
           line-height: 1.7;
           font-size: 14px;
-          font-family:
-            ui-monospace,
-            SFMono-Regular,
-            Menlo,
-            Monaco,
-            Consolas,
-            "Liberation Mono",
-            "Courier New",
-            monospace;
+          font-family: inherit;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxImageIntentBar {
@@ -3220,6 +3367,8 @@ export default function ChatPage(): React.JSX.Element {
           flex-wrap: wrap;
           gap: 8px;
           align-items: center;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxImageIntentHint {
@@ -3227,6 +3376,10 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 12px;
           font-weight: 800;
           color: rgba(11, 13, 18, 0.68);
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
 
         .ajxIntentBtn {
@@ -3243,6 +3396,8 @@ export default function ChatPage(): React.JSX.Element {
             border 0.12s ease,
             transform 0.12s ease,
             box-shadow 0.12s ease;
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxIntentBtn:hover {
@@ -3261,10 +3416,14 @@ export default function ChatPage(): React.JSX.Element {
         .ajxImageButtonWrap {
           display: inline-flex;
           align-items: center;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxQuickActionsWrap {
           padding: 0 20px 12px 20px;
+          min-width: 0;
+          max-width: 100%;
         }
 
         .ajxQuickActionsTitle {
@@ -3277,6 +3436,11 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           padding-bottom: 4px;
           scrollbar-width: thin;
+          max-width: 100%;
+        }
+
+        .ajxQuickActionsRow::-webkit-scrollbar {
+          height: 6px;
         }
 
         .ajxQuickActionBtn {
@@ -3305,6 +3469,22 @@ export default function ChatPage(): React.JSX.Element {
           box-shadow: 0 14px 30px rgba(11, 13, 18, 0.1);
         }
 
+        .ajxStatusNote {
+          margin-top: 8px;
+          padding: 10px 12px;
+          border-radius: 14px;
+          border: 1px solid rgba(11, 13, 18, 0.08);
+          background: rgba(11, 13, 18, 0.04);
+          color: rgba(11, 13, 18, 0.78);
+          font-size: 12px;
+          font-weight: 800;
+          line-height: 1.5;
+          max-width: 100%;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+        }
+
         .ajxDisclaimerRow {
           margin-top: 10px;
           display: flex;
@@ -3316,6 +3496,8 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 11px;
           line-height: 1.45;
           color: rgba(11, 13, 18, 0.62);
+          max-width: 100%;
+          min-width: 0;
         }
 
         .ajxDisclaimerPlan {
@@ -3331,6 +3513,8 @@ export default function ChatPage(): React.JSX.Element {
           font-weight: 950;
           letter-spacing: 0.2px;
           box-shadow: 0 10px 22px rgba(11, 13, 18, 0.08);
+          max-width: 100%;
+          min-width: 0;
         }
 
         @media (max-width: 980px) {
@@ -3352,9 +3536,12 @@ export default function ChatPage(): React.JSX.Element {
             line-height: 1.72;
           }
 
-          .ajxCodePre,
-          .ajxOutputBody {
+          .ajxCodePre {
             font-size: 12px;
+          }
+
+          .ajxOutputBody {
+            font-size: 13px;
           }
 
           .ajxTopHelp {
@@ -3618,6 +3805,7 @@ export default function ChatPage(): React.JSX.Element {
                     ? {
                         minHeight: 0,
                         overflowY: "auto",
+                        overflowX: "hidden",
                         WebkitOverflowScrolling: "touch",
                         paddingBottom:
                           composerHeight +
@@ -3625,6 +3813,7 @@ export default function ChatPage(): React.JSX.Element {
                           (keyboardInset > 0 ? 24 : 0),
                       }
                     : {
+                        overflowX: "hidden",
                         paddingBottom: composerHeight + (showQuickActions ? 72 : 24),
                       }
                 }
@@ -3650,6 +3839,11 @@ export default function ChatPage(): React.JSX.Element {
                         className={`${styles.bubble} ${
                           isUser ? styles.bubbleUser : styles.bubbleAi
                         }`}
+                        style={{
+                          minWidth: 0,
+                          maxWidth: "100%",
+                          overflow: "hidden",
+                        }}
                       >
                         {hasCopyableText ? (
                           <div className="ajxBubbleTop">
@@ -3978,6 +4172,8 @@ export default function ChatPage(): React.JSX.Element {
                       ))}
                     </div>
                   ) : null}
+
+                  {imageStatus ? <div className="ajxStatusNote">{imageStatus}</div> : null}
 
                   <div className="ajxDisclaimerRow">
                     <span>{disclaimerText}</span>
