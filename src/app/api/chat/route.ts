@@ -1279,7 +1279,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
 
     case "plus":
       return {
-        reqPerMonth: PLUS_PRIMARY_LIMIT,
+        reqPerMonth: 2000,
         reqPerDay: 0,
         imgAnalysesPerMonth: 120,
         imgAnalysesPerDay: 0,

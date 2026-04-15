@@ -1693,7 +1693,10 @@ export default function ChatPage(): React.JSX.Element {
     effectiveCanonical === "company";
 
   const canAttachImagesForAnalysis = Number(effectiveLimits?.imgPerMonth || 0) > 0;
-  const showImageButton = canGenerateImages;
+  const canOpenPlusMenu = effectiveCanonical !== "free";
+  const canEditImages =
+    effectiveCanonical === "pro" || effectiveCanonical === "company";
+  const showImageButton = canEditImages;
   const showWebButton = Number(effectiveLimits?.webPerMonth || 0) > 0;
 
   const allowedModes = useMemo(
@@ -2742,6 +2745,17 @@ export default function ChatPage(): React.JSX.Element {
 
     if (hasPendingImage && text) {
       if (effectiveImageIntent === "edit") {
+        if (!canEditImages) {
+          appendAssistantMessage(
+            locale === "fi"
+              ? "Kuvan muokkaus on käytössä vain Pro- ja Company-tasoilla."
+              : locale === "es"
+                ? "La edición de imágenes está disponible solo en los planes Pro y Company."
+                : "Image editing is available only on Pro and Company plans."
+          );
+          return;
+        }
+
         setImageStatus(imageEditStartedText(locale));
         scrollToBottom(true);
 
@@ -3901,17 +3915,19 @@ export default function ChatPage(): React.JSX.Element {
                 <div className={styles.composerInner}>
                   <div className="ajxComposerActions">
                     <div className="ajxComposerLeft">
-                      <button
-                        ref={plusBtnRef}
-                        className={`${styles.btnGhost} ajxActionBtn`}
-                        onClick={() => setPlusOpen((v) => !v)}
-                        disabled={loading}
-                        title={t(locale, "ui.plus")}
-                        aria-label={t(locale, "ui.plus")}
-                        type="button"
-                      >
-                        ＋
-                      </button>
+                      {canOpenPlusMenu ? (
+                        <button
+                          ref={plusBtnRef}
+                          className={`${styles.btnGhost} ajxActionBtn`}
+                          onClick={() => setPlusOpen((v) => !v)}
+                          disabled={loading}
+                          title={t(locale, "ui.plus")}
+                          aria-label={t(locale, "ui.plus")}
+                          type="button"
+                        >
+                          ＋
+                        </button>
+                      ) : null}
 
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
@@ -4072,19 +4088,21 @@ export default function ChatPage(): React.JSX.Element {
                             : "Analyze image"}
                       </button>
 
-                      <button
-                        type="button"
-                        className={`ajxIntentBtn ${
-                          effectiveImageIntent === "edit" ? "ajxIntentBtnActive" : ""
-                        }`}
-                        onClick={() => setManualImageIntent("edit")}
-                      >
-                        {locale === "fi"
-                          ? "Muokkaa kuvaa"
-                          : locale === "es"
-                            ? "Editar imagen"
-                            : "Edit image"}
-                      </button>
+                      {canEditImages ? (
+                        <button
+                          type="button"
+                          className={`ajxIntentBtn ${
+                            effectiveImageIntent === "edit" ? "ajxIntentBtnActive" : ""
+                          }`}
+                          onClick={() => setManualImageIntent("edit")}
+                        >
+                          {locale === "fi"
+                            ? "Muokkaa kuvaa"
+                            : locale === "es"
+                              ? "Editar imagen"
+                              : "Edit image"}
+                        </button>
+                      ) : null}
 
                       {manualImageIntent ? (
                         <button
