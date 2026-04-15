@@ -1696,7 +1696,7 @@ export default function ChatPage(): React.JSX.Element {
   const canOpenPlusMenu = effectiveCanonical !== "free";
   const canEditImages =
     effectiveCanonical === "pro" || effectiveCanonical === "company";
-  const showImageButton = canEditImages;
+  const showImageButton = canGenerateImages;
   const showWebButton = Number(effectiveLimits?.webPerMonth || 0) > 0;
 
   const allowedModes = useMemo(
@@ -3936,7 +3936,7 @@ export default function ChatPage(): React.JSX.Element {
                             devPlan={devPlan}
                             getPrompt={() => input}
                             getSourceImage={() =>
-                              firstPendingImage
+                              canEditImages && firstPendingImage
                                 ? {
                                     name: firstPendingImage.name,
                                     type: firstPendingImage.type,
