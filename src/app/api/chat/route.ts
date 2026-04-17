@@ -1504,9 +1504,6 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
         );
       }
     } else {
-        );
-      }
-    } else {
       fileSummaries.push(
         l(
           locale,
@@ -3020,6 +3017,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 
 
