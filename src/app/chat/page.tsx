@@ -53,7 +53,7 @@ const INITIAL_JPEG_QUALITY = 0.75;
 const MIN_JPEG_QUALITY = 0.45;
 const TARGET_IMAGE_BYTES = 900_000;
 const HARD_MAX_IMAGE_BYTES = 1_200_000;
-const MAX_NON_IMAGE_FILE_BYTES = 4_000_000;
+const MAX_NON_IMAGE_FILE_BYTES = 5_000_000;
 
 // ====== Canonical plans (UI) ======
 type CanonicalPlan = "free" | "basic" | "plus" | "pro" | "company";
