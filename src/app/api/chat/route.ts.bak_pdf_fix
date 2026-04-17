@@ -1490,29 +1490,6 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
         );
       }
     } else {
-      }
-    } else if (isTextLikeMime(mime)) {
-      let txt = "";
-      try {
-        txt = base64ToUtf8(parsed.base64);
-      } catch {
-        txt = "";
-      }
-      if (txt) {
-        const truncated = txt.length > MAX_EXTRACTED_TEXT_CHARS;
-        if (truncated) txt = txt.slice(0, MAX_EXTRACTED_TEXT_CHARS);
-        textFiles.push({ name, mime, text: txt, truncated });
-      } else {
-        fileSummaries.push(
-          l(
-            locale,
-            `- ${name}: tekstin lukeminen epäonnistui (mime: ${mime}).`,
-            `- ${name}: failed to read text (mime: ${mime}).`,
-            `- ${name}: no se pudo leer el texto (mime: ${mime}).`
-          )
-        );
-      }
-    } else {
       fileSummaries.push(
         l(
           locale,
@@ -3026,7 +3003,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-
 
 
