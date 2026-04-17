@@ -1269,6 +1269,12 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
         mode: "research",
       },
       {
+        id: "ad",
+        label: "Crear anuncio",
+        prompt: "Ayúdame a crear un anuncio efectivo basado en mi negocio.",
+        mode: "ideation",
+      },
+      {
         id: "sales",
         label: "Aumentar ventas",
         prompt: "Ayúdame a encontrar formas prácticas de aumentar mis ventas.",
@@ -1308,6 +1314,12 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
         label: "Create offer",
         prompt: "Help me create a clear and convincing offer for a client.",
         mode: "research",
+      },
+      {
+        id: "ad",
+        label: "Create ad",
+        prompt: "Help me create an effective advertisement for my business.",
+        mode: "ideation",
       },
       {
         id: "sales",
@@ -1350,6 +1362,12 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       mode: "research",
     },
     {
+      id: "ad",
+      label: "Luo mainos",
+      prompt: "Auta minua luomaan tehokas mainos yritykselleni.",
+      mode: "ideation",
+    },
+    {
       id: "sales",
       label: "Kasvata myyntiä",
       prompt: "Auta minua löytämään käytännöllisiä tapoja kasvattaa myyntiä.",
@@ -1381,7 +1399,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
     },
   ];
 }
-
 function quickActionQuestionInstruction(action: QuickAction, locale: Locale): string {
   if (locale === "es") {
     return [
