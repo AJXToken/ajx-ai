@@ -156,7 +156,7 @@ function trimMessagesByChars(
 const MAX_ATTACHMENTS = 4;
 const MAX_IMAGE_BYTES = 3_500_000;
 const MAX_FILE_BYTES = 8_000_000;
-const MAX_EXTRACTED_TEXT_CHARS = 300_000;
+const MAX_EXTRACTED_TEXT_CHARS = 120_000;
 
 type AttachmentIn = {
   kind: "image" | "file";
@@ -1446,11 +1446,34 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
     });
 
     if (mime === "application/pdf") {
-      let txt = "";
-      try {
-        const pdfData = await pdfParse(Buffer.from(parsed.base64, "base64"));
-        txt = String(pdfData?.text || "");
-      } catch {
+  let txt = "";
+  try {
+    const pdfData = await pdfParse(Buffer.from(parsed.base64, "base64"));
+    txt = String(pdfData?.text || "");
+  } catch {
+    txt = "";
+  }
+
+  if (txt) {
+    // 🔥 jos liian iso → otetaan vain alku + loppu
+    if (txt.length > MAX_EXTRACTED_TEXT_CHARS) {
+      const head = txt.slice(0, MAX_EXTRACTED_TEXT_CHARS / 2);
+      const tail = txt.slice(-MAX_EXTRACTED_TEXT_CHARS / 2);
+      txt = head + "\n\n...[TRUNCATED]...\n\n" + tail;
+    }
+
+    textFiles.push({ name, mime, text: txt, truncated: true });
+  } else {
+    fileSummaries.push(
+      l(
+        locale,
+        `- ${name}: PDF-tekstin lukeminen epäonnistui.`,
+        `- ${name}: failed to read PDF text.`,
+        `- ${name}: no se pudo leer el texto del PDF.`
+      )
+    );
+  }
+} catch {
         txt = "";
       }
 
@@ -3003,6 +3026,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 
 
