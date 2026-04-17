@@ -1275,11 +1275,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
         mode: "ideation",
       },
       {
-        id: "ad",
-        label: "Crear anuncio",
-        prompt: "Ayúdame a crear un anuncio efectivo basado en mi negocio.",
-        mode: "ideation",
-      },
       {
         id: "sales",
         label: "Aumentar ventas",
@@ -1328,11 +1323,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
         mode: "ideation",
       },
       {
-        id: "ad",
-        label: "Create ad",
-        prompt: "Help me create an effective advertisement for my business.",
-        mode: "ideation",
-      },
       {
         id: "sales",
         label: "Grow sales",
@@ -1380,11 +1370,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       mode: "ideation",
     },
     {
-      id: "ad",
-      label: "Luo mainos",
-      prompt: "Auta minua luomaan tehokas mainos yritykselleni.",
-      mode: "ideation",
-    },
     {
       id: "sales",
       label: "Kasvata myyntiä",
