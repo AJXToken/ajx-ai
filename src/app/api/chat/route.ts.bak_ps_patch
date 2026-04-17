@@ -1346,7 +1346,7 @@ function isTextLikeMime(mime: string) {
     m === "application/yaml" ||
     m === "application/javascript" ||
     m === "application/typescript" ||
-    m === "application/csv" || m === "application/pdf" || m === "application/pdf"
+    m === "application/csv" || m === "application/pdf"
   );
 }
 
@@ -1355,12 +1355,12 @@ function base64ToUtf8(base64: string): string {
   return buf.toString("utf8");
 }
 
-async function prepareAttachments(raw: any, locale: Locale): Promise<{
+function prepareAttachments(raw: any, locale: Locale): {
   images: PreparedAttachment[];
   files: PreparedAttachment[];
   textFiles: PreparedTextFile[];
   fileSummaries: string[];
-}> {
+} {
   const arr: AttachmentIn[] = Array.isArray(raw) ? raw : [];
   const sliced = arr.slice(0, MAX_ATTACHMENTS);
 
@@ -2097,7 +2097,7 @@ export async function POST(req: NextRequest) {
   const locale = normLocale(body?.locale);
 
   const attachmentsRaw = body?.attachments;
-  const prepared = await prepareAttachments(attachmentsRaw, locale);
+  const prepared = prepareAttachments(attachmentsRaw, locale);
 
   const rolesEnabledRaw = !!body?.rolesEnabled;
   const requestedRole: AjxRoleId = normalizeAjxRole(body?.role);
@@ -2980,4 +2980,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./chat2030.module.css";
@@ -1271,12 +1271,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       {
         id: "ad",
         label: "Crear anuncio",
-        prompt: "Ayúdame a crear un anuncio claro y convincente para mi producto o servicio.",
-        mode: "ideation",
-      },
-      {
-        id: "ad",
-        label: "Crear anuncio",
         prompt: "Ayúdame a crear un anuncio efectivo basado en mi negocio.",
         mode: "ideation",
       },
@@ -1324,12 +1318,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       {
         id: "ad",
         label: "Create ad",
-        prompt: "Help me create a clear and convincing ad for my product or service.",
-        mode: "ideation",
-      },
-      {
-        id: "ad",
-        label: "Create ad",
         prompt: "Help me create an effective advertisement for my business.",
         mode: "ideation",
       },
@@ -1372,12 +1360,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       label: "Luo tarjous",
       prompt: "Auta minua luomaan selkeä ja myyvä tarjous asiakkaalle.",
       mode: "research",
-    },
-    {
-      id: "ad",
-      label: "Luo mainos",
-      prompt: "Auta minua luomaan selkeä ja myyvä mainos tuotteelleni tai palvelulleni.",
-      mode: "ideation",
     },
     {
       id: "ad",
