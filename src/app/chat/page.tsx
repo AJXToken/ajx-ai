@@ -4295,3 +4295,4 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+

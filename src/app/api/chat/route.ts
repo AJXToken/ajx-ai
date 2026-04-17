@@ -1346,7 +1346,7 @@ function isTextLikeMime(mime: string) {
     m === "application/yaml" ||
     m === "application/javascript" ||
     m === "application/typescript" ||
-    m === "application/csv" || m === "application/pdf" || m === "application/pdf"
+    m === "application/csv" || m === "application/pdf"
   );
 }
 
@@ -1445,7 +1445,30 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
       bytes: parsed.bytes,
     });
 
-    if (isTextLikeMime(mime)) {
+    if (mime === "application/pdf") {
+      let txt = "";
+      try {
+        const pdfData = await pdfParse(Buffer.from(parsed.base64, "base64"));
+        txt = String(pdfData?.text || "");
+      } catch {
+        txt = "";
+      }
+
+      if (txt) {
+        const truncated = txt.length > MAX_EXTRACTED_TEXT_CHARS;
+        if (truncated) txt = txt.slice(0, MAX_EXTRACTED_TEXT_CHARS);
+        textFiles.push({ name, mime, text: txt, truncated });
+      } else {
+        fileSummaries.push(
+          l(
+            locale,
+            `- ${name}: PDF-tekstin lukeminen epäonnistui.`,
+            `- ${name}: failed to read PDF text.`,
+            `- ${name}: no se pudo leer el texto del PDF.`
+          )
+        );
+      }
+    } else if (isTextLikeMime(mime)) {
       let txt = "";
       try {
         txt = base64ToUtf8(parsed.base64);
@@ -2980,4 +3003,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
