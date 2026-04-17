@@ -1446,40 +1446,30 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
     });
 
     if (mime === "application/pdf") {
-  let txt = "";
-  try {
-    const pdfData = await pdfParse(Buffer.from(parsed.base64, "base64"));
-    txt = String(pdfData?.text || "");
-  } catch {
-    txt = "";
-  }
-
-  if (txt) {
-    // 🔥 jos liian iso → otetaan vain alku + loppu
-    if (txt.length > MAX_EXTRACTED_TEXT_CHARS) {
-      const head = txt.slice(0, MAX_EXTRACTED_TEXT_CHARS / 2);
-      const tail = txt.slice(-MAX_EXTRACTED_TEXT_CHARS / 2);
-      txt = head + "\n\n...[TRUNCATED]...\n\n" + tail;
-    }
-
-    textFiles.push({ name, mime, text: txt, truncated: true });
-  } else {
-    fileSummaries.push(
-      l(
-        locale,
-        `- ${name}: PDF-tekstin lukeminen epäonnistui.`,
-        `- ${name}: failed to read PDF text.`,
-        `- ${name}: no se pudo leer el texto del PDF.`
-      )
-    );
-  }
-} catch {
+      let txt = "";
+      try {
+        const pdfData = await pdfParse(Buffer.from(parsed.base64, "base64"));
+        txt = String(pdfData?.text || "");
+      } catch {
         txt = "";
       }
 
       if (txt) {
-        const truncated = txt.length > MAX_EXTRACTED_TEXT_CHARS;
-        if (truncated) txt = txt.slice(0, MAX_EXTRACTED_TEXT_CHARS);
+        const normalizedTxt = txt.replace(/\r\n/g, "\n").trim();
+        const truncated = normalizedTxt.length > MAX_EXTRACTED_TEXT_CHARS;
+
+        if (truncated) {
+          const headSize = Math.floor(MAX_EXTRACTED_TEXT_CHARS * 0.7);
+          const tailSize = MAX_EXTRACTED_TEXT_CHARS - headSize;
+          const head = normalizedTxt.slice(0, headSize).trim();
+          const tail = normalizedTxt.slice(-tailSize).trim();
+
+          txt =
+            `${head}\n\n[... PDF middle truncated ...]\n\n${tail}`.trim();
+        } else {
+          txt = normalizedTxt;
+        }
+
         textFiles.push({ name, mime, text: txt, truncated });
       } else {
         fileSummaries.push(
@@ -1498,6 +1488,7 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
       } catch {
         txt = "";
       }
+
       if (txt) {
         const truncated = txt.length > MAX_EXTRACTED_TEXT_CHARS;
         if (truncated) txt = txt.slice(0, MAX_EXTRACTED_TEXT_CHARS);
@@ -1510,6 +1501,9 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
             `- ${name}: failed to read text (mime: ${mime}).`,
             `- ${name}: no se pudo leer el texto (mime: ${mime}).`
           )
+        );
+      }
+    } else {
         );
       }
     } else {
