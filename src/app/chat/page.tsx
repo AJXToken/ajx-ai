@@ -53,7 +53,7 @@ const INITIAL_JPEG_QUALITY = 0.75;
 const MIN_JPEG_QUALITY = 0.45;
 const TARGET_IMAGE_BYTES = 900_000;
 const HARD_MAX_IMAGE_BYTES = 1_200_000;
-const MAX_NON_IMAGE_FILE_BYTES = 5_000_000;
+const MAX_NON_IMAGE_FILE_BYTES = 8_000_000;
 
 // ====== Canonical plans (UI) ======
 type CanonicalPlan = "free" | "basic" | "plus" | "pro" | "company";
@@ -3584,7 +3584,19 @@ export default function ChatPage(): React.JSX.Element {
           box-shadow: 0 10px 22px rgba(11, 13, 18, 0.08);
           max-width: 100%;
           min-width: 0;
+        }        .ajxBubbleScroll {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: auto;
+          overflow-y: visible;
+          -webkit-overflow-scrolling: touch;
         }
+
+        .ajxBubbleScrollInner {
+          min-width: max-content;
+        }
+
+
 
         @media (max-width: 980px) {
           .ajxTopControls {
@@ -4360,6 +4372,11 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
+
+
+
 
 
 
