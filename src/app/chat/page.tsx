@@ -3383,14 +3383,50 @@ export default function ChatPage(): React.JSX.Element {
         .ajxOutputBody {
           margin: 0;
           padding: 14px 16px;
-          white-space: pre-wrap;
+          white-space: pre;
           line-height: 1.7;
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: 0;
-          overflow-wrap: anywhere;
-          word-break: break-word;
+          min-width: max-content;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ajxCodeBlockWrap {
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ajxCodePre {
+          margin: 0;
+          padding: 12px 14px;
+          overflow-x: auto;
+          overflow-y: hidden;
+          max-width: 100%;
+          min-width: max-content;
+          white-space: pre;
+          font-size: 13px;
+          line-height: 1.55;
+          font-family:
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            "Liberation Mono",
+            "Courier New",
+            monospace;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow {
+          min-width: max-content;
         }
 
         .ajxImageIntentBar {
@@ -3574,8 +3610,53 @@ export default function ChatPage(): React.JSX.Element {
           }
 
           .ajxOutputBody {
-            font-size: 13px;
-          }
+          margin: 0;
+          padding: 14px 16px;
+          white-space: pre;
+          line-height: 1.7;
+          font-size: 14px;
+          font-family: inherit;
+          max-width: 100%;
+          min-width: max-content;
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ajxCodeBlockWrap {
+          overflow-x: auto;
+          overflow-y: hidden;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ajxCodePre {
+          margin: 0;
+          padding: 12px 14px;
+          overflow-x: auto;
+          overflow-y: hidden;
+          max-width: 100%;
+          min-width: max-content;
+          white-space: pre;
+          font-size: 13px;
+          line-height: 1.55;
+          font-family:
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            "Liberation Mono",
+            "Courier New",
+            monospace;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow {
+          min-width: max-content;
+        }
 
           .ajxTopHelp {
             display: none;
@@ -4279,6 +4360,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
