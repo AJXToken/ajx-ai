@@ -155,7 +155,7 @@ function trimMessagesByChars(
 // ====== Attachments limits ======
 const MAX_ATTACHMENTS = 4;
 const MAX_IMAGE_BYTES = 3_500_000;
-const MAX_FILE_BYTES = 4_500_000;
+const MAX_FILE_BYTES = 8_000_000;
 const MAX_EXTRACTED_TEXT_CHARS = 120_000;
 
 type AttachmentIn = {
@@ -3024,6 +3024,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 
 
