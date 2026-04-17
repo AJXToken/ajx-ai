@@ -1489,8 +1489,6 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
           )
         );
       }
-    } else {
-      }
     } else if (isTextLikeMime(mime)) {
       let txt = "";
       try {
@@ -3026,6 +3024,8 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
 
 
 
