@@ -1275,7 +1275,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
         mode: "ideation",
       },
       {
-      {
         id: "sales",
         label: "Aumentar ventas",
         prompt: "Ayúdame a encontrar formas prácticas de aumentar mis ventas.",
@@ -1323,7 +1322,6 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
         mode: "ideation",
       },
       {
-      {
         id: "sales",
         label: "Grow sales",
         prompt: "Help me find practical ways to grow my sales.",
@@ -1368,9 +1366,8 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       label: "Luo mainos",
       prompt: "Auta minua luomaan selkeä ja myyvä mainos tuotteelleni tai palvelulleni.",
       mode: "ideation",
-    },
-    {
-    {
+      },
+      {
       id: "sales",
       label: "Kasvata myyntiä",
       prompt: "Auta minua löytämään käytännöllisiä tapoja kasvattaa myyntiä.",
@@ -4280,4 +4277,5 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
