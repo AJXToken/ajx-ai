@@ -600,87 +600,6 @@ function extractBodyFromMatchedLabelLine(line: string): string {
 }
 
 function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
-  const normalized = normalizeCopyBoxSource(text);
-  if (!normalized) return null;
-  if (normalized.includes("```")) return null;
-
-  const lines = normalized.split("\n");
-
-  for (let i = 0; i < lines.length; i++) {
-    const rawLine = lines[i] ?? "";
-    const line = rawLine.trim();
-    if (!line) continue;
-    if (isSummaryLikeLabel(line, locale) || isSummaryLine(line, locale)) continue;
-
-    const matched = getExplicitCopyLabelMatch(line);
-    if (!matched) continue;
-
-    const label = normalizeOutputBoxLabel(line, locale);
-
-    const inlineBody = extractBodyFromMatchedLabelLine(line);
-    const tail = lines.slice(i + 1).join("\n").trim();
-
-    let body = "";
-    if (inlineBody && tail) {
-      body = `${inlineBody}\n${tail}`.trim();
-    } else if (inlineBody) {
-      body = inlineBody.trim();
-    } else {
-      body = tail.trim();
-    }
-
-    if (!body || body.trim().length < 2) return null;
-
-    const mainText = lines.slice(0, i).join("\n").trim();
-
-    return {
-      mainText,
-      copyText: body,
-      label,
-    };
-  }
-
-  if (lines.length >= 2) {
-    const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
-    if (firstNonEmptyIndex >= 0 && firstNonEmptyIndex < lines.length - 1) {
-      const rawFirstLine = lines[firstNonEmptyIndex];
-      const firstLine = rawFirstLine.trim().toLowerCase().replace(/\*+/g, "");
-      const rest = lines.slice(firstNonEmptyIndex + 1).join("\n").trim();
-
-      if (isSummaryLikeLabel(rawFirstLine, locale) || isSummaryLine(rawFirstLine, locale)) {
-        return null;
-      }
-
-      const introLooksLikeLabel =
-        firstLine.includes("käännös") ||
-        firstLine.includes("translation") ||
-        firstLine.includes("traducción") ||
-        firstLine.includes("valmis teksti") ||
-        firstLine.includes("final text") ||
-        firstLine.includes("texto final") ||
-        firstLine.includes("sähköposti") ||
-        firstLine.includes("sähköpostipohja") ||
-        firstLine.includes("email") ||
-        firstLine.includes("correo") ||
-        firstLine.includes("viesti") ||
-        firstLine.includes("viestipohja") ||
-        firstLine.includes("message") ||
-        firstLine.includes("mensaje") ||
-        firstLine.includes("tarjous") ||
-        firstLine.includes("tarjouspohja") ||
-        firstLine.includes("offer") ||
-        firstLine.includes("oferta");
-
-      if (introLooksLikeLabel && rest) {
-        return {
-          mainText: lines.slice(0, firstNonEmptyIndex).join("\n").trim(),
-          copyText: rest,
-          label: normalizeOutputBoxLabel(lines[firstNonEmptyIndex], locale),
-        };
-      }
-    }
-  }
-
   return null;
 }
 
@@ -4372,6 +4291,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
