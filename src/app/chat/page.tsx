@@ -2278,51 +2278,6 @@ export default function ChatPage(): React.JSX.Element {
       fr.readAsDataURL(file);
     });
   }
-  function textToDataUrl(text: string, mime = "text/plain;charset=utf-8"): string {
-    const bytes = new TextEncoder().encode(text);
-    let binary = "";
-    const chunkSize = 0x8000;
-
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      const chunk = bytes.subarray(i, i + chunkSize);
-      binary += String.fromCharCode(...chunk);
-    }
-
-    return `data:${mime};base64,${btoa(binary)}`;
-  }
-
-  async function extractPdfTextInBrowser(file: File): Promise<string> {
-    const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
-    const arrayBuffer = await file.arrayBuffer();
-
-    const loadingTask = pdfjs.getDocument({
-      data: new Uint8Array(arrayBuffer),
-      useWorkerFetch: false,
-      isEvalSupported: false,
-      useSystemFonts: true,
-      disableFontFace: true,
-    } as any);
-
-    const pdf = await loadingTask.promise;
-    const pages: string[] = [];
-
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
-      const page = await pdf.getPage(pageNum);
-      const content = await page.getTextContent();
-
-      const pageText = (content.items || [])
-        .map((item: any) => String(item?.str || ""))
-        .join(" ")
-        .replace(/\s+/g, " ")
-        .trim();
-
-      if (pageText) {
-        pages.push(pageText);
-      }
-    }
-
-    return pages.join("\n\n");
-  }
 
   async function addAttachmentFromFile(file: File, kind: "image" | "file") {
     if (kind === "image") {
@@ -2353,69 +2308,6 @@ export default function ChatPage(): React.JSX.Element {
       return;
     }
 
-    if (file.type === "application/pdf") {
-      if (file.size > MAX_NON_IMAGE_FILE_BYTES) {
-        throw new Error(
-          locale === "fi"
-            ? "PDF on liian suuri."
-            : locale === "es"
-              ? "El PDF es demasiado grande."
-              : "The PDF is too large."
-        );
-      }
-
-      let extractedText = "";
-      try {
-        extractedText = await extractPdfTextInBrowser(file);
-      } catch {
-        throw new Error(
-          locale === "fi"
-            ? "PDF-tekstin purku epäonnistui."
-            : locale === "es"
-              ? "No se pudo extraer el texto del PDF."
-              : "Failed to extract text from PDF."
-        );
-      }
-
-      const normalizedText = String(extractedText || "")
-        .replace(/\r\n/g, "\n")
-        .replace(/\n{3,}/g, "\n\n")
-        .trim();
-
-      if (!normalizedText) {
-        throw new Error(
-          locale === "fi"
-            ? "PDF:stä ei saatu luettavaa tekstiä."
-            : locale === "es"
-              ? "No se obtuvo texto legible del PDF."
-              : "No readable text was extracted from the PDF."
-        );
-      }
-
-      const maxPdfTextChars = 300_000;
-      const headSize = Math.floor(maxPdfTextChars * 0.7);
-      const tailSize = maxPdfTextChars - headSize;
-      const truncated = normalizedText.length > maxPdfTextChars;
-
-      const finalText = truncated
-        ? `${normalizedText.slice(0, headSize).trim()}\n\n[... PDF middle truncated ...]\n\n${normalizedText.slice(-tailSize).trim()}`.trim()
-        : normalizedText;
-
-      const dataUrl = textToDataUrl(finalText);
-
-      setPending((prev) => [
-        ...prev,
-        {
-          id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
-          kind: "file",
-          name: `${file.name || "file"}.txt`,
-          type: "text/plain",
-          dataUrl,
-        },
-      ]);
-      setManualImageIntent(null);
-      return;
-    }
     if (file.size > MAX_NON_IMAGE_FILE_BYTES) {
       throw new Error(
         locale === "fi"
