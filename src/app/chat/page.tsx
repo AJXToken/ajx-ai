@@ -1047,7 +1047,7 @@ function RichMessage({
                   <div className="ajxOutputTop">
                     <span className="ajxOutputTitle">{extracted.label}</span>
                   </div>
-                  <pre className="ajxOutputBody">{extracted.copyText}</pre>
+                  <div className="ajxOutputBody">{extracted.copyText}</div>
                 </div>
               ) : null}
             </React.Fragment>
@@ -4372,6 +4372,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
