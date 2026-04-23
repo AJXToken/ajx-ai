@@ -600,6 +600,87 @@ function extractBodyFromMatchedLabelLine(line: string): string {
 }
 
 function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
+  const normalized = normalizeCopyBoxSource(text);
+  if (!normalized) return null;
+  if (normalized.includes("```")) return null;
+
+  const lines = normalized.split("\n");
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i] ?? "";
+    const line = rawLine.trim();
+    if (!line) continue;
+    if (isSummaryLikeLabel(line, locale) || isSummaryLine(line, locale)) continue;
+
+    const matched = getExplicitCopyLabelMatch(line);
+    if (!matched) continue;
+
+    const label = normalizeOutputBoxLabel(line, locale);
+
+    const inlineBody = extractBodyFromMatchedLabelLine(line);
+    const tail = lines.slice(i + 1).join("\n").trim();
+
+    let body = "";
+    if (inlineBody && tail) {
+      body = `${inlineBody}\n${tail}`.trim();
+    } else if (inlineBody) {
+      body = inlineBody.trim();
+    } else {
+      body = tail.trim();
+    }
+
+    if (!body || body.trim().length < 2) return null;
+
+    const mainText = lines.slice(0, i).join("\n").trim();
+
+    return {
+      mainText,
+      copyText: body,
+      label,
+    };
+  }
+
+  if (lines.length >= 2) {
+    const firstNonEmptyIndex = lines.findIndex((line) => line.trim());
+    if (firstNonEmptyIndex >= 0 && firstNonEmptyIndex < lines.length - 1) {
+      const rawFirstLine = lines[firstNonEmptyIndex];
+      const firstLine = rawFirstLine.trim().toLowerCase().replace(/\*+/g, "");
+      const rest = lines.slice(firstNonEmptyIndex + 1).join("\n").trim();
+
+      if (isSummaryLikeLabel(rawFirstLine, locale) || isSummaryLine(rawFirstLine, locale)) {
+        return null;
+      }
+
+      const introLooksLikeLabel =
+        firstLine.includes("käännös") ||
+        firstLine.includes("translation") ||
+        firstLine.includes("traducción") ||
+        firstLine.includes("valmis teksti") ||
+        firstLine.includes("final text") ||
+        firstLine.includes("texto final") ||
+        firstLine.includes("sähköposti") ||
+        firstLine.includes("sähköpostipohja") ||
+        firstLine.includes("email") ||
+        firstLine.includes("correo") ||
+        firstLine.includes("viesti") ||
+        firstLine.includes("viestipohja") ||
+        firstLine.includes("message") ||
+        firstLine.includes("mensaje") ||
+        firstLine.includes("tarjous") ||
+        firstLine.includes("tarjouspohja") ||
+        firstLine.includes("offer") ||
+        firstLine.includes("oferta");
+
+      if (introLooksLikeLabel && rest) {
+        return {
+          mainText: lines.slice(0, firstNonEmptyIndex).join("\n").trim(),
+          copyText: rest,
+          label: normalizeOutputBoxLabel(lines[firstNonEmptyIndex], locale),
+        };
+      }
+    }
+  }
+
   return null;
 }
 
@@ -966,7 +1047,7 @@ function RichMessage({
                   <div className="ajxOutputTop">
                     <span className="ajxOutputTitle">{extracted.label}</span>
                   </div>
-                  <div className="ajxOutputBody">{extracted.copyText}</div>
+                  <pre className="ajxOutputBody">{extracted.copyText}</pre>
                 </div>
               ) : null}
             </React.Fragment>
@@ -1533,21 +1614,6 @@ function imageQueuedText(locale: Locale): string {
   if (locale === "es") return "Kuva lisätty. Valitse analysointi tai muokkaus ja lähetä pyyntö.";
   if (locale === "en") return "Image attached. Choose analyze or edit, then send your request.";
   return "Kuva lisätty. Valitse analyysi tai muokkaus ja lähetä pyyntö.";
-}
-function attachmentHintText(locale: Locale): string {
-  if (locale === "es") {
-    return "Adjuntos: puedes subir imágenes, PDF y otros archivos. Tamaño máximo recomendado: 3,5 MB.";
-  }
-  if (locale === "en") {
-    return "Attachments: you can upload images, PDFs, and other files. Recommended maximum size: 3.5 MB.";
-  }
-  return "Liitteet: voit ladata kuvia, PDF:iä ja muita tiedostoja. Suositeltu enimmäiskoko: 3.5 MB.";
-}
-
-function attachFileMenuLabel(locale: Locale): string {
-  if (locale === "es") return "Adjuntar archivo (PDF, TXT, CSV...)";
-  if (locale === "en") return "Attach file (PDF, TXT, CSV...)";
-  return "Liitä tiedosto (PDF, TXT, CSV...)";
 }
 
 export default function ChatPage(): React.JSX.Element {
@@ -2782,8 +2848,6 @@ export default function ChatPage(): React.JSX.Element {
           ? "Interpretación: edición de imagen"
           : "Interpretation: image editing";
     }
-  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
-  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
 
     if (effectiveImageIntent === "analyze") {
       return locale === "fi"
@@ -3534,52 +3598,13 @@ export default function ChatPage(): React.JSX.Element {
 
 
 
-                @media (max-width: 980px) {
-          .ajxTopBar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: nowrap;
-          }
-
-          .ajxTopControls {
-            display: flex;
-            gap: 6px;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-          }
-
-          .ajxControlGroup {
-            flex: 0 0 auto;
-          }
-        }
+        @media (max-width: 980px) {
           .ajxTopControls {
             gap: 8px;
             width: 100%;
             justify-content: flex-start;
           }
 
-          .ajxControlLabel {
-            display: none;
-          }
-
-          .ajxControlGroup {
-            gap: 6px;
-            padding: 4px 6px;
-            border-radius: 14px;
-          }
-
-          .ajxSelect {
-            padding: 8px 28px 8px 10px;
-            font-size: 12px;
-            border-radius: 12px;
-          }
-
-          .ajxChevron {
-            right: 10px;
-            font-size: 11px;
-          }
           .ajxControlGroup {
             padding: 5px;
           }
@@ -3637,19 +3662,6 @@ export default function ChatPage(): React.JSX.Element {
             monospace;
           -webkit-overflow-scrolling: touch;
         }
-          .ajxActionBtn {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            font-size: 16px;
-          }
-
-          .ajxSidebarToggleBtn {
-            min-width: 42px;
-            height: 42px;
-            padding: 0 10px;
-            border-radius: 14px;
-          }
 
         .ajxParagraph,
         .ajxHeadingBlock,
@@ -3659,17 +3671,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
           .ajxTopHelp {
-          .ajxDisclaimerRow {
-            margin-top: 8px;
-            gap: 4px;
-            font-size: 10px;
-            line-height: 1.3;
-          }
-
-          .ajxDisclaimerPlan {
-            padding: 3px 8px;
-            font-size: 10px;
-          }
             display: none;
           }
 
@@ -3848,7 +3849,7 @@ export default function ChatPage(): React.JSX.Element {
               </button>
 
               <div className={styles.topTitle}>
-                {!isMobile ? <div className={styles.title}>{activeTitle}</div> : null}
+                <div className={styles.title}>{activeTitle}</div>
               </div>
             </div>
 
@@ -4303,10 +4304,9 @@ export default function ChatPage(): React.JSX.Element {
                   ) : null}
 
                   {imageStatus ? <div className="ajxStatusNote">{imageStatus}</div> : null}
-                  
 
                   <div className="ajxDisclaimerRow">
-                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la información importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdä virheitä. Tarkista tiedot aina.") : disclaimerText}</span>
+                    <span>{disclaimerText}</span>
                     <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
                 </div>
@@ -4330,17 +4330,17 @@ export default function ChatPage(): React.JSX.Element {
           }}
         >
           {canAttachImagesForAnalysis ? (
-          <button
-            className={`${styles.btnGhost} ajxMenuItem`}
-            onClick={() => {
-              setPlusOpen(false);
-              requestAnimationFrame(() => imgInputRef.current?.click());
-            }}
-            type="button"
-          >
-            {t(locale, "ui.attach_image")}
-          </button>
-        ) : null}
+            <button
+              className={`${styles.btnGhost} ajxMenuItem`}
+              onClick={() => {
+                setPlusOpen(false);
+                requestAnimationFrame(() => imgInputRef.current?.click());
+              }}
+              type="button"
+            >
+              {t(locale, "ui.attach_image")}
+            </button>
+          ) : null}
 
           <button
             className={`${styles.btnGhost} ajxMenuItem`}
@@ -4348,10 +4348,9 @@ export default function ChatPage(): React.JSX.Element {
               setPlusOpen(false);
               requestAnimationFrame(() => fileInputRef.current?.click());
             }}
-            title={attachFileMenuLabel(locale)}
             type="button"
           >
-            {attachFileMenuLabel(locale)}
+            {t(locale, "ui.attach_file")}
           </button>
 
           {showWebButton ? (
@@ -4373,19 +4372,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
