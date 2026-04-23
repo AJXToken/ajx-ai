@@ -4240,7 +4240,7 @@ export default function ChatPage(): React.JSX.Element {
                   ) : null}
 
                   {imageStatus ? <div className="ajxStatusNote">{imageStatus}</div> : null}
-                  <div className="ajxStatusNote">{attachmentHintText(locale)}</div>
+                  
 
                   <div className="ajxDisclaimerRow">
                     <span>{disclaimerText}</span>
@@ -4310,6 +4310,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
