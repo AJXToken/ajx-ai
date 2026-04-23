@@ -2782,7 +2782,10 @@ export default function ChatPage(): React.JSX.Element {
           ? "InterpretaciÃ³n: ediciÃ³n de imagen"
           : "Interpretation: image editing";
     }
-if (effectiveImageIntent === "analyze") {
+  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
+  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
+
+    if (effectiveImageIntent === "analyze") {
       return locale === "fi"
         ? "Tulkinta: kuvan analyysi"
         : locale === "es"
@@ -3796,7 +3799,7 @@ if (effectiveImageIntent === "analyze") {
                         locale === "fi" ? "fi-FI" : locale === "es" ? "es-ES" : "en-US"
                       )}
                     </span>
-                    <span>•</span>
+                    <span>â€¢</span>
                     <span>
                       {th.messages.length} {t(locale, "ui.msg")}
                     </span>
@@ -3855,8 +3858,8 @@ if (effectiveImageIntent === "analyze") {
               : undefined
           }
         >
-          <header className={styles.topbar}>
-            <div className={styles.topLeft}>
+          <header className={styles.topbar} style={isMobile ? { display: "grid", gridTemplateColumns: "auto minmax(0,1fr)", alignItems: "center", columnGap: "8px", rowGap: "0", paddingBottom: "10px" } : undefined}>
+            <div className={styles.topLeft} style={isMobile ? { minWidth: "auto", flex: "0 0 auto" } : undefined}>
               <button
                 className={`${styles.btnGhost} ajxSidebarToggleBtn`}
                 onClick={() => setSidebarOpen((v) => !v)}
@@ -3864,7 +3867,7 @@ if (effectiveImageIntent === "analyze") {
                 aria-label={chatsLabel}
                 type="button"
               >
-                <span className="ajxSidebarToggleIcon">{sidebarOpen ? "✕" : "☰"}</span>
+                <span className="ajxSidebarToggleIcon">{sidebarOpen ? "?" : "?"}</span>
                 <span className="ajxSidebarToggleText">{chatsLabel}</span>
               </button>
 
@@ -3873,7 +3876,7 @@ if (effectiveImageIntent === "analyze") {
               </div>
             </div>
 
-            <div className="ajxTopControls">
+            <div className="ajxTopControls" style={isMobile ? { minWidth: 0, width: "100%", justifyContent: "flex-end", flexWrap: "nowrap", overflow: "hidden" } : undefined}>
               <a
                 href={`/help?lang=${locale}`}
                 className="ajxHelpLink ajxTopHelp"
@@ -3882,13 +3885,13 @@ if (effectiveImageIntent === "analyze") {
                 {helpLabel}
               </a>
 
-              <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")}>
+              <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")} style={isMobile ? { minWidth: 0, maxWidth: "100%" } : undefined}>
                 <div className="ajxControlLabel">{t(locale, "ui.ajx_mode")}</div>
                 <div className="ajxSelectWrap">
                   <select
                     value={mode}
                     onChange={(e) => setMode(e.target.value as AjxMode)}
-                    className="ajxSelect"
+                    className="ajxSelect" style={isMobile ? { maxWidth: "100%", width: "100%" } : undefined}
                     title={t(locale, "ui.ajx_mode")}
                   >
                     {allowedModes.map((m) => (
@@ -3897,24 +3900,24 @@ if (effectiveImageIntent === "analyze") {
                       </option>
                     ))}
                   </select>
-                  <span className="ajxChevron">▾</span>
+                  <span className="ajxChevron">?</span>
                 </div>
               </div>
 
-              <div className="ajxControlGroup" aria-label={t(locale, "ui.language")}>
+              <div className="ajxControlGroup" aria-label={t(locale, "ui.language")} style={isMobile ? { minWidth: 0, maxWidth: "100%" } : undefined}>
                 <div className="ajxControlLabel">{t(locale, "ui.language")}</div>
                 <div className="ajxSelectWrap">
                   <select
                     value={locale}
                     onChange={(e) => setLocaleAndPersist(e.target.value as Locale)}
-                    className="ajxSelect"
+                    className="ajxSelect" style={isMobile ? { maxWidth: "100%", width: "100%" } : undefined}
                     title={t(locale, "ui.language")}
                   >
                     <option value="fi">FI</option>
                     <option value="en">EN</option>
                     <option value="es">ES</option>
                   </select>
-                  <span className="ajxChevron">▾</span>
+                  <span className="ajxChevron">?</span>
                 </div>
               </div>
             </div>
@@ -4087,10 +4090,10 @@ if (effectiveImageIntent === "analyze") {
                               if (isMdImage) {
                                 setImageStatus(
                                   locale === "fi"
-                                    ? "✅ Kuva luotu tai muokattu."
+                                    ? "? Kuva luotu tai muokattu."
                                     : locale === "es"
-                                      ? "✅ Imagen creada o editada."
-                                      : "✅ Image created or edited."
+                                      ? "? Imagen creada o editada."
+                                      : "? Image created or edited."
                                 );
                                 appendAssistantMessage(s);
                                 setManualImageIntent(null);
@@ -4307,7 +4310,7 @@ if (effectiveImageIntent === "analyze") {
                     <div className="ajxChips">
                       {pending.map((p) => (
                         <div key={p.id} className="ajxChip" title={p.type}>
-                          <span>{p.kind === "image" ? "🖼️" : "📎"}</span>
+                          <span>{p.kind === "image" ? "???" : "??"}</span>
                           <span className="ajxChipName">{p.name}</span>
                           <button
                             className={styles.btnTinyDanger}
