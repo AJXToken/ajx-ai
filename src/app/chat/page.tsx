@@ -3541,6 +3541,26 @@ export default function ChatPage(): React.JSX.Element {
             justify-content: flex-start;
           }
 
+          .ajxControlLabel {
+            display: none;
+          }
+
+          .ajxControlGroup {
+            gap: 6px;
+            padding: 4px 6px;
+            border-radius: 14px;
+          }
+
+          .ajxSelect {
+            padding: 8px 28px 8px 10px;
+            font-size: 12px;
+            border-radius: 12px;
+          }
+
+          .ajxChevron {
+            right: 10px;
+            font-size: 11px;
+          }
           .ajxControlGroup {
             padding: 5px;
           }
@@ -3598,6 +3618,19 @@ export default function ChatPage(): React.JSX.Element {
             monospace;
           -webkit-overflow-scrolling: touch;
         }
+          .ajxActionBtn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            font-size: 16px;
+          }
+
+          .ajxSidebarToggleBtn {
+            min-width: 42px;
+            height: 42px;
+            padding: 0 10px;
+            border-radius: 14px;
+          }
 
         .ajxParagraph,
         .ajxHeadingBlock,
@@ -3607,6 +3640,17 @@ export default function ChatPage(): React.JSX.Element {
         }
 
           .ajxTopHelp {
+          .ajxDisclaimerRow {
+            margin-top: 8px;
+            gap: 4px;
+            font-size: 10px;
+            line-height: 1.3;
+          }
+
+          .ajxDisclaimerPlan {
+            padding: 3px 8px;
+            font-size: 10px;
+          }
             display: none;
           }
 
@@ -3785,7 +3829,7 @@ export default function ChatPage(): React.JSX.Element {
               </button>
 
               <div className={styles.topTitle}>
-                <div className={styles.title}>{activeTitle}</div>
+                {!isMobile ? <div className={styles.title}>{activeTitle}</div> : null}
               </div>
             </div>
 
@@ -4243,7 +4287,7 @@ export default function ChatPage(): React.JSX.Element {
                   
 
                   <div className="ajxDisclaimerRow">
-                    <span>{disclaimerText}</span>
+                    <span>{isMobile ? (locale === "es" ? "AJX AI puede equivocarse." : locale === "en" ? "AJX AI can make mistakes." : "AJX AI voi erehtyä.") : disclaimerText}</span>
                     <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
                 </div>
@@ -4310,6 +4354,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
