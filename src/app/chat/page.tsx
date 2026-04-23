@@ -175,7 +175,7 @@ function renderInlineFormatting(text: string): React.ReactNode[] {
 }
 
 function isBulletLine(line: string) {
-  return /^(\-|\*|•)\s+/.test(line.trim());
+  return /^(\-|\*|ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢)\s+/.test(line.trim());
 }
 
 function isOrderedLine(line: string) {
@@ -190,7 +190,7 @@ function isOrderedLine(line: string) {
 }
 
 function isDividerLine(line: string) {
-  return /^(-{3,}|—\s*—\s*—)$/.test(line.trim());
+  return /^(-{3,}|ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â\s*ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â\s*ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â)$/.test(line.trim());
 }
 
 function isMarkdownHeadingLine(line: string) {
@@ -249,7 +249,7 @@ function normalizeInlineListSequences(text: string): string {
   if (!text) return "";
 
   return normalizeDetachedOrderedMarkers(text)
-    .replace(/([^\n])\s+(•\s)/g, "$1\n$2")
+    .replace(/([^\n])\s+(ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\-\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\*\s)/g, "$1\n$2");
 }
@@ -309,7 +309,7 @@ function isHeadingLine(line: string, prevRaw?: string, nextRaw?: string) {
 }
 
 function cleanBulletText(line: string) {
-  return line.trim().replace(/^(\-|\*|•)\s+/, "");
+  return line.trim().replace(/^(\-|\*|ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢)\s+/, "");
 }
 
 function cleanOrderedText(line: string) {
@@ -334,7 +334,7 @@ function isSummaryHeadingLine(line: string, locale: Locale) {
   const cleaned = cleanHeadingText(line).toLowerCase();
 
   if (locale === "fi") {
-    return cleaned === "yhteenveto" || cleaned === "tiivistelmä" || cleaned === "lyhyesti";
+    return cleaned === "yhteenveto" || cleaned === "tiivistelmÃƒÆ’Ã‚Â¤" || cleaned === "lyhyesti";
   }
 
   if (locale === "es") {
@@ -350,7 +350,7 @@ function isSummaryLine(line: string, locale: Locale) {
   if (locale === "fi") {
     return (
       s.startsWith("yhteenveto:") ||
-      s.startsWith("tiivistelmä:") ||
+      s.startsWith("tiivistelmÃƒÆ’Ã‚Â¤:") ||
       s.startsWith("lyhyesti:")
     );
   }
@@ -440,9 +440,9 @@ function normalizeOutputBoxLabel(raw: string, locale: Locale) {
   if (!s) return outputBoxLabel(locale);
 
   if (locale === "fi") {
-    if (s.includes("käännös")) return "Käännös";
-    if (s.includes("sähköpostipohja")) return "Sähköposti";
-    if (s.includes("sähköposti")) return "Sähköposti";
+    if (s.includes("kÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤nnÃƒÆ’Ã‚Â¶s")) return "KÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤nnÃƒÆ’Ã‚Â¶s";
+    if (s.includes("sÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶postipohja")) return "SÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶posti";
+    if (s.includes("sÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶posti")) return "SÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶posti";
     if (s.includes("viestipohja")) return "Viesti";
     if (s.includes("viesti")) return "Viesti";
     if (s.includes("tarjouspohja")) return "Tarjous";
@@ -454,7 +454,7 @@ function normalizeOutputBoxLabel(raw: string, locale: Locale) {
   }
 
   if (locale === "es") {
-    if (s.includes("traducción")) return "Traducción";
+    if (s.includes("traducciÃƒÆ’Ã‚Â³n")) return "TraducciÃƒÆ’Ã‚Â³n";
     if (s.includes("plantilla de correo")) return "Correo";
     if (s.includes("correo")) return "Correo";
     if (s.includes("plantilla de mensaje")) return "Mensaje";
@@ -489,7 +489,7 @@ function cleanCopyLabelLine(line: string) {
     .trim()
     .replace(/^\*+/, "")
     .replace(/\*+$/, "")
-    .replace(/^[_`>#\-\s•]+/, "")
+    .replace(/^[_`>#\-\sÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢]+/, "")
     .trim();
 }
 
@@ -497,7 +497,7 @@ function isSummaryLikeLabel(line: string, locale: Locale) {
   const cleaned = cleanCopyLabelLine(line).toLowerCase().replace(/:+$/, "").trim();
 
   if (locale === "fi") {
-    return cleaned === "yhteenveto" || cleaned === "tiivistelmä" || cleaned === "lyhyesti";
+    return cleaned === "yhteenveto" || cleaned === "tiivistelmÃƒÆ’Ã‚Â¤" || cleaned === "lyhyesti";
   }
 
   if (locale === "es") {
@@ -511,19 +511,19 @@ function getExplicitCopyLabelMatch(line: string): string | null {
   const cleaned = cleanCopyLabelLine(line).toLowerCase();
 
   const labels = [
-    "käännös",
-    "tässä käännös",
+    "kÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤nnÃƒÆ’Ã‚Â¶s",
+    "tÃƒÆ’Ã‚Â¤ssÃƒÆ’Ã‚Â¤ kÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤nnÃƒÆ’Ã‚Â¶s",
     "translation",
     "here is the translation",
-    "traducción",
-    "aquí tienes la traducción",
+    "traducciÃƒÆ’Ã‚Â³n",
+    "aquÃƒÆ’Ã‚Â­ tienes la traducciÃƒÆ’Ã‚Â³n",
     "valmis teksti",
     "final text",
     "texto final",
-    "sähköposti",
-    "sähköpostipohja",
-    "valmis sähköposti",
-    "valmis sähköpostipohja",
+    "sÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶posti",
+    "sÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶postipohja",
+    "valmis sÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶posti",
+    "valmis sÃƒÆ’Ã‚Â¤hkÃƒÆ’Ã‚Â¶postipohja",
     "email",
     "email template",
     "ready email",
@@ -551,9 +551,9 @@ function getExplicitCopyLabelMatch(line: string): string | null {
     "caption",
     "copy-paste",
     "copy paste",
-    "kopioi tästä",
+    "kopioi tÃƒÆ’Ã‚Â¤stÃƒÆ’Ã‚Â¤",
     "copy from here",
-    "copia desde aquí",
+    "copia desde aquÃƒÆ’Ã‚Â­",
   ];
 
   for (const label of labels) {
@@ -608,7 +608,7 @@ function renderPlainRichText(text: string, locale: Locale) {
   if (!content) return null;
 
   const normalized = normalizeInlineListSequences(
-    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\n— — —\n")
+    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\nÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â\n")
   );
 
   const rawLines = normalizePlainTextBreaks(normalized.split("\n"));
@@ -1000,9 +1000,9 @@ function detectImageIntent(text: string): ImageIntentChoice {
     /\bmuokkaa\b/,
     /\beditoi\b/,
     /\bparanna\b/,
-    /\btee tästä\b/,
+    /\btee tÃƒÆ’Ã‚Â¤stÃƒÆ’Ã‚Â¤\b/,
     /\bvaihda\b/,
-    /\blisää\b/,
+    /\blisÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤\b/,
     /\bpoista\b/,
     /\brajaa\b/,
     /\btausta\b/,
@@ -1031,7 +1031,7 @@ function detectImageIntent(text: string): ImageIntentChoice {
     /\bmodifica\b/,
     /\bcambia\b/,
     /\bagrega\b/,
-    /\bañade\b/,
+    /\baÃƒÆ’Ã‚Â±ade\b/,
     /\bquita\b/,
     /\brecorta\b/,
     /\bmejora\b/,
@@ -1039,17 +1039,17 @@ function detectImageIntent(text: string): ImageIntentChoice {
   ];
 
   const analyzePatterns = [
-    /\bmitä kuvassa\b/,
-    /\bmitä tässä\b/,
-    /\bmitä näet\b/,
+    /\bmitÃƒÆ’Ã‚Â¤ kuvassa\b/,
+    /\bmitÃƒÆ’Ã‚Â¤ tÃƒÆ’Ã‚Â¤ssÃƒÆ’Ã‚Â¤\b/,
+    /\bmitÃƒÆ’Ã‚Â¤ nÃƒÆ’Ã‚Â¤et\b/,
     /\banalysoi\b/,
     /\barvioi\b/,
     /\btunnista\b/,
-    /\bmikä auto\b/,
-    /\bmikä tämä on\b/,
+    /\bmikÃƒÆ’Ã‚Â¤ auto\b/,
+    /\bmikÃƒÆ’Ã‚Â¤ tÃƒÆ’Ã‚Â¤mÃƒÆ’Ã‚Â¤ on\b/,
     /\bkerro kuvasta\b/,
     /\bkuvaile\b/,
-    /\bonko tämä\b/,
+    /\bonko tÃƒÆ’Ã‚Â¤mÃƒÆ’Ã‚Â¤\b/,
     /\bwhat is in the image\b/,
     /\bwhat's in the image\b/,
     /\bwhat do you see\b/,
@@ -1060,13 +1060,13 @@ function detectImageIntent(text: string): ImageIntentChoice {
     /\bwhat car\b/,
     /\bis this\b/,
     /\bque hay en la imagen\b/,
-    /\bqué hay en la imagen\b/,
-    /\bqué ves\b/,
+    /\bquÃƒÆ’Ã‚Â© hay en la imagen\b/,
+    /\bquÃƒÆ’Ã‚Â© ves\b/,
     /\bque ves\b/,
     /\banaliza\b/,
     /\bdescribe\b/,
     /\bidentifica\b/,
-    /\bqué coche\b/,
+    /\bquÃƒÆ’Ã‚Â© coche\b/,
     /\bque coche\b/,
     /\bes esto\b/,
   ];
@@ -1167,9 +1167,9 @@ function defaultLimitsForCanonicalPlan(cp: CanonicalPlan): Limits {
 }
 
 function composerPlaceholder(locale: Locale): string {
-  if (locale === "es") return "Escribe…";
-  if (locale === "en") return "Write…";
-  return "Kirjoita…";
+  if (locale === "es") return "EscribeÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦";
+  if (locale === "en") return "WriteÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦";
+  return "KirjoitaÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦";
 }
 
 function chatsToggleLabel(locale: Locale): string {
@@ -1184,43 +1184,43 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       {
         id: "offer",
         label: "Crear oferta",
-        prompt: "Ayúdame a crear una oferta clara y convincente para un cliente.",
+        prompt: "AyÃƒÆ’Ã‚Âºdame a crear una oferta clara y convincente para un cliente.",
         mode: "research",
       },
       {
         id: "ad",
         label: "Crear anuncio",
-        prompt: "Ayúdame a crear un anuncio claro y convincente para mi producto o servicio.",
+        prompt: "AyÃƒÆ’Ã‚Âºdame a crear un anuncio claro y convincente para mi producto o servicio.",
         mode: "ideation",
       },
       {
         id: "sales",
         label: "Aumentar ventas",
-        prompt: "Ayúdame a encontrar formas prácticas de aumentar mis ventas.",
+        prompt: "AyÃƒÆ’Ã‚Âºdame a encontrar formas prÃƒÆ’Ã‚Â¡cticas de aumentar mis ventas.",
         mode: "analysis",
       },
       {
         id: "customers",
         label: "Encontrar clientes",
-        prompt: "Ayúdame a encontrar clientes potenciales para mi negocio.",
+        prompt: "AyÃƒÆ’Ã‚Âºdame a encontrar clientes potenciales para mi negocio.",
         mode: "research",
       },
       {
         id: "marketing",
         label: "Mejorar marketing",
-        prompt: "Ayúdame a mejorar mi marketing de forma práctica.",
+        prompt: "AyÃƒÆ’Ã‚Âºdame a mejorar mi marketing de forma prÃƒÆ’Ã‚Â¡ctica.",
         mode: "ideation",
       },
       {
         id: "pricing",
         label: "Mejorar precios",
-        prompt: "Analiza mi pricing y ayúdame a mejorarlo.",
+        prompt: "Analiza mi pricing y ayÃƒÆ’Ã‚Âºdame a mejorarlo.",
         mode: "analysis",
       },
       {
         id: "problem",
         label: "Resolver problema",
-        prompt: "Ayúdame a resolver un problema de negocio paso a paso.",
+        prompt: "AyÃƒÆ’Ã‚Âºdame a resolver un problema de negocio paso a paso.",
         mode: "analysis",
       },
     ];
@@ -1277,37 +1277,37 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
     {
       id: "offer",
       label: "Luo tarjous",
-      prompt: "Auta minua luomaan selkeä ja myyvä tarjous asiakkaalle.",
+      prompt: "Auta minua luomaan selkeÃƒÆ’Ã‚Â¤ ja myyvÃƒÆ’Ã‚Â¤ tarjous asiakkaalle.",
       mode: "research",
     },
     {
       id: "ad",
       label: "Luo mainos",
-      prompt: "Auta minua luomaan selkeä ja myyvä mainos tuotteelleni tai palvelulleni.",
+      prompt: "Auta minua luomaan selkeÃƒÆ’Ã‚Â¤ ja myyvÃƒÆ’Ã‚Â¤ mainos tuotteelleni tai palvelulleni.",
       mode: "ideation",
       },
       {
       id: "sales",
-      label: "Kasvata myyntiä",
-      prompt: "Auta minua löytämään käytännöllisiä tapoja kasvattaa myyntiä.",
+      label: "Kasvata myyntiÃƒÆ’Ã‚Â¤",
+      prompt: "Auta minua lÃƒÆ’Ã‚Â¶ytÃƒÆ’Ã‚Â¤mÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤n kÃƒÆ’Ã‚Â¤ytÃƒÆ’Ã‚Â¤nnÃƒÆ’Ã‚Â¶llisiÃƒÆ’Ã‚Â¤ tapoja kasvattaa myyntiÃƒÆ’Ã‚Â¤.",
       mode: "analysis",
     },
     {
       id: "customers",
-      label: "Löydä asiakkaita",
-      prompt: "Auta minua löytämään potentiaalisia asiakkaita yritykselleni.",
+      label: "LÃƒÆ’Ã‚Â¶ydÃƒÆ’Ã‚Â¤ asiakkaita",
+      prompt: "Auta minua lÃƒÆ’Ã‚Â¶ytÃƒÆ’Ã‚Â¤mÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤n potentiaalisia asiakkaita yritykselleni.",
       mode: "research",
     },
     {
       id: "marketing",
       label: "Paranna markkinointia",
-      prompt: "Auta minua parantamaan markkinointia käytännöllisesti.",
+      prompt: "Auta minua parantamaan markkinointia kÃƒÆ’Ã‚Â¤ytÃƒÆ’Ã‚Â¤nnÃƒÆ’Ã‚Â¶llisesti.",
       mode: "ideation",
     },
     {
       id: "pricing",
       label: "Paranna hinnoittelua",
-      prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sitä.",
+      prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sitÃƒÆ’Ã‚Â¤.",
       mode: "analysis",
     },
     {
@@ -1322,12 +1322,12 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   if (locale === "es") {
     return [
       `MODO_PIKATOIMINTO: ${action.id}`,
-      "No des una respuesta larga ni un plan final todavía.",
-      "Haz primero exactamente 3–5 preguntas cortas y concretas para recopilar la información necesaria.",
-      "Presenta solo esas preguntas, cada una en su propia línea, sin numeración ni viñetas.",
+      "No des una respuesta larga ni un plan final todavÃƒÆ’Ã‚Â­a.",
+      "Haz primero exactamente 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 preguntas cortas y concretas para recopilar la informaciÃƒÆ’Ã‚Â³n necesaria.",
+      "Presenta solo esas preguntas, cada una en su propia lÃƒÆ’Ã‚Â­nea, sin numeraciÃƒÆ’Ã‚Â³n ni viÃƒÆ’Ã‚Â±etas.",
       "No expliques tu razonamiento.",
-      "No añadas resumen, introducción larga ni propuesta final todavía.",
-      "Cuando el usuario responda, entonces crea la oferta, el plan o la solución basándote en sus respuestas.",
+      "No aÃƒÆ’Ã‚Â±adas resumen, introducciÃƒÆ’Ã‚Â³n larga ni propuesta final todavÃƒÆ’Ã‚Â­a.",
+      "Cuando el usuario responda, entonces crea la oferta, el plan o la soluciÃƒÆ’Ã‚Â³n basÃƒÆ’Ã‚Â¡ndote en sus respuestas.",
     ].join("\n");
   }
 
@@ -1335,7 +1335,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     return [
       `QUICK_ACTION_MODE: ${action.id}`,
       "Do not give a long answer or a final plan yet.",
-      "First ask exactly 3–5 short, concrete questions needed to complete the task.",
+      "First ask exactly 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 short, concrete questions needed to complete the task.",
       "Output only those questions, each on its own line, without numbering or bullet points.",
       "Do not explain your reasoning.",
       "Do not add a summary, long intro, or final proposal yet.",
@@ -1345,12 +1345,12 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
 
   return [
     `PIKATOIMINTO_TILA: ${action.id}`,
-    "Älä anna vielä pitkää vastausta tai valmista suunnitelmaa.",
-    "Kysy ensin täsmälleen 3–5 lyhyttä ja konkreettista kysymystä, joilla keräät tarvittavat tiedot.",
-    "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejä.",
-    "Älä selitä ajatteluasi.",
-    "Älä lisää yhteenvetoa, pitkää johdantoa tai lopullista tarjousta vielä.",
-    "Kun käyttäjä vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
+    "ÃƒÆ’Ã¢â‚¬Å¾lÃƒÆ’Ã‚Â¤ anna vielÃƒÆ’Ã‚Â¤ pitkÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤ vastausta tai valmista suunnitelmaa.",
+    "Kysy ensin tÃƒÆ’Ã‚Â¤smÃƒÆ’Ã‚Â¤lleen 3ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“5 lyhyttÃƒÆ’Ã‚Â¤ ja konkreettista kysymystÃƒÆ’Ã‚Â¤, joilla kerÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤t tarvittavat tiedot.",
+    "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejÃƒÆ’Ã‚Â¤.",
+    "ÃƒÆ’Ã¢â‚¬Å¾lÃƒÆ’Ã‚Â¤ selitÃƒÆ’Ã‚Â¤ ajatteluasi.",
+    "ÃƒÆ’Ã¢â‚¬Å¾lÃƒÆ’Ã‚Â¤ lisÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤ yhteenvetoa, pitkÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤ johdantoa tai lopullista tarjousta vielÃƒÆ’Ã‚Â¤.",
+    "Kun kÃƒÆ’Ã‚Â¤yttÃƒÆ’Ã‚Â¤jÃƒÆ’Ã‚Â¤ vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
   ].join("\n");
 }
 
@@ -1399,7 +1399,7 @@ function loadImageElementFromFile(file: File): Promise<HTMLImageElement> {
 
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      reject(new Error("Kuvan lukeminen epäonnistui."));
+      reject(new Error("Kuvan lukeminen epÃƒÆ’Ã‚Â¤onnistui."));
     };
 
     img.src = objectUrl;
@@ -1411,7 +1411,7 @@ function canvasToJpegBlob(canvas: HTMLCanvasElement, quality: number): Promise<B
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          reject(new Error("Kuvan pakkaus epäonnistui."));
+          reject(new Error("Kuvan pakkaus epÃƒÆ’Ã‚Â¤onnistui."));
           return;
         }
         resolve(blob);
@@ -1433,7 +1433,7 @@ async function compressImageFile(file: File): Promise<{
 
   if (file.type === "image/svg+xml") {
     if (file.size > HARD_MAX_IMAGE_BYTES) {
-      throw new Error("SVG-kuva on liian suuri. Käytä pienempää kuvaa.");
+      throw new Error("SVG-kuva on liian suuri. KÃƒÆ’Ã‚Â¤ytÃƒÆ’Ã‚Â¤ pienempÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤ kuvaa.");
     }
     const dataUrl = await new Promise<string>((resolve, reject) => {
       const fr = new FileReader();
@@ -1465,7 +1465,7 @@ async function compressImageFile(file: File): Promise<{
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   if (!ctx) {
-    throw new Error("Canvas ei ole käytettävissä.");
+    throw new Error("Canvas ei ole kÃƒÆ’Ã‚Â¤ytettÃƒÆ’Ã‚Â¤vissÃƒÆ’Ã‚Â¤.");
   }
 
   let currentWidth = width;
@@ -1508,7 +1508,7 @@ async function compressImageFile(file: File): Promise<{
   }
 
   if (!bestBlob) {
-    throw new Error("Kuvan pakkaus epäonnistui.");
+    throw new Error("Kuvan pakkaus epÃƒÆ’Ã‚Â¤onnistui.");
   }
 
   if (bestBlob.size > HARD_MAX_IMAGE_BYTES) {
@@ -1524,30 +1524,30 @@ async function compressImageFile(file: File): Promise<{
 }
 
 function imageEditStartedText(locale: Locale): string {
-  if (locale === "es") return "Muokataan kuvaa…";
-  if (locale === "en") return "Editing image…";
-  return "Muokataan kuvaa…";
+  if (locale === "es") return "Muokataan kuvaaÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦";
+  if (locale === "en") return "Editing imageÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦";
+  return "Muokataan kuvaaÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦";
 }
 
 function imageQueuedText(locale: Locale): string {
-  if (locale === "es") return "Kuva lisätty. Valitse analysointi tai muokkaus ja lähetä pyyntö.";
+  if (locale === "es") return "Kuva lisÃƒÆ’Ã‚Â¤tty. Valitse analysointi tai muokkaus ja lÃƒÆ’Ã‚Â¤hetÃƒÆ’Ã‚Â¤ pyyntÃƒÆ’Ã‚Â¶.";
   if (locale === "en") return "Image attached. Choose analyze or edit, then send your request.";
-  return "Kuva lisätty. Valitse analyysi tai muokkaus ja lähetä pyyntö.";
+  return "Kuva lisÃƒÆ’Ã‚Â¤tty. Valitse analyysi tai muokkaus ja lÃƒÆ’Ã‚Â¤hetÃƒÆ’Ã‚Â¤ pyyntÃƒÆ’Ã‚Â¶.";
 }
 function attachmentHintText(locale: Locale): string {
   if (locale === "es") {
-    return "Adjuntos: puedes subir imágenes, PDF y otros archivos. Tamaño máximo recomendado: 3,5 MB.";
+    return "Adjuntos: puedes subir imÃƒÆ’Ã‚Â¡genes, PDF y otros archivos. TamaÃƒÆ’Ã‚Â±o mÃƒÆ’Ã‚Â¡ximo recomendado: 3,5 MB.";
   }
   if (locale === "en") {
     return "Attachments: you can upload images, PDFs, and other files. Recommended maximum size: 3.5 MB.";
   }
-  return "Liitteet: voit ladata kuvia, PDF:iä ja muita tiedostoja. Suositeltu enimmäiskoko: 3.5 MB.";
+  return "Liitteet: voit ladata kuvia, PDF:iÃƒÆ’Ã‚Â¤ ja muita tiedostoja. Suositeltu enimmÃƒÆ’Ã‚Â¤iskoko: 3.5 MB.";
 }
 
 function attachFileMenuLabel(locale: Locale): string {
   if (locale === "es") return "Adjuntar archivo (PDF, TXT, CSV...)";
   if (locale === "en") return "Attach file (PDF, TXT, CSV...)";
-  return "Liitä tiedosto (PDF, TXT, CSV...)";
+  return "LiitÃƒÆ’Ã‚Â¤ tiedosto (PDF, TXT, CSV...)";
 }
 
 export default function ChatPage(): React.JSX.Element {
@@ -2222,7 +2222,7 @@ export default function ChatPage(): React.JSX.Element {
           locale === "fi"
             ? "Kuva on liian suuri. Valitse pienempi kuva."
             : locale === "es"
-              ? "La imagen es demasiado grande. Elige una imagen más pequeña."
+              ? "La imagen es demasiado grande. Elige una imagen mÃƒÆ’Ã‚Â¡s pequeÃƒÆ’Ã‚Â±a."
               : "The image is too large. Choose a smaller image."
         );
       }
@@ -2661,7 +2661,7 @@ export default function ChatPage(): React.JSX.Element {
 
       if (!sawStructuredStream && !textSoFar.trim()) {
         applyText(
-          locale === "fi" ? "(Tyhjä vastaus)" : locale === "es" ? "(Respuesta vacía)" : "(Empty response)"
+          locale === "fi" ? "(TyhjÃƒÆ’Ã‚Â¤ vastaus)" : locale === "es" ? "(Respuesta vacÃƒÆ’Ã‚Â­a)" : "(Empty response)"
         );
       }
 
@@ -2699,9 +2699,9 @@ export default function ChatPage(): React.JSX.Element {
         if (!canEditImages) {
           appendAssistantMessage(
             locale === "fi"
-              ? "Kuvan muokkaus on käytössä vain Pro- ja Company-tasoilla."
+              ? "Kuvan muokkaus on kÃƒÆ’Ã‚Â¤ytÃƒÆ’Ã‚Â¶ssÃƒÆ’Ã‚Â¤ vain Pro- ja Company-tasoilla."
               : locale === "es"
-                ? "La edición de imágenes está disponible solo en los planes Pro y Company."
+                ? "La ediciÃƒÆ’Ã‚Â³n de imÃƒÆ’Ã‚Â¡genes estÃƒÆ’Ã‚Â¡ disponible solo en los planes Pro y Company."
                 : "Image editing is available only on Pro and Company plans."
           );
           return;
@@ -2715,9 +2715,9 @@ export default function ChatPage(): React.JSX.Element {
           setImageStatus("");
           appendAssistantMessage(
             locale === "fi"
-              ? "Kuvan muokkausnappia ei löytynyt. Kokeile painaa kuvan generointinappia kerran."
+              ? "Kuvan muokkausnappia ei lÃƒÆ’Ã‚Â¶ytynyt. Kokeile painaa kuvan generointinappia kerran."
               : locale === "es"
-                ? "No se encontró el botón de edición de imagen. Prueba a pulsar el botón de generación una vez."
+                ? "No se encontrÃƒÆ’Ã‚Â³ el botÃƒÆ’Ã‚Â³n de ediciÃƒÆ’Ã‚Â³n de imagen. Prueba a pulsar el botÃƒÆ’Ã‚Â³n de generaciÃƒÆ’Ã‚Â³n una vez."
                 : "Image edit button was not found. Try pressing the image generation button once."
           );
         }
@@ -2727,7 +2727,7 @@ export default function ChatPage(): React.JSX.Element {
       if (effectiveImageIntent === null) {
         appendAssistantMessage(
           locale === "fi"
-            ? "Valitse ensin haluatko analysoida kuvan vai muokata sitä."
+            ? "Valitse ensin haluatko analysoida kuvan vai muokata sitÃƒÆ’Ã‚Â¤."
             : locale === "es"
               ? "Primero elige si quieres analizar o editar la imagen."
               : "First choose whether you want to analyze or edit the image."
@@ -2764,12 +2764,12 @@ export default function ChatPage(): React.JSX.Element {
 
   const disclaimerText = useMemo(() => {
     if (locale === "es") {
-      return "AJX AI es una inteligencia artificial y puede cometer errores. Verifica siempre la información.";
+      return "AJX AI es una inteligencia artificial y puede cometer errores. Verifica siempre la informaciÃƒÆ’Ã‚Â³n.";
     }
     if (locale === "en") {
       return "AJX AI is an AI and can make mistakes. Always verify important information.";
     }
-    return "AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina.";
+    return "AJX AI on tekoÃƒÆ’Ã‚Â¤ly ja voi tehdÃƒÆ’Ã‚Â¤ virheitÃƒÆ’Ã‚Â¤. Tarkista tiedot aina.";
   }, [locale]);
 
   const imageIntentHint = useMemo(() => {
@@ -2779,7 +2779,7 @@ export default function ChatPage(): React.JSX.Element {
       return locale === "fi"
         ? "Tulkinta: kuvan muokkaus"
         : locale === "es"
-          ? "Interpretación: edición de imagen"
+          ? "InterpretaciÃƒÆ’Ã‚Â³n: ediciÃƒÆ’Ã‚Â³n de imagen"
           : "Interpretation: image editing";
     }
   const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
@@ -2789,7 +2789,7 @@ export default function ChatPage(): React.JSX.Element {
       return locale === "fi"
         ? "Tulkinta: kuvan analyysi"
         : locale === "es"
-          ? "Interpretación: análisis de imagen"
+          ? "InterpretaciÃƒÆ’Ã‚Â³n: anÃƒÆ’Ã‚Â¡lisis de imagen"
           : "Interpretation: image analysis";
     }
 
@@ -2816,7 +2816,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const planMiniText =
     effectiveCanonical === "free"
-      ? `${planLabel} · ${Number(usage?.msgThisMonth || 0)}/${FREE_DISPLAY_LIMIT}`
+      ? `${planLabel} Ãƒâ€šÃ‚Â· ${Number(usage?.msgThisMonth || 0)}/${FREE_DISPLAY_LIMIT}`
       : planLabel;
 
   return (
@@ -3799,7 +3799,7 @@ export default function ChatPage(): React.JSX.Element {
                         locale === "fi" ? "fi-FI" : locale === "es" ? "es-ES" : "en-US"
                       )}
                     </span>
-                    <span>•</span>
+                    <span>ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢</span>
                     <span>
                       {th.messages.length} {t(locale, "ui.msg")}
                     </span>
@@ -3858,8 +3858,8 @@ export default function ChatPage(): React.JSX.Element {
               : undefined
           }
         >
-          <header className={styles.topbar}>
-            <div className={styles.topLeft}>
+          <header className={styles.topbar} style={isMobile ? { display: "grid", gridTemplateColumns: "auto minmax(0,1fr)", alignItems: "center", columnGap: "8px", rowGap: "0" } : undefined}>
+            <div className={styles.topLeft} style={isMobile ? { minWidth: "auto", flex: "0 0 auto" } : undefined}>
               <button
                 className={`${styles.btnGhost} ajxSidebarToggleBtn`}
                 onClick={() => setSidebarOpen((v) => !v)}
@@ -3867,7 +3867,7 @@ export default function ChatPage(): React.JSX.Element {
                 aria-label={chatsLabel}
                 type="button"
               >
-                <span className="ajxSidebarToggleIcon">{sidebarOpen ? "?" : "?"}</span>
+                <span className="ajxSidebarToggleIcon">{sidebarOpen ? "Ã¢Å“â€¢" : "Ã¢ËœÂ°"}</span>
                 <span className="ajxSidebarToggleText">{chatsLabel}</span>
               </button>
 
@@ -3876,7 +3876,7 @@ export default function ChatPage(): React.JSX.Element {
               </div>
             </div>
 
-            <div className="ajxTopControls">
+            <div className="ajxTopControls" style={isMobile ? { minWidth: 0, width: "100%", justifyContent: "flex-end", flexWrap: "nowrap", overflow: "hidden", gap: "6px", alignItems: "center" } : undefined}>
               <a
                 href={`/help?lang=${locale}`}
                 className="ajxHelpLink ajxTopHelp"
@@ -3885,7 +3885,7 @@ export default function ChatPage(): React.JSX.Element {
                 {helpLabel}
               </a>
 
-              <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")}>
+              <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")} style={isMobile ? { minWidth: 0, flex: "0 1 auto" } : undefined}>
                 <div className="ajxControlLabel">{t(locale, "ui.ajx_mode")}</div>
                 <div className="ajxSelectWrap">
                   <select
@@ -3900,11 +3900,11 @@ export default function ChatPage(): React.JSX.Element {
                       </option>
                     ))}
                   </select>
-                  <span className="ajxChevron">?</span>
+                  <span className="ajxChevron">Ã¢â€“Â¾</span>
                 </div>
               </div>
 
-              <div className="ajxControlGroup" aria-label={t(locale, "ui.language")}>
+              <div className="ajxControlGroup" aria-label={t(locale, "ui.language")} style={isMobile ? { minWidth: 0, flex: "0 0 auto" } : undefined}>
                 <div className="ajxControlLabel">{t(locale, "ui.language")}</div>
                 <div className="ajxSelectWrap">
                   <select
@@ -3917,7 +3917,7 @@ export default function ChatPage(): React.JSX.Element {
                     <option value="en">EN</option>
                     <option value="es">ES</option>
                   </select>
-                  <span className="ajxChevron">?</span>
+                  <span className="ajxChevron">Ã¢â€“Â¾</span>
                 </div>
               </div>
             </div>
@@ -4107,9 +4107,9 @@ export default function ChatPage(): React.JSX.Element {
                                 low.includes("data:image") ||
                                 low.includes("virhe") ||
                                 low.includes("error") ||
-                                low.includes("kiintiö") ||
-                                low.includes("päivitä") ||
-                                low.includes("ei ole käytössä") ||
+                                low.includes("kiintiÃƒÆ’Ã‚Â¶") ||
+                                low.includes("pÃƒÆ’Ã‚Â¤ivitÃƒÆ’Ã‚Â¤") ||
+                                low.includes("ei ole kÃƒÆ’Ã‚Â¤ytÃƒÆ’Ã‚Â¶ssÃƒÆ’Ã‚Â¤") ||
                                 low.includes("quota")
                               ) {
                                 appendAssistantMessage(s);
@@ -4166,21 +4166,19 @@ export default function ChatPage(): React.JSX.Element {
                         disabled={loading}
                         title={
                           locale === "fi"
-                            ? "Lisää rivinvaihto"
+                            ? "LisÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤ rivinvaihto"
                             : locale === "es"
-                              ? "Insertar salto de línea"
+                              ? "Insertar salto de lÃƒÆ’Ã‚Â­nea"
                               : "Insert line break"
                         }
                         aria-label={
                           locale === "fi"
-                            ? "Lisää rivinvaihto"
+                            ? "LisÃƒÆ’Ã‚Â¤ÃƒÆ’Ã‚Â¤ rivinvaihto"
                             : locale === "es"
-                              ? "Insertar salto de línea"
+                              ? "Insertar salto de lÃƒÆ’Ã‚Â­nea"
                               : "Insert line break"
                         }
-                      >
-                        ?
-                      </button>
+                      >Ã¢â€ Âµ</button>
 
                       <button
                         className={`${styles.btnPrimarySmall} ajxActionBtn`}
@@ -4198,9 +4196,7 @@ export default function ChatPage(): React.JSX.Element {
                             fontWeight: 900,
                             color: sendDisabled ? "#0b0d12" : "#ffffff",
                           }}
-                        >
-                          ?
-                        </span>
+                        >Ã¢Å¾Â¤</span>
                       </button>
                     </div>
                   </div>
@@ -4267,7 +4263,7 @@ export default function ChatPage(): React.JSX.Element {
                           err?.message
                             ? String(err.message)
                             : locale === "fi"
-                              ? "Kuvan liittäminen epäonnistui."
+                              ? "Kuvan liittÃƒÆ’Ã‚Â¤minen epÃƒÆ’Ã‚Â¤onnistui."
                               : locale === "es"
                                 ? "No se pudo adjuntar la imagen."
                                 : "Failed to attach image."
@@ -4294,7 +4290,7 @@ export default function ChatPage(): React.JSX.Element {
                           err?.message
                             ? String(err.message)
                             : locale === "fi"
-                              ? "Tiedoston liittäminen epäonnistui."
+                              ? "Tiedoston liittÃƒÆ’Ã‚Â¤minen epÃƒÆ’Ã‚Â¤onnistui."
                               : locale === "es"
                                 ? "No se pudo adjuntar el archivo."
                                 : "Failed to attach file."
@@ -4319,7 +4315,7 @@ export default function ChatPage(): React.JSX.Element {
                             style={{ padding: "4px 8px" }}
                             type="button"
                           >
-                            ×
+                            ÃƒÆ’Ã¢â‚¬â€
                           </button>
                         </div>
                       ))}
@@ -4330,7 +4326,7 @@ export default function ChatPage(): React.JSX.Element {
                   
 
                   <div className="ajxDisclaimerRow">
-                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la información importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdä virheitä. Tarkista tiedot aina.") : disclaimerText}</span>
+                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la informaciÃƒÆ’Ã‚Â³n importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdÃƒÆ’Ã‚Â¤ virheitÃƒÆ’Ã‚Â¤. Tarkista tiedot aina.") : disclaimerText}</span>
                     <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
                 </div>
