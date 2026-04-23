@@ -1534,6 +1534,21 @@ function imageQueuedText(locale: Locale): string {
   if (locale === "en") return "Image attached. Choose analyze or edit, then send your request.";
   return "Kuva lisätty. Valitse analyysi tai muokkaus ja lähetä pyyntö.";
 }
+function attachmentHintText(locale: Locale): string {
+  if (locale === "es") {
+    return "Adjuntos: puedes subir imágenes, PDF y otros archivos. Tamaño máximo recomendado: 3,5 MB.";
+  }
+  if (locale === "en") {
+    return "Attachments: you can upload images, PDFs, and other files. Recommended maximum size: 3.5 MB.";
+  }
+  return "Liitteet: voit ladata kuvia, PDF:iä ja muita tiedostoja. Suositeltu enimmäiskoko: 3.5 MB.";
+}
+
+function attachFileMenuLabel(locale: Locale): string {
+  if (locale === "es") return "Adjuntar archivo (PDF, TXT, CSV...)";
+  if (locale === "en") return "Attach file (PDF, TXT, CSV...)";
+  return "Liitä tiedosto (PDF, TXT, CSV...)";
+}
 
 export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
@@ -2767,6 +2782,8 @@ export default function ChatPage(): React.JSX.Element {
           ? "Interpretación: edición de imagen"
           : "Interpretation: image editing";
     }
+  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
+  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
 
     if (effectiveImageIntent === "analyze") {
       return locale === "fi"
@@ -4223,6 +4240,7 @@ export default function ChatPage(): React.JSX.Element {
                   ) : null}
 
                   {imageStatus ? <div className="ajxStatusNote">{imageStatus}</div> : null}
+                  <div className="ajxStatusNote">{attachmentHintText(locale)}</div>
 
                   <div className="ajxDisclaimerRow">
                     <span>{disclaimerText}</span>
@@ -4249,17 +4267,17 @@ export default function ChatPage(): React.JSX.Element {
           }}
         >
           {canAttachImagesForAnalysis ? (
-            <button
-              className={`${styles.btnGhost} ajxMenuItem`}
-              onClick={() => {
-                setPlusOpen(false);
-                requestAnimationFrame(() => imgInputRef.current?.click());
-              }}
-              type="button"
-            >
-              {t(locale, "ui.attach_image")}
-            </button>
-          ) : null}
+          <button
+            className={`${styles.btnGhost} ajxMenuItem`}
+            onClick={() => {
+              setPlusOpen(false);
+              requestAnimationFrame(() => imgInputRef.current?.click());
+            }}
+            type="button"
+          >
+            {t(locale, "ui.attach_image")}
+          </button>
+        ) : null}
 
           <button
             className={`${styles.btnGhost} ajxMenuItem`}
@@ -4267,9 +4285,10 @@ export default function ChatPage(): React.JSX.Element {
               setPlusOpen(false);
               requestAnimationFrame(() => fileInputRef.current?.click());
             }}
+            title={attachFileMenuLabel(locale)}
             type="button"
           >
-            {t(locale, "ui.attach_file")}
+            {attachFileMenuLabel(locale)}
           </button>
 
           {showWebButton ? (
@@ -4291,6 +4310,10 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
+
+
 
 
 
