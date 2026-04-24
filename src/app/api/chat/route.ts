@@ -1391,7 +1391,7 @@ function isFreePremiumToolAttempt(text: string): boolean {
     /tee.*tarjous/,
     /auta.*tarjous/,
     /tarjouspohja/,
-    /luo.*mainos/,
+    /mainos/,
     /tee.*mainos/,
     /mainosteksti/,
     /voiko.*luoda.*mainos/,
@@ -1440,6 +1440,25 @@ function isFreePremiumToolAttempt(text: string): boolean {
   ];
 
   return patterns.some((re) => re.test(t));
+}
+
+
+function freeLiteModeInstruction(locale: Locale): string {
+  return l(
+    locale,
+    "- User is on FREE plan.\n- Provide a LIGHT version of the result.\n- Do NOT run full multi-step workflows.\n- Ask max 2–3 questions.\n- Provide only ONE version (not multiple variations).\n- Keep answer useful but shorter and simpler.\n- Do not mention limitations in a negative way.\n- Briefly mention that more advanced workflow is available in Plus.",
+    "- Usuario en plan FREE.\n- Proporciona una versión ligera.\n- Máx 2–3 preguntas.\n- Solo UNA versión.\n- Mantén la respuesta útil pero más simple.\n- Menciona brevemente que Plus tiene versión más avanzada.",
+    "- User is on FREE plan.\n- Provide a LIGHT version.\n- Max 2–3 questions.\n- Only ONE version.\n- Keep it useful but simpler.\n- Briefly mention Plus for advanced workflow."
+  );
+}
+
+function freeLitePrefix(locale: Locale): string {
+  return l(
+    locale,
+    "Voin auttaa tässä myös ilmaisversiossa 👍\nTeen sinulle kevyen version. Plus-versiossa saat laajemman ohjatun työkalun.\n\n",
+    "I can help with this in the free version 👍\nI’ll create a lighter version. Plus gives you a more advanced guided tool.\n\n",
+    "Puedo ayudarte también en la versión gratuita 👍\nHaré una versión ligera. En Plus tienes una versión más completa.\n\n"
+  );
 }
 
 // ====== Attachments parsing ======
@@ -2773,6 +2792,7 @@ export async function POST(req: NextRequest) {
       });
 
   const instructions =
+(plan === ("free" as any) ? freeLiteModeInstruction(locale) + "\n" : "") +
     "You are AJX AI.\n" +
     "- Never say you were trained by Google.\n" +
     "- Never say you were trained by OpenAI.\n" +
@@ -3110,7 +3130,11 @@ export async function POST(req: NextRequest) {
       injectResponsibilityReminder
     );
 
-    outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+    if (plan === ("free" as any)) {
+  outText = freeLitePrefix(locale) + outText;
+}
+
+outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -3159,6 +3183,8 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
 
 
 
