@@ -1181,141 +1181,36 @@ function chatsToggleLabel(locale: Locale): string {
 function quickActionsForLocale(locale: Locale): QuickAction[] {
   if (locale === "es") {
     return [
-      {
-        id: "offer",
-        label: "Crear oferta",
-        prompt: "Ayúdame a crear una oferta clara y convincente para un cliente.",
-        mode: "research",
-      },
-      {
-        id: "ad",
-        label: "Crear anuncio",
-        prompt: "Ayúdame a crear un anuncio claro y convincente para mi producto o servicio.",
-        mode: "ideation",
-      },
-      {
-        id: "sales",
-        label: "Aumentar ventas",
-        prompt: "Ayúdame a encontrar formas prácticas de aumentar mis ventas.",
-        mode: "analysis",
-      },
-      {
-        id: "customers",
-        label: "Encontrar clientes",
-        prompt: "Ayúdame a encontrar clientes potenciales para mi negocio.",
-        mode: "research",
-      },
-      {
-        id: "marketing",
-        label: "Mejorar marketing",
-        prompt: "Ayúdame a mejorar mi marketing de forma práctica.",
-        mode: "ideation",
-      },
-      {
-        id: "pricing",
-        label: "Mejorar precios",
-        prompt: "Analiza mi pricing y ayúdame a mejorarlo.",
-        mode: "analysis",
-      },
-      {
-        id: "problem",
-        label: "Resolver problema",
-        prompt: "Ayúdame a resolver un problema de negocio paso a paso.",
-        mode: "analysis",
-      },
+      { id: "offer", label: "Crear oferta", prompt: "Ay\u00fadame a crear una oferta clara y convincente para un cliente.", mode: "research" },
+      { id: "ad", label: "Crear anuncio", prompt: "Ay\u00fadame a crear un anuncio claro y convincente para mi producto o servicio.", mode: "ideation" },
+      { id: "sales", label: "Aumentar ventas", prompt: "Ay\u00fadame a encontrar formas pr\u00e1cticas de aumentar mis ventas.", mode: "analysis" },
+      { id: "marketing", label: "Mejorar marketing", prompt: "Ay\u00fadame a mejorar mi marketing de forma pr\u00e1ctica.", mode: "ideation" },
+      { id: "funding", label: "Buscar financiaci\u00f3n", prompt: "Ay\u00fadame a encontrar financiaci\u00f3n para mi empresa: subvenciones, ayudas p\u00fablicas, fondos europeos, pr\u00e9stamos, inversores y otros canales posibles.", mode: "research" },
+      { id: "pricing", label: "Mejorar precios", prompt: "Analiza mi pricing y ay\u00fadame a mejorarlo.", mode: "analysis" },
+      { id: "problem", label: "Resolver problema", prompt: "Ay\u00fadame a resolver un problema de negocio paso a paso.", mode: "analysis" },
     ];
   }
 
   if (locale === "en") {
     return [
-      {
-        id: "offer",
-        label: "Create offer",
-        prompt: "Help me create a clear and convincing offer for a client.",
-        mode: "research",
-      },
-      {
-        id: "ad",
-        label: "Create ad",
-        prompt: "Help me create a clear and convincing ad for my product or service.",
-        mode: "ideation",
-      },
-      {
-        id: "sales",
-        label: "Grow sales",
-        prompt: "Help me find practical ways to grow my sales.",
-        mode: "analysis",
-      },
-      {
-        id: "customers",
-        label: "Find customers",
-        prompt: "Help me find potential customers for my business.",
-        mode: "research",
-      },
-      {
-        id: "marketing",
-        label: "Improve marketing",
-        prompt: "Help me improve my marketing in a practical way.",
-        mode: "ideation",
-      },
-      {
-        id: "pricing",
-        label: "Improve pricing",
-        prompt: "Analyze my pricing and help me improve it.",
-        mode: "analysis",
-      },
-      {
-        id: "problem",
-        label: "Solve problem",
-        prompt: "Help me solve a business problem step by step.",
-        mode: "analysis",
-      },
+      { id: "offer", label: "Create offer", prompt: "Help me create a clear and convincing offer for a client.", mode: "research" },
+      { id: "ad", label: "Create ad", prompt: "Help me create a clear and convincing ad for my product or service.", mode: "ideation" },
+      { id: "sales", label: "Grow sales", prompt: "Help me find practical ways to grow my sales.", mode: "analysis" },
+      { id: "marketing", label: "Improve marketing", prompt: "Help me improve my marketing in a practical way.", mode: "ideation" },
+      { id: "funding", label: "Get funding", prompt: "Help me find funding for my business: EU grants, public subsidies, business loans, investors, local support programs and other realistic funding channels.", mode: "research" },
+      { id: "pricing", label: "Improve pricing", prompt: "Analyze my pricing and help me improve it.", mode: "analysis" },
+      { id: "problem", label: "Solve problem", prompt: "Help me solve a business problem step by step.", mode: "analysis" },
     ];
   }
 
   return [
-    {
-      id: "offer",
-      label: "Luo tarjous",
-      prompt: "Auta minua luomaan selkeä ja myyvä tarjous asiakkaalle.",
-      mode: "research",
-    },
-    {
-      id: "ad",
-      label: "Luo mainos",
-      prompt: "Auta minua luomaan selkeä ja myyvä mainos tuotteelleni tai palvelulleni.",
-      mode: "ideation",
-      },
-      {
-      id: "sales",
-      label: "Kasvata myyntiä",
-      prompt: "Auta minua löytämään käytännöllisiä tapoja kasvattaa myyntiä.",
-      mode: "analysis",
-    },
-    {
-      id: "customers",
-      label: "Löydä asiakkaita",
-      prompt: "Auta minua löytämään potentiaalisia asiakkaita yritykselleni.",
-      mode: "research",
-    },
-    {
-      id: "marketing",
-      label: "Paranna markkinointia",
-      prompt: "Auta minua parantamaan markkinointia käytännöllisesti.",
-      mode: "ideation",
-    },
-    {
-      id: "pricing",
-      label: "Paranna hinnoittelua",
-      prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sitä.",
-      mode: "analysis",
-    },
-    {
-      id: "problem",
-      label: "Ratkaise yritysongelma",
-      prompt: "Auta minua ratkaisemaan yritysongelma askel askeleelta.",
-      mode: "analysis",
-    },
+    { id: "offer", label: "Luo tarjous", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 tarjous asiakkaalle.", mode: "research" },
+    { id: "ad", label: "Luo mainos", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 mainos tuotteelleni tai palvelulleni.", mode: "ideation" },
+    { id: "sales", label: "Kasvata myynti\u00e4", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n k\u00e4yt\u00e4nn\u00f6llisi\u00e4 tapoja kasvattaa myynti\u00e4.", mode: "analysis" },
+    { id: "marketing", label: "Paranna markkinointia", prompt: "Auta minua parantamaan markkinointia k\u00e4yt\u00e4nn\u00f6llisesti.", mode: "ideation" },
+    { id: "funding", label: "Hanki rahoitusta", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n yritykselleni rahoitusta: EU-tukia, julkisia avustuksia, yrityslainoja, sijoittajia, paikallisia tukiohjelmia ja muita realistisia rahoituskanavia.", mode: "research" },
+    { id: "pricing", label: "Paranna hinnoittelua", prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sit\u00e4.", mode: "analysis" },
+    { id: "problem", label: "Ratkaise yritysongelma", prompt: "Auta minua ratkaisemaan yritysongelma askel askeleelta.", mode: "analysis" },
   ];
 }
 function quickActionQuestionInstruction(action: QuickAction, locale: Locale): string {
