@@ -1223,7 +1223,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     return [
       `MODO_PIKATOIMINTO: ${action.id}`,
       "No des una respuesta larga ni un plan final todavÃ­a.",
-      "Haz primero exactamente 3â€“5 preguntas cortas y concretas para recopilar la información necesaria.",
+      "Haz primero exactamente 3â€“5 preguntas cortas y concretas para recopilar la informaciÃ³n necesaria.",
       "Presenta solo esas preguntas, cada una en su propia lÃ­nea, sin numeraciÃ³n ni viÃ±etas.",
       "No expliques tu razonamiento.",
       "No aÃ±adas resumen, introducciÃ³n larga ni propuesta final todavÃ­a.",
@@ -2681,7 +2681,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const disclaimerText = useMemo(() => {
     if (locale === "es") {
-      return "AJX AI es una inteligencia artificial y puede cometer errores. Verifica siempre la información.";
+      return "AJX AI es una inteligencia artificial y puede cometer errores. Verifica siempre la informaciÃ³n.";
     }
     if (locale === "en") {
       return "AJX AI is an AI and can make mistakes. Always verify important information.";
@@ -4229,7 +4229,7 @@ export default function ChatPage(): React.JSX.Element {
                   
 
                   <div className="ajxDisclaimerRow">
-                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la información importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdä virheitä. Tarkista tiedot aina.") : disclaimerText}</span>
+                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la informaciÃ³n importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdä virheitä. Tarkista tiedot aina.") : disclaimerText}</span>
                     <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
                 </div>
@@ -4296,7 +4296,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 
