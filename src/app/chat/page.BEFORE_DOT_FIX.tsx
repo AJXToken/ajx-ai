@@ -2733,7 +2733,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const planMiniText =
     effectiveCanonical === "free"
-      ? `${planLabel} · ${Number(usage?.msgThisMonth || 0)}/${FREE_DISPLAY_LIMIT}`
+      ? `${planLabel} Â· ${Number(usage?.msgThisMonth || 0)}/${FREE_DISPLAY_LIMIT}`
       : planLabel;
 
   return (
@@ -4296,7 +4296,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 
