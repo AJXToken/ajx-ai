@@ -2358,28 +2358,7 @@ export async function POST(req: NextRequest) {
   const effectiveImgLimit =
     Number(limits.imgAnalysesPerMonth || 0) + Number(usage.extraImgThisMonth || 0);
   const effectiveWebLimit = Number(limits.webPerMonth || 0) + Number(usage.extraWebThisMonth || 0);
-
-  if (plan === ("free" as any) && isFreePremiumToolAttempt(lastTextOriginal)) {
-    const text = freePremiumToolLockedText(locale);
-
-    return NextResponse.json(
-      {
-        ok: true,
-        plan,
-        limits: {
-          ...limits,
-          reqPerMonth: effectiveReqLimit,
-          imgAnalysesPerMonth: effectiveImgLimit,
-          webPerMonth: effectiveWebLimit,
-        },
-        usage,
-        text,
-      },
-      { status: 200, headers: resHeaders }
-    );
-  }
-
-  if (lastTextOriginal.length > budget.maxLastUserChars) {
+if (lastTextOriginal.length > budget.maxLastUserChars) {
     return NextResponse.json(
       {
         ok: false,
@@ -3221,6 +3200,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
