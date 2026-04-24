@@ -1446,12 +1446,35 @@ function isFreePremiumToolAttempt(text: string): boolean {
 function freeLiteModeInstruction(locale: Locale): string {
   return l(
     locale,
-    "- User is on FREE plan.\n- Provide a LIGHT version of the result.\n- Do NOT run full multi-step workflows.\n- Ask max 2–3 questions.\n- Provide only ONE version (not multiple variations).\n- Keep answer useful but shorter and simpler.\n- Do not mention limitations in a negative way.\n- Briefly mention that more advanced workflow is available in Plus.",
-    "- Usuario en plan FREE.\n- Proporciona una versión ligera.\n- Máx 2–3 preguntas.\n- Solo UNA versión.\n- Mantén la respuesta útil pero más simple.\n- Menciona brevemente que Plus tiene versión más avanzada.",
-    "- User is on FREE plan.\n- Provide a LIGHT version.\n- Max 2–3 questions.\n- Only ONE version.\n- Keep it useful but simpler.\n- Briefly mention Plus for advanced workflow."
+    `
+- User is on FREE plan.
+- Provide a LIGHT version of the result.
+- Avoid generic marketing phrases like "high quality", "best service", "industry leading".
+- Avoid emojis unless absolutely necessary.
+- Prefer simple, direct, believable language.
+- Make the output feel like it could actually be used immediately.
+- Do not sound like typical AI-generated marketing text.
+`.trim(),
+    `
+- User is on FREE plan.
+- Provide a LIGHT version of the result.
+- Avoid generic marketing phrases like "high quality", "best service", "industry leading".
+- Avoid emojis unless absolutely necessary.
+- Prefer simple, direct, believable language.
+- Make the output feel like it could actually be used immediately.
+- Do not sound like typical AI-generated marketing text.
+`.trim(),
+    `
+- User is on FREE plan.
+- Provide a LIGHT version of the result.
+- Avoid generic marketing phrases like "alta calidad", "mejor servicio", "líder del sector".
+- Avoid emojis unless absolutely necessary.
+- Prefer simple, direct, believable language.
+- Make the output feel like it could actually be used immediately.
+- Do not sound like typical AI-generated marketing text.
+`.trim()
   );
 }
-
 function freeLitePrefix(locale: Locale): string {
   return l(
     locale,
@@ -3183,6 +3206,8 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
+
 
 
 
