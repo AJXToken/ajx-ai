@@ -1394,6 +1394,10 @@ function isFreePremiumToolAttempt(text: string): boolean {
     /luo.*mainos/,
     /tee.*mainos/,
     /mainosteksti/,
+    /voiko.*luoda.*mainos/,
+    /voitko.*luoda.*mainos/,
+    /voisitko.*luoda.*mainos/,
+    /auta.*mainos/,
     /kasvata.*myynt/,
     /hanki.*asiakk/,
     /löydä.*asiakk/,
@@ -1402,6 +1406,11 @@ function isFreePremiumToolAttempt(text: string): boolean {
     /hanki.*rahoit/,
     /hanki.*tuk/,
     /etsi.*rahoit/,
+      /auta.*rahoit/,
+      /auta.*hakemaan.*rahoit/,
+      /hae.*rahoit/,
+      /hakemaan.*rahoit/,
+      /rahoituksen.*hakem/,
     /etsi.*tuk/,
     /yritysongelma/,
 
@@ -3150,6 +3159,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 
 
