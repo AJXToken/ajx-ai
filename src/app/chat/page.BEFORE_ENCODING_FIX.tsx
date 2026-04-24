@@ -1172,9 +1172,9 @@ function defaultLimitsForCanonicalPlan(cp: CanonicalPlan): Limits {
 }
 
 function composerPlaceholder(locale: Locale): string {
-  if (locale === "es") return "Escribe…";
-  if (locale === "en") return "Write…";
-  return "Kirjoita…";
+  if (locale === "es") return "Escribeâ€¦";
+  if (locale === "en") return "Writeâ€¦";
+  return "Kirjoitaâ€¦";
 }
 
 function chatsToggleLabel(locale: Locale): string {
@@ -2686,7 +2686,7 @@ export default function ChatPage(): React.JSX.Element {
     if (locale === "en") {
       return "AJX AI is an AI and can make mistakes. Always verify important information.";
     }
-    return "AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina.";
+    return "AJX AI on tekoÃ¤ly ja voi tehdÃ¤ virheitÃ¤. Tarkista tiedot aina.";
   }, [locale]);
 
   const imageIntentHint = useMemo(() => {
@@ -4229,7 +4229,7 @@ export default function ChatPage(): React.JSX.Element {
                   
 
                   <div className="ajxDisclaimerRow">
-                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la informaciÃ³n importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdä virheitä. Tarkista tiedot aina.") : disclaimerText}</span>
+                    <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la informaciÃ³n importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdÃ¤ virheitÃ¤. Tarkista tiedot aina.") : disclaimerText}</span>
                     <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
                 </div>
@@ -4296,7 +4296,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 
