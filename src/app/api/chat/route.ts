@@ -1454,6 +1454,11 @@ function freeLiteModeInstruction(locale: Locale): string {
 - Prefer simple, direct, believable language.
 - Make the output feel like it could actually be used immediately.
 - Do not sound like typical AI-generated marketing text.
+- Avoid phrases like "luotettava kumppani", "asiantunteva palvelu", "laadukas", "alan huipulta".
+- Do NOT list generic bullet points.
+- Write like a real small business, not a marketing agency.
+- Prefer simple, concrete sentences.
+- Make it feel local, practical and believable.
 `.trim(),
     `
 - User is on FREE plan.
@@ -1463,6 +1468,11 @@ function freeLiteModeInstruction(locale: Locale): string {
 - Prefer simple, direct, believable language.
 - Make the output feel like it could actually be used immediately.
 - Do not sound like typical AI-generated marketing text.
+- Avoid phrases like "luotettava kumppani", "asiantunteva palvelu", "laadukas", "alan huipulta".
+- Do NOT list generic bullet points.
+- Write like a real small business, not a marketing agency.
+- Prefer simple, concrete sentences.
+- Make it feel local, practical and believable.
 `.trim(),
     `
 - User is on FREE plan.
@@ -1472,6 +1482,11 @@ function freeLiteModeInstruction(locale: Locale): string {
 - Prefer simple, direct, believable language.
 - Make the output feel like it could actually be used immediately.
 - Do not sound like typical AI-generated marketing text.
+- Avoid phrases like "luotettava kumppani", "asiantunteva palvelu", "laadukas", "alan huipulta".
+- Do NOT list generic bullet points.
+- Write like a real small business, not a marketing agency.
+- Prefer simple, concrete sentences.
+- Make it feel local, practical and believable.
 `.trim()
   );
 }
@@ -3206,6 +3221,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
