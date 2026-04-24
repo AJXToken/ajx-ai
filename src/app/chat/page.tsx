@@ -3959,7 +3959,7 @@ export default function ChatPage(): React.JSX.Element {
                           aria-label={t(locale, "ui.plus")}
                           type="button"
                         >
-                          ï¼‹
+                          +
                         </button>
                       ) : null}
 
@@ -4078,7 +4078,7 @@ export default function ChatPage(): React.JSX.Element {
                               : "Insert line break"
                         }
                       >
-                        â†µ
+                        ↵
                       </button>
 
                       <button
@@ -4098,7 +4098,7 @@ export default function ChatPage(): React.JSX.Element {
                             color: sendDisabled ? "#0b0d12" : "#ffffff",
                           }}
                         >
-                          âž¤
+                          ➤
                         </span>
                       </button>
                     </div>
@@ -4296,6 +4296,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
