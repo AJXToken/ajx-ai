@@ -1,4 +1,4 @@
-﻿// src/app/api/stats/route.ts
+// src/app/api/stats/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -169,7 +169,7 @@ function canonicalLimits(plan: PlanId): Limits {
     case "free":
     default:
       return {
-        msgPerMonth: 20,
+        msgPerMonth: 10,
         imgPerMonth: 0,
         genPerMonth: 0,
         webPerMonth: 0,

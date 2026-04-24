@@ -1,4 +1,4 @@
-﻿// src/app/api/chat/route.ts
+// src/app/api/chat/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import pdfParse from "pdf-parse";
@@ -1314,7 +1314,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
     case "free":
       return {
         reqPerMonth: 0,
-        reqPerDay: 20,
+        reqPerDay: 10,
         imgAnalysesPerMonth: 0,
         imgAnalysesPerDay: 0,
         webPerMonth: 0,
@@ -1338,7 +1338,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 120,
         imgAnalysesPerDay: 0,
         webPerMonth: 0,
-        workMemory: 15,
+        workMemory: 25,
       };
 
     case "pro":
