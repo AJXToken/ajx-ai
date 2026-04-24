@@ -1182,7 +1182,7 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
   if (locale === "es") {
     return [
       { id: "offer", label: "Crear oferta", prompt: "Ay\u00fadame a crear una oferta clara y convincente para un cliente.", mode: "research" },
-      { id: "funding", label: "Buscar financiaci\u00f3n", prompt: "Ay\u00fadame a encontrar financiaci\u00f3n para mi empresa: subvenciones, ayudas p\u00fablicas, fondos europeos, programas locales, inversores, pr\u00e9stamos empresariales y otros canales realistas. Primero haz preguntas concretas.", mode: "research" },
+      { id: "funding", label: "Buscar ayudas y financiaci\u00f3n", prompt: "Ay\u00fadame a encontrar financiaci\u00f3n para mi empresa: subvenciones, ayudas p\u00fablicas, fondos europeos, programas locales, inversores, pr\u00e9stamos empresariales y otros canales realistas. Primero haz preguntas concretas.", mode: "research" },
       { id: "ad", label: "Crear anuncio", prompt: "Ay\u00fadame a crear un anuncio claro y convincente para mi producto o servicio.", mode: "ideation" },
       { id: "sales", label: "Aumentar ventas", prompt: "Ay\u00fadame a encontrar formas pr\u00e1cticas de aumentar mis ventas con acciones concretas.", mode: "analysis" },
       { id: "customers", label: "Conseguir clientes", prompt: "Ay\u00fadame a encontrar clientes nuevos y crear un plan pr\u00e1ctico para contactarlos.", mode: "research" },
@@ -1194,7 +1194,7 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
   if (locale === "en") {
     return [
       { id: "offer", label: "Create offer", prompt: "Help me create a clear and convincing offer for a client.", mode: "research" },
-      { id: "funding", label: "Get funding", prompt: "Help me find funding for my business: EU grants, public subsidies, local programs, investors, business loans and other realistic funding channels. First ask concrete questions.", mode: "research" },
+      { id: "funding", label: "Find grants & funding", prompt: "Help me find funding for my business: EU grants, public subsidies, local programs, investors, business loans and other realistic funding channels. First ask concrete questions.", mode: "research" },
       { id: "ad", label: "Create ad", prompt: "Help me create a clear and convincing ad for my product or service.", mode: "ideation" },
       { id: "sales", label: "Grow sales", prompt: "Help me find practical ways to grow my sales with concrete actions.", mode: "analysis" },
       { id: "customers", label: "Get customers", prompt: "Help me find new customers and create a practical outreach plan.", mode: "research" },
@@ -1205,7 +1205,7 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
 
   return [
     { id: "offer", label: "Luo tarjous", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 tarjous asiakkaalle.", mode: "research" },
-    { id: "funding", label: "Hanki rahoitusta", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n yritykselleni rahoitusta: EU-tukia, julkisia avustuksia, paikallisia tukiohjelmia, sijoittajia, yrityslainoja ja muita realistisia rahoituskanavia. Kysy ensin konkreettiset taustakysymykset.", mode: "research" },
+    { id: "funding", label: "Hanki tukia ja rahoitusta", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n yritykselleni rahoitusta: EU-tukia, julkisia avustuksia, paikallisia tukiohjelmia, sijoittajia, yrityslainoja ja muita realistisia rahoituskanavia. Kysy ensin konkreettiset taustakysymykset.", mode: "research" },
     { id: "ad", label: "Luo mainos", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 mainos tuotteelleni tai palvelulleni.", mode: "ideation" },
     { id: "sales", label: "Kasvata myynti\u00e4", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n konkreettisia tapoja kasvattaa myynti\u00e4.", mode: "analysis" },
     { id: "customers", label: "Hanki asiakkaita", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n uusia asiakkaita ja tee k\u00e4yt\u00e4nn\u00f6n suunnitelma, miten heit\u00e4 l\u00e4hestyt\u00e4\u00e4n.", mode: "research" },
