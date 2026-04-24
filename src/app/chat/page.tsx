@@ -1249,6 +1249,18 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   ].join("\n");
 }
 
+function quickActionLockedText(locale: Locale): string {
+  if (locale === "es") {
+    return "Los accesos rápidos están disponibles en Plus. Con Plus, AJX AI te guía paso a paso para crear ofertas, anuncios, planes de ventas, financiación y soluciones de negocio.";
+  }
+
+  if (locale === "en") {
+    return "Quick actions are available on Plus. With Plus, AJX AI guides you step by step to create offers, ads, sales plans, funding paths and business solutions.";
+  }
+
+  return "Pikatoiminnot kuuluvat Plus-versioon. Plus ohjaa sinut vaihe vaiheelta tarjousten, mainosten, myynnin, rahoituksen ja yritysongelmien ratkaisuun.";
+}
+
 // ====== Attachments UI ======
 type PendingAttachment = {
   id: string;
@@ -2635,7 +2647,12 @@ export default function ChatPage(): React.JSX.Element {
   }
 
   async function runQuickAction(action: QuickAction) {
-    await sendTextDirect(action.prompt, undefined, quickActionQuestionInstruction(action, locale));
+    if (effectiveCanonical === "free") {
+      appendAssistantMessage(quickActionLockedText(locale));
+      return;
+    }
+
+    await sendTextDirect(action.prompt, action.mode, quickActionQuestionInstruction(action, locale));
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -3369,6 +3386,12 @@ export default function ChatPage(): React.JSX.Element {
           box-shadow: 0 14px 30px rgba(11, 13, 18, 0.1);
         }
 
+        .ajxQuickActionLocked {
+          opacity: 0.72;
+          border-style: dashed;
+          background: rgba(255, 255, 255, 0.72);
+        }
+
         .ajxStatusNote {
           margin-top: 8px;
           padding: 10px 12px;
@@ -3896,10 +3919,10 @@ export default function ChatPage(): React.JSX.Element {
                       <button
                         key={action.id}
                         type="button"
-                        className="ajxQuickActionBtn"
+                        className={`ajxQuickActionBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
                         onClick={() => runQuickAction(action).catch(() => {})}
                       >
-                        {action.label}
+                        {effectiveCanonical === "free" ? `\uD83D\uDD12 ${action.label}` : action.label}
                       </button>
                     ))}
                   </div>
