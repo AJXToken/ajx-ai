@@ -1373,6 +1373,66 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
   }
 }
 
+
+function freePremiumToolLockedText(locale: Locale) {
+  return l(
+    locale,
+    "Tämä yrittäjätyökalu kuuluu Plus-versioon. Ilmaisversiossa voit kysyä yleisiä neuvoja, mutta valmiit työkaluprosessit kuten tarjoukset, mainokset, hinnoittelu, asiakashankinta, markkinointi ja rahoituksen hakeminen avautuvat Plus-paketissa.",
+    "This entrepreneur tool is included in Plus. In the free version, you can ask general advice, but ready-made tool workflows such as offers, ads, pricing, customer acquisition, marketing, and funding support are available in Plus.",
+    "Esta herramienta para emprendedores está incluida en Plus. En la versión gratuita puedes pedir consejos generales, pero los flujos de trabajo como ofertas, anuncios, precios, captación de clientes, marketing y financiación están disponibles en Plus."
+  );
+}
+
+function isFreePremiumToolAttempt(text: string): boolean {
+  const t = String(text || "").toLowerCase();
+
+  const patterns = [
+    /luo.*tarjous/,
+    /tee.*tarjous/,
+    /auta.*tarjous/,
+    /tarjouspohja/,
+    /luo.*mainos/,
+    /tee.*mainos/,
+    /mainosteksti/,
+    /kasvata.*myynt/,
+    /hanki.*asiakk/,
+    /löydä.*asiakk/,
+    /paranna.*markkinoint/,
+    /paranna.*hinnoittel/,
+    /hanki.*rahoit/,
+    /hanki.*tuk/,
+    /etsi.*rahoit/,
+    /etsi.*tuk/,
+    /yritysongelma/,
+
+    /create.*offer/,
+    /make.*offer/,
+    /write.*offer/,
+    /create.*ad/,
+    /write.*ad/,
+    /grow.*sales/,
+    /get.*customers/,
+    /find.*customers/,
+    /improve.*marketing/,
+    /improve.*pricing/,
+    /get.*funding/,
+    /find.*funding/,
+    /business problem/,
+
+    /crear.*oferta/,
+    /hacer.*oferta/,
+    /crear.*anuncio/,
+    /aumentar.*ventas/,
+    /conseguir.*clientes/,
+    /mejorar.*marketing/,
+    /mejorar.*precios/,
+    /buscar.*financiaci/,
+    /conseguir.*financiaci/
+  ];
+
+  return patterns.some((re) => re.test(t));
+}
+
 // ====== Attachments parsing ======
 type PreparedAttachment = {
   kind: "image" | "file";
@@ -2233,6 +2293,26 @@ export async function POST(req: NextRequest) {
     Number(limits.imgAnalysesPerMonth || 0) + Number(usage.extraImgThisMonth || 0);
   const effectiveWebLimit = Number(limits.webPerMonth || 0) + Number(usage.extraWebThisMonth || 0);
 
+  if (plan === ("free" as any) && isFreePremiumToolAttempt(lastTextOriginal)) {
+    const text = freePremiumToolLockedText(locale);
+
+    return NextResponse.json(
+      {
+        ok: true,
+        plan,
+        limits: {
+          ...limits,
+          reqPerMonth: effectiveReqLimit,
+          imgAnalysesPerMonth: effectiveImgLimit,
+          webPerMonth: effectiveWebLimit,
+        },
+        usage,
+        text,
+      },
+      { status: 200, headers: resHeaders }
+    );
+  }
+
   if (lastTextOriginal.length > budget.maxLastUserChars) {
     return NextResponse.json(
       {
@@ -3070,6 +3150,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
 
 
