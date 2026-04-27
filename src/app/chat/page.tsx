@@ -2746,6 +2746,72 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
+        .ajxToolsIconBtn {
+          width: 46px;
+          height: 46px;
+          border-radius: 16px;
+          border: 1px solid rgba(91, 255, 139, 0.28);
+          background: rgba(91, 255, 139, 0.12);
+          color: #35d96f;
+          display: grid;
+          place-items: center;
+          font-size: 20px;
+          font-weight: 950;
+          cursor: pointer;
+          box-shadow: 0 10px 24px rgba(21, 80, 42, 0.12);
+        }
+
+        .ajxToolsIconBtn:hover {
+          background: rgba(91, 255, 139, 0.18);
+          border-color: rgba(91, 255, 139, 0.42);
+        }
+
+        .ajxToolsDrawerMoved {
+          margin-top: 10px;
+        }
+
+        .ajxToolsMiniRow {
+          display: none !important;
+        }
+
+        body {
+          background: #07100c !important;
+        }
+
+        .ajxTopControls,
+        .ajxControlGroup,
+        .ajxSelect,
+        .ajxHelpLink {
+          border-color: rgba(91, 255, 139, 0.18) !important;
+        }
+
+        [data-ajx-card-themed="true"] {
+          background:
+            radial-gradient(circle at top left, rgba(91, 255, 139, 0.08), transparent 36%),
+            #07100c !important;
+          border-color: rgba(91, 255, 139, 0.20) !important;
+        }
+
+        [data-ajx-themed="true"] {
+          background:
+            radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
+            #07100c !important;
+          border-color: rgba(91, 255, 139, 0.22) !important;
+        }
+
+        [data-ajx-themed="true"] textarea {
+          background: rgba(255, 255, 255, 0.94) !important;
+        }
+
+        @media (max-width: 520px) {
+          .ajxToolsIconBtn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            font-size: 18px;
+          }
+        }
+
         [data-ajx-themed="true"] {
           border-top: 1px solid rgba(91, 255, 139, 0.18) !important;
           background:
@@ -4167,34 +4233,7 @@ export default function ChatPage(): React.JSX.Element {
                 }}
               >
                 <div className={styles.composerInner}>
-                  <div className="ajxToolsMiniRow">
-                    <button
-                      type="button"
-                      className="ajxToolsMiniBtn"
-                      onClick={() => setToolsOpen((v) => !v)}
-                    >
-                      ✦ Työkalut
-                    </button>
-                  </div>
 
-                  {toolsOpen ? (
-                    <div className="ajxToolsDrawer">
-                      {quickActions.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          className="ajxToolsDrawerBtn"
-                          onClick={() => {
-                            setToolsOpen(false);
-                            runQuickAction(action).catch(() => {});
-                          }}
-                        >
-                          <span>{action.label}</span>
-                          <b>→</b>
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
                   <div className="ajxComposerActions">
                     <div className="ajxComposerLeft">
                       {canOpenPlusMenu ? (
@@ -4210,6 +4249,16 @@ export default function ChatPage(): React.JSX.Element {
                           +
                         </button>
                       ) : null}
+
+                      <button
+                        type="button"
+                        className="ajxToolsIconBtn"
+                        onClick={() => setToolsOpen((v) => !v)}
+                        title="Työkalut"
+                        aria-label="Työkalut"
+                      >
+                        ✦
+                      </button>
 
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
@@ -4351,6 +4400,25 @@ export default function ChatPage(): React.JSX.Element {
                       </button>
                     </div>
                   </div>
+
+                  {toolsOpen ? (
+                    <div className="ajxToolsDrawer ajxToolsDrawerMoved">
+                      {quickActions.map((action) => (
+                        <button
+                          key={action.id}
+                          type="button"
+                          className="ajxToolsDrawerBtn"
+                          onClick={() => {
+                            setToolsOpen(false);
+                            runQuickAction(action).catch(() => {});
+                          }}
+                        >
+                          <span>{action.label}</span>
+                          <b>→</b>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
 
                   {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
@@ -4544,6 +4612,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
