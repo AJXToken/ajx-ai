@@ -1466,11 +1466,7 @@ export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
 
   const titleDefault = useMemo(() => t(locale, "thread.title_default"), [locale]);
-  const greeting = useMemo(() => {
-    if (locale === "es") return "¿Qué quieres hacer hoy?";
-    if (locale === "en") return "What do you want to do today?";
-    return "Mitä haluat tehdä tänään?";
-  }, [locale]);
+  const greeting = useMemo(() => t(locale, "chat.greeting"), [locale]);
 
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -2745,100 +2741,6 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
-        .ajxStartDashboard {
-          margin: 14px 14px 10px 14px;
-          padding: 18px;
-          border: 1px solid rgba(91, 255, 139, 0.22);
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.14), transparent 36%),
-            rgba(5, 10, 16, 0.72);
-          border-radius: 26px;
-          box-shadow: 0 24px 80px rgba(0, 0, 0, 0.24);
-        }
-
-        .ajxStartKicker {
-          font-size: 11px;
-          font-weight: 950;
-          letter-spacing: 0.22em;
-          color: rgba(91, 255, 139, 0.92);
-          text-transform: uppercase;
-          margin-bottom: 8px;
-        }
-
-        .ajxStartTitle {
-          font-size: 24px;
-          line-height: 1.15;
-          font-weight: 950;
-          color: #ffffff;
-          margin-bottom: 8px;
-        }
-
-        .ajxStartSub {
-          font-size: 14px;
-          line-height: 1.45;
-          color: rgba(255, 255, 255, 0.68);
-          margin-bottom: 16px;
-        }
-
-        .ajxStartGrid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 10px;
-        }
-
-        .ajxStartCard {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-          padding: 15px 16px;
-          border-radius: 18px;
-          border: 1px solid rgba(91, 255, 139, 0.18);
-          background: rgba(255, 255, 255, 0.045);
-          color: #ffffff;
-          cursor: pointer;
-          text-align: left;
-          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-          transition: transform 0.14s ease, border 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
-        }
-
-        .ajxStartCard:hover {
-          transform: translateY(-1px);
-          border-color: rgba(91, 255, 139, 0.42);
-          background: rgba(91, 255, 139, 0.08);
-          box-shadow: 0 14px 34px rgba(91, 255, 139, 0.08);
-        }
-
-        .ajxStartCardLabel {
-          font-size: 15px;
-          font-weight: 950;
-          line-height: 1.25;
-        }
-
-        .ajxStartCardArrow {
-          flex: 0 0 auto;
-          width: 34px;
-          height: 34px;
-          display: grid;
-          place-items: center;
-          border-radius: 999px;
-          background: rgba(91, 255, 139, 0.12);
-          color: rgba(91, 255, 139, 0.96);
-          font-size: 20px;
-          font-weight: 950;
-        }
-
-        .ajxStartCardFree {
-          opacity: 0.86;
-        }
-
-        @media (min-width: 720px) {
-          .ajxStartGrid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
-        }
-
         .ajxTopControls {
           display: flex;
           gap: 10px;
@@ -3944,39 +3846,6 @@ export default function ChatPage(): React.JSX.Element {
                   : undefined
               }
             >
-              {showQuickActions ? (
-                <div className="ajxStartDashboard">
-                  <div className="ajxStartKicker">AJX AI</div>
-                  <div className="ajxStartTitle">
-                    {locale === "es"
-                      ? "¿Qué quieres hacer hoy?"
-                      : locale === "en"
-                        ? "What do you want to do today?"
-                        : "Mitä haluat tehdä tänään?"}
-                  </div>
-                  <div className="ajxStartSub">
-                    {locale === "es"
-                      ? "Elige una herramienta o escribe tu objetivo abajo."
-                      : locale === "en"
-                        ? "Choose a tool or write your goal below."
-                        : "Valitse työkalu tai kirjoita tavoite alle."}
-                  </div>
-
-                  <div className="ajxStartGrid">
-                    {quickActions.map((action) => (
-                      <button
-                        key={action.id}
-                        type="button"
-                        className={`ajxStartCard ${effectiveCanonical === "free" ? "ajxStartCardFree" : ""}`}
-                        onClick={() => runQuickAction(action).catch(() => {})}
-                      >
-                        <span className="ajxStartCardLabel">{action.label}</span>
-                        <span className="ajxStartCardArrow">→</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
               <div
                 className={styles.msgList}
                 style={
@@ -4048,7 +3917,7 @@ export default function ChatPage(): React.JSX.Element {
                 <div ref={bottomRef} />
               </div>
 
-              {false && showQuickActions ? (
+              {showQuickActions ? (
                 <div className="ajxQuickActionsWrap">
                   <div className="ajxQuickActionsRow">
                     {quickActions.map((action) => (
@@ -4427,7 +4296,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 
