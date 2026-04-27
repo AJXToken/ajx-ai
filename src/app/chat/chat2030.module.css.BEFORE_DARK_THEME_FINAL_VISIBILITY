@@ -1108,373 +1108,106 @@
   -webkit-text-fill-color: rgba(7, 16, 12, 0.48) !important;
 }
 
-
-
-
-
-
-/* =========================
-   AJX FORCE CLEAN LIGHT UI
-   ========================= */
+/* ===== AJX DARK GREEN THEME FINAL ===== */
 
 .shell {
-  --bg0: #f6f7fb !important;
-  --bg1: #eef1f6 !important;
-  --surface: #ffffff !important;
-  --surface2: #ffffff !important;
-  --text: #0b0d12 !important;
-}
-
-/* koko tausta */
-.bg {
-  background: #f6f7fb !important;
-}
-
-/* chat alue */
-.chatCard {
-  background: #ffffff !important;
-}
-
-/* AI viestit */
-.bubbleAi {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-}
-
-/* user viestit */
-.bubbleUser {
-  background: #e9eef5 !important;
-  color: #0b0d12 !important;
-}
-
-/* input area */
-.composer {
-  background: #ffffff !important;
-  border-top: 1px solid rgba(0,0,0,0.08) !important;
-}
-
-/* tekstikenttä */
-.input {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-}
-
-/* top bar (agent + kieli) */
-:global(.ajxTopControls) {
-  background: #ffffff !important;
-  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-}
-
-/* napit */
-:global(.ajxComposerActions button) {
-  background: #f3f5f9 !important;
-  color: #0b0d12 !important;
-}
-
-/* POISTA vihreä tumma override */
-:global([data-ajx-themed="true"]),
-:global([data-ajx-card-themed="true"]) {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-}
-
-
-
-/* =========================
-   AJX FORCE FULL LIGHT (FINAL)
-   ========================= */
-
-/* tappaa koko tumma gradient */
-.bg {
-  background: #f6f7fb !important;
-}
-
-/* koko app */
-.shell {
-  background: #f6f7fb !important;
-  color: #0b0d12 !important;
-}
-
-/* chat container */
-.chatCard {
-  background: #ffffff !important;
-}
-
-/* AI bubble */
-.bubbleAi {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-}
-
-/* user bubble */
-.bubbleUser {
-  background: #e9eef5 !important;
-  color: #0b0d12 !important;
-}
-
-/* yläpalkki (agent + kieli) */
-:global(.ajxTopControls) {
-  background: #ffffff !important;
-  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-}
-
-/* alapalkki */
-.composer {
-  background: #ffffff !important;
-}
-
-/* input */
-.input {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-}
-
-/* ⚠️ tärkein: override page.tsx dark-teema */
-:global([data-ajx-themed="true"]),
-:global([data-ajx-card-themed="true"]) {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-}
-
-/* kaikki nappirivit */
-:global(.ajxComposerActions),
-:global(.ajxComposerLeft),
-:global(.ajxComposerRight) {
-  background: transparent !important;
-}
-
-
-/* ===== AJX SAFE LIGHT RESET ===== */
-
-.shell {
-  --bg0: #f6f7fb !important;
-  --bg1: #eef1f6 !important;
-  --surface: rgba(255,255,255,0.88) !important;
-  --surface2: rgba(255,255,255,0.72) !important;
-  --text: #0b0d12 !important;
-  --muted: rgba(11,13,18,0.62) !important;
-  --line: rgba(11,13,18,0.10) !important;
-  --line2: rgba(11,13,18,0.08) !important;
-  background: #f6f7fb !important;
-  color: #0b0d12 !important;
+  --bg0: #050b08;
+  --bg1: #07100c;
+  --surface: rgba(7, 16, 12, 0.86);
+  --surface2: rgba(10, 24, 17, 0.72);
+  --text: #f4fff7;
+  --muted: rgba(244, 255, 247, 0.62);
+  --line: rgba(91, 255, 139, 0.18);
+  --line2: rgba(91, 255, 139, 0.12);
+  --focus: 0 0 0 4px rgba(91, 255, 139, 0.12);
 }
 
 .bg {
   background:
-    radial-gradient(900px 650px at 18% 12%, rgba(17,24,39,0.04), transparent 60%),
-    linear-gradient(180deg, #f6f7fb, #eef1f6 55%, #e8ebf2) !important;
+    radial-gradient(900px 650px at 18% 12%, rgba(91, 255, 139, 0.10), transparent 60%),
+    radial-gradient(950px 700px at 82% 18%, rgba(91, 255, 139, 0.06), transparent 60%),
+    linear-gradient(180deg, #050b08, #07100c 55%, #08140e) !important;
 }
 
+.sidebar,
 .topbar,
-.mainPane,
-.main,
 .chatCard,
-.msgList,
-.composer,
-.composerInner {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
+.composer {
+  background: rgba(7, 16, 12, 0.86) !important;
+  border-color: rgba(91, 255, 139, 0.14) !important;
 }
 
-.bubbleAi,
+.threadItem,
+.bubbleAi {
+  background: rgba(244, 255, 247, 0.08) !important;
+  border-color: rgba(91, 255, 139, 0.12) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+}
+
+.bubbleAi * {
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+}
+
 .bubbleUser {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
+  background: rgba(91, 255, 139, 0.14) !important;
+  border-color: rgba(91, 255, 139, 0.22) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
 }
 
-.bubbleAi *,
 .bubbleUser * {
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
 }
 
 .input {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  caret-color: #0b0d12 !important;
+  background: rgba(244, 255, 247, 0.96) !important;
+  color: #07100c !important;
+  -webkit-text-fill-color: #07100c !important;
+  caret-color: #07100c !important;
+  border-color: rgba(91, 255, 139, 0.28) !important;
 }
 
-.avatarUser,
-.avatarAi {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.10) !important;
+.input::placeholder {
+  color: rgba(7, 16, 12, 0.48) !important;
+  -webkit-text-fill-color: rgba(7, 16, 12, 0.48) !important;
 }
 
-:global(.ajxTopControls),
-:global(.ajxControlGroup),
+.btnGhost,
+.btnTiny,
+.btnTinyDanger,
 :global(.ajxSelect),
+:global(.ajxControlGroup),
 :global(.ajxHelpLink),
-:global(.ajxDisclaimerPlan),
-:global(.ajxCopyBtn),
-:global(.ajxToolsIconBtn),
-:global(.ajxActionBtn) {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border-color: rgba(11,13,18,0.12) !important;
-}
-
-:global(.ajxDisclaimerRow),
-:global(.ajxDisclaimerRow span) {
-  color: rgba(11,13,18,0.62) !important;
-  -webkit-text-fill-color: rgba(11,13,18,0.62) !important;
-}
-
-
-/* =========================
-   AJX LIGHT READABILITY FIX
-   ========================= */
-
-/* yläpalkki vaaleaksi */
-.topbar {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  border-bottom: 1px solid rgba(11,13,18,0.08) !important;
-}
-
-/* agentti- ja kielivalikot */
-:global(.ajxTopControls),
-:global(.ajxControlGroup),
-:global(.ajxSelectWrap),
-:global(.ajxSelect) {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border-color: rgba(11,13,18,0.12) !important;
-  box-shadow: 0 8px 22px rgba(11,13,18,0.06) !important;
-}
-
-/* valikon nuolet */
-:global(.ajxChevron) {
-  color: rgba(11,13,18,0.65) !important;
-  -webkit-text-fill-color: rgba(11,13,18,0.65) !important;
-}
-
-/* kopioi-napit */
 :global(.ajxCopyBtn) {
-  background: #f3f5f9 !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.12) !important;
-  box-shadow: 0 8px 18px rgba(11,13,18,0.06) !important;
+  background: rgba(244, 255, 247, 0.08) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+  border-color: rgba(91, 255, 139, 0.18) !important;
 }
 
-/* Ohjeet-nappi */
-:global(.ajxHelpLink) {
-  background: #f3f5f9 !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.12) !important;
-  box-shadow: 0 8px 18px rgba(11,13,18,0.06) !important;
+:global(.ajxDisclaimerRow) {
+  color: rgba(244, 255, 247, 0.62) !important;
 }
 
-/* PLUS-logo alhaalla */
-:global(.ajxDisclaimerPlan) {
-  background: #f3f5f9 !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.12) !important;
-  box-shadow: 0 8px 18px rgba(11,13,18,0.06) !important;
-}
-
-/* vastuuvapausteksti */
-:global(.ajxDisclaimerRow),
-:global(.ajxDisclaimerRow span) {
-  color: rgba(11,13,18,0.62) !important;
-  -webkit-text-fill-color: rgba(11,13,18,0.62) !important;
-}
-
-/* alapalkin nappulat yhtenäisiksi */
-:global(.ajxActionBtn),
-.btnGhost {
-  background: #f3f5f9 !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.12) !important;
-}
-
-/* työkalunappi erottuu, mutta ei huuda */
 :global(.ajxToolsIconBtn) {
-  background: #ecfff2 !important;
-  color: #0b6b32 !important;
-  -webkit-text-fill-color: #0b6b32 !important;
-  border: 1px solid rgba(22,163,74,0.24) !important;
+  background: rgba(91, 255, 139, 0.14) !important;
+  color: #5bff8b !important;
+  -webkit-text-fill-color: #5bff8b !important;
+  border-color: rgba(91, 255, 139, 0.30) !important;
 }
 
-/* lähetysnappi saa olla tumma */
-.btnPrimarySmall {
-  background: #0b0d12 !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  border: 1px solid rgba(11,13,18,0.18) !important;
+:global(.ajxToolsDrawer) {
+  background: rgba(5, 11, 8, 0.96) !important;
+  border-color: rgba(91, 255, 139, 0.22) !important;
 }
 
-/* input ja composer puhtaaksi */
-.composer,
-.composerInner {
-  background: #ffffff !important;
-}
-
-.input {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  -webkit-text-fill-color: #0b0d12 !important;
-}
-
-
-/* =========================
-   AJX FULL LIGHT MODE FIX
-   ========================= */
-
-/* YLÄPALKKI täysin vaalea */
-:global(.ajxTopBar),
-:global(.ajxTopControls) {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  border-bottom: 1px solid rgba(11,13,18,0.08) !important;
-}
-
-/* SELECTIT (Yleinen / FI) */
-:global(.ajxSelect),
-:global(.ajxSelectWrap) {
-  background: #ffffff !important;
-  color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.12) !important;
-}
-
-/* PIKATOIMINNOT KORTTI */
-:global(.ajxCompactTools) {
-  background: #ffffff !important;
-  border: 1px solid rgba(11,13,18,0.08) !important;
-  box-shadow: 0 12px 32px rgba(11,13,18,0.06) !important;
-}
-
-/* PIKATOIMINTO NAPIT */
-:global(.ajxCompactTools button) {
-  background: #f7f9fc !important;
-  color: #0b0d12 !important;
-  border: 1px solid rgba(11,13,18,0.08) !important;
-}
-
-/* VALITTU tila (vihreä mutta hillitty) */
-:global(.ajxCompactTools button.active) {
-  background: #e9f8ef !important;
-  border: 1px solid rgba(34,197,94,0.35) !important;
-}
-
-/* NUOLI IKONI */
-:global(.ajxCompactTools button svg) {
-  color: #16a34a !important;
-}
-
-/* INPUT kevyemmäksi */
-.input {
-  border: 1px solid rgba(11,13,18,0.10) !important;
-  box-shadow: 0 6px 18px rgba(11,13,18,0.06) !important;
+:global(.ajxToolsDrawerBtn) {
+  background: rgba(244, 255, 247, 0.06) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+  border-color: rgba(91, 255, 139, 0.18) !important;
 }
 
