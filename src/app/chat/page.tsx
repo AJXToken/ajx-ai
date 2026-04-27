@@ -4289,7 +4289,6 @@ export default function ChatPage(): React.JSX.Element {
           >
             <section
               className={styles.chatCard}
-              data-ajx-card-themed="true"
               style={
                 isMobile
                   ? {
@@ -4422,7 +4421,6 @@ export default function ChatPage(): React.JSX.Element {
               <div
                 ref={composerRef}
                 className={styles.composer}
-                data-ajx-themed="true"
                 style={{
                   bottom: 0,
                   transition: "none",
@@ -4810,6 +4808,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
