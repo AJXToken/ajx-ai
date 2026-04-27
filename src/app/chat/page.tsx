@@ -1489,6 +1489,7 @@ export default function ChatPage(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
 
   const [plusOpen, setPlusOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   const [plan, setPlan] = useState<Plan>("free");
   const [limits, setLimits] = useState<Limits>({
@@ -2745,6 +2746,78 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
+        [data-ajx-themed="true"] {
+          border-top: 1px solid rgba(91, 255, 139, 0.18) !important;
+          background:
+            linear-gradient(180deg, rgba(255,255,255,0.96), rgba(245,255,249,0.96)) !important;
+          box-shadow: 0 -18px 60px rgba(21, 80, 42, 0.10) !important;
+        }
+
+        [data-ajx-card-themed="true"] {
+          border: 1px solid rgba(91, 255, 139, 0.14) !important;
+          box-shadow: 0 20px 80px rgba(21, 80, 42, 0.10) !important;
+        }
+
+        .ajxToolsMiniRow {
+          display: flex;
+          justify-content: flex-start;
+          margin-bottom: 8px;
+        }
+
+        .ajxToolsMiniBtn {
+          border: 1px solid rgba(91, 255, 139, 0.24);
+          background: rgba(91, 255, 139, 0.10);
+          color: #122018;
+          border-radius: 999px;
+          padding: 8px 13px;
+          font-size: 12px;
+          font-weight: 950;
+          cursor: pointer;
+        }
+
+        .ajxToolsDrawer {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          margin-bottom: 10px;
+          padding: 10px;
+          border-radius: 18px;
+          border: 1px solid rgba(91, 255, 139, 0.20);
+          background: rgba(5, 10, 16, 0.88);
+        }
+
+        .ajxToolsDrawerBtn {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          border: 1px solid rgba(91, 255, 139, 0.16);
+          background: rgba(255, 255, 255, 0.045);
+          color: #ffffff;
+          border-radius: 14px;
+          padding: 11px 12px;
+          font-size: 12px;
+          font-weight: 900;
+          cursor: pointer;
+          text-align: left;
+        }
+
+        .ajxToolsDrawerBtn b {
+          color: rgba(91, 255, 139, 0.95);
+          font-size: 16px;
+        }
+
+        .ajxToolsDrawerBtn:hover {
+          background: rgba(91, 255, 139, 0.10);
+          border-color: rgba(91, 255, 139, 0.32);
+        }
+
+        @media (max-width: 520px) {
+          .ajxToolsDrawer {
+            grid-template-columns: 1fr;
+          }
+        }
+
         .ajxCompactTools {
           margin: 8px 0 18px 0;
           padding: 16px;
@@ -3950,6 +4023,7 @@ export default function ChatPage(): React.JSX.Element {
           >
             <section
               className={styles.chatCard}
+              data-ajx-card-themed="true"
               style={
                 isMobile
                   ? {
@@ -4082,6 +4156,7 @@ export default function ChatPage(): React.JSX.Element {
               <div
                 ref={composerRef}
                 className={styles.composer}
+                data-ajx-themed="true"
                 style={{
                   bottom: 0,
                   transition: "none",
@@ -4092,6 +4167,34 @@ export default function ChatPage(): React.JSX.Element {
                 }}
               >
                 <div className={styles.composerInner}>
+                  <div className="ajxToolsMiniRow">
+                    <button
+                      type="button"
+                      className="ajxToolsMiniBtn"
+                      onClick={() => setToolsOpen((v) => !v)}
+                    >
+                      ✦ Työkalut
+                    </button>
+                  </div>
+
+                  {toolsOpen ? (
+                    <div className="ajxToolsDrawer">
+                      {quickActions.map((action) => (
+                        <button
+                          key={action.id}
+                          type="button"
+                          className="ajxToolsDrawerBtn"
+                          onClick={() => {
+                            setToolsOpen(false);
+                            runQuickAction(action).catch(() => {});
+                          }}
+                        >
+                          <span>{action.label}</span>
+                          <b>→</b>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                   <div className="ajxComposerActions">
                     <div className="ajxComposerLeft">
                       {canOpenPlusMenu ? (
@@ -4441,6 +4544,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
