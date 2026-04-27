@@ -1504,46 +1504,37 @@ function plusLiteBusinessToolInstruction(locale: Locale): string {
   return l(
     locale,
     [
-      "- User is on PLUS plan.",
-      "- PLUS uses the same lightweight model base, so do not promise premium intelligence or super quality.",
-      "- PLUS value comes from better workflow, clearer questions, better structure and more useful business output.",
-      "- For business tool requests such as ads, offers, pricing, marketing, customers or funding:",
-      "- If important details are missing, ask exactly 3 short concrete questions first.",
-      "- Do not create fake prices, discounts, guarantees, campaigns or claims.",
-      "- Do not use emojis unless the user asks for a playful tone.",
-      "- Avoid generic AI marketing language.",
-      "- Make the result more polished than FREE, but still realistic and practical.",
-      "- Prefer this structure when enough details are available: 1) short situation check, 2) ready-to-use output, 3) what to fill in or decide next.",
-      "- For offers: produce a clean business offer skeleton, not hype.",
-      "- For ads: produce a believable small-business ad, not a flashy agency ad.",
-      "- For pricing: give practical price ranges, assumptions and a clear recommendation."
+      "- PLUS BUSINESS TOOL MODE.",
+      "- Do not answer like generic AI marketing.",
+      "- No emojis.",
+      "- Do not invent prices, discounts, campaign prices, guarantees or measurable claims.",
+      "- If the user has not given price, write [hinta] instead of inventing one.",
+      "- If the user has not given phone or website, write [puhelin] and [verkkosivu].",
+      "- Never write 'erikoishinta', 'kampanjahinta', 'vain 99 €', '15% alennus' unless the user gave it.",
+      "- Avoid words: ammattimainen, ammattitaitoinen, asiantunteva, kattava, optimaalinen, paras, huippu, taattu.",
+      "- For ads: write a simple believable ad text, max 8 lines.",
+      "- For offers: write a clean offer structure with placeholders. No hype.",
+      "- For pricing: give a range, assumptions and recommendation. Do not invent discounts.",
+      "- If important details are missing, ask 3 short questions before final output.",
+      "- PLUS should be clearer and more structured than FREE, not more flashy."
     ].join("\n"),
     [
-      "- User is on PLUS plan.",
-      "- PLUS uses the same lightweight model base, so do not promise premium intelligence or super quality.",
-      "- PLUS value comes from better workflow, clearer questions, better structure and more useful business output.",
-      "- For business tool requests such as ads, offers, pricing, marketing, customers or funding:",
-      "- If important details are missing, ask exactly 3 short concrete questions first.",
-      "- Do not create fake prices, discounts, guarantees, campaigns or claims.",
-      "- Do not use emojis unless the user asks for a playful tone.",
-      "- Avoid generic AI marketing language.",
-      "- Make the result more polished than FREE, but still realistic and practical.",
-      "- Prefer this structure when enough details are available: 1) short situation check, 2) ready-to-use output, 3) what to fill in or decide next.",
-      "- For offers: produce a clean business offer skeleton, not hype.",
-      "- For ads: produce a believable small-business ad, not a flashy agency ad.",
-      "- For pricing: give practical price ranges, assumptions and a clear recommendation."
+      "- PLUS BUSINESS TOOL MODE.",
+      "- No generic AI marketing.",
+      "- No emojis.",
+      "- Do not invent prices, discounts, guarantees or campaign claims.",
+      "- Use placeholders for missing details.",
+      "- Ask 3 short questions when important details are missing.",
+      "- PLUS should be clearer and more structured than FREE, not more flashy."
     ].join("\n"),
     [
-      "- Usuario en plan PLUS.",
-      "- PLUS usa la misma base ligera, así que no prometas inteligencia premium ni calidad superior.",
-      "- El valor de PLUS viene del flujo guiado, mejores preguntas, mejor estructura y resultados más útiles.",
-      "- Para anuncios, ofertas, precios, marketing, clientes o financiación:",
-      "- Si faltan datos importantes, haz exactamente 3 preguntas cortas y concretas primero.",
-      "- No inventes precios, descuentos, garantías, campañas ni promesas.",
-      "- No uses emojis salvo que el usuario pida tono divertido.",
-      "- Evita lenguaje genérico de marketing.",
-      "- Haz el resultado más trabajado que FREE, pero realista y práctico.",
-      "- Si hay datos suficientes: 1) revisión breve, 2) texto listo, 3) datos que faltan o siguiente decisión."
+      "- MODO PLUS PARA NEGOCIOS.",
+      "- Sin marketing genérico.",
+      "- Sin emojis.",
+      "- No inventes precios, descuentos, garantías ni campañas.",
+      "- Usa marcadores si faltan datos.",
+      "- Haz 3 preguntas cortas si faltan datos importantes.",
+      "- PLUS debe ser más claro y estructurado que FREE, no más exagerado."
     ].join("\n")
   );
 }
@@ -3248,6 +3239,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
