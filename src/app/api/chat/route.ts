@@ -1449,6 +1449,12 @@ function freeLiteModeInstruction(locale: Locale): string {
     `
 - User is on FREE plan.
 - Provide a LIGHT version of the result.
+- Do NOT start with filler phrases like "Ymmärrän että", "I understand that", "Entiendo que".
+- Start directly with the useful answer.
+- Avoid filler introductions completely.
+- Output must be immediately usable.
+- If user asks for an offer, ad, or business content, produce it directly.
+- Do not explain what you will do. Just do it.
 - Avoid generic marketing phrases like "high quality", "best service", "industry leading".
 - Avoid emojis unless absolutely necessary.
 - Prefer simple, direct, believable language.
@@ -1463,6 +1469,12 @@ function freeLiteModeInstruction(locale: Locale): string {
     `
 - User is on FREE plan.
 - Provide a LIGHT version of the result.
+- Do NOT start with filler phrases like "Ymmärrän että", "I understand that", "Entiendo que".
+- Start directly with the useful answer.
+- Avoid filler introductions completely.
+- Output must be immediately usable.
+- If user asks for an offer, ad, or business content, produce it directly.
+- Do not explain what you will do. Just do it.
 - Avoid generic marketing phrases like "high quality", "best service", "industry leading".
 - Avoid emojis unless absolutely necessary.
 - Prefer simple, direct, believable language.
@@ -1477,6 +1489,12 @@ function freeLiteModeInstruction(locale: Locale): string {
     `
 - User is on FREE plan.
 - Provide a LIGHT version of the result.
+- Do NOT start with filler phrases like "Ymmärrän että", "I understand that", "Entiendo que".
+- Start directly with the useful answer.
+- Avoid filler introductions completely.
+- Output must be immediately usable.
+- If user asks for an offer, ad, or business content, produce it directly.
+- Do not explain what you will do. Just do it.
 - Avoid generic marketing phrases like "alta calidad", "mejor servicio", "líder del sector".
 - Avoid emojis unless absolutely necessary.
 - Prefer simple, direct, believable language.
@@ -3200,6 +3218,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
