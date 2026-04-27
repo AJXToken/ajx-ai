@@ -2746,19 +2746,6 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
-        :global(.bubbleUser),
-        :global(.rowUser),
-        :global([class*="bubbleUser"]) {
-          color: #07100c !important;
-        }
-
-        :global([class*="bubbleUser"] *) {
-          color: #07100c !important;
-        }
-
-        :global([class*="bubbleAi"]) {
-          color: #f4fff7 !important;
-        }
         :global(body) {
           background: #07100c !important;
         }
@@ -4839,7 +4826,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 

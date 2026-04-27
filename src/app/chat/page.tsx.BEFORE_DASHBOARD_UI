@@ -1459,18 +1459,14 @@ function attachmentHintText(locale: Locale): string {
 function attachFileMenuLabel(locale: Locale): string {
   if (locale === "es") return "Adjuntar archivo (PDF, TXT, CSV...)";
   if (locale === "en") return "Attach file (PDF, TXT, CSV...)";
-  return "Liitä tiedosto (PDF, TXT, CSV...)";
+  return "LiitÃ¤ tiedosto (PDF, TXT, CSV...)";
 }
 
 export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
 
   const titleDefault = useMemo(() => t(locale, "thread.title_default"), [locale]);
-  const greeting = useMemo(() => {
-    if (locale === "es") return "¿Qué quieres hacer hoy?";
-    if (locale === "en") return "What do you want to do today?";
-    return "Mitä haluat tehdä tänään?";
-  }, [locale]);
+  const greeting = useMemo(() => t(locale, "chat.greeting"), [locale]);
 
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -1489,7 +1485,6 @@ export default function ChatPage(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
 
   const [plusOpen, setPlusOpen] = useState(false);
-  const [toolsOpen, setToolsOpen] = useState(false);
 
   const [plan, setPlan] = useState<Plan>("free");
   const [limits, setLimits] = useState<Limits>({
@@ -2746,454 +2741,6 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
-        :global(.bubbleUser),
-        :global(.rowUser),
-        :global([class*="bubbleUser"]) {
-          color: #07100c !important;
-        }
-
-        :global([class*="bubbleUser"] *) {
-          color: #07100c !important;
-        }
-
-        :global([class*="bubbleAi"]) {
-          color: #f4fff7 !important;
-        }
-        :global(body) {
-          background: #07100c !important;
-        }
-
-        :global(.ajxControlGroup),
-        :global(.ajxSelect),
-        :global(.ajxHelpLink),
-        :global(.ajxDisclaimerPlan),
-        :global(.ajxCopyBtn) {
-          background: rgba(8, 18, 13, 0.92) !important;
-          color: #f4fff7 !important;
-          border-color: rgba(91, 255, 139, 0.22) !important;
-        }
-
-        :global(.ajxDisclaimerRow) {
-          color: rgba(244, 255, 247, 0.68) !important;
-        }
-
-        :global(textarea),
-        :global(.ajxComposerText) {
-          background: rgba(244, 255, 247, 0.96) !important;
-          color: #07100c !important;
-          caret-color: #07100c !important;
-        }
-
-        :global(textarea::placeholder) {
-          color: rgba(7, 16, 12, 0.48) !important;
-        }
-
-        :global([data-ajx-card-themed="true"]),
-        :global([data-ajx-themed="true"]) {
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.22) !important;
-        }
-        body {
-          background: #07100c !important;
-        }
-
-        .ajxTopControls,
-        .ajxControlGroup,
-        .ajxSelect,
-        .ajxHelpLink,
-        .ajxDisclaimerPlan {
-          background: rgba(8, 18, 13, 0.88) !important;
-          color: #f4fff7 !important;
-          border-color: rgba(91, 255, 139, 0.18) !important;
-        }
-
-        .ajxSelect option {
-          background: #07100c !important;
-          color: #f4fff7 !important;
-        }
-
-        [data-ajx-card-themed="true"],
-        [data-ajx-themed="true"] {
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.20) !important;
-        }
-
-        .ajxDisclaimerRow {
-          color: rgba(244, 255, 247, 0.66) !important;
-        }
-
-        textarea {
-          background: rgba(244, 255, 247, 0.96) !important;
-          color: #07100c !important;
-          caret-color: #07100c !important;
-        }
-
-        textarea::placeholder {
-          color: rgba(7, 16, 12, 0.48) !important;
-        }
-        body {
-          background: #07100c !important;
-        }
-
-        .ajxTopControls,
-        .ajxControlGroup,
-        .ajxSelect,
-        .ajxHelpLink,
-        .ajxDisclaimerPlan {
-          background: rgba(8, 18, 13, 0.88) !important;
-          color: #f4fff7 !important;
-          border-color: rgba(91, 255, 139, 0.18) !important;
-        }
-
-        .ajxSelect option {
-          background: #07100c !important;
-          color: #f4fff7 !important;
-        }
-
-        [data-ajx-card-themed="true"],
-        [data-ajx-themed="true"] {
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.20) !important;
-        }
-
-        .ajxDisclaimerRow {
-          color: rgba(244, 255, 247, 0.66) !important;
-        }
-
-        textarea {
-          background: rgba(244, 255, 247, 0.96) !important;
-          color: #07100c !important;
-          caret-color: #07100c !important;
-        }
-
-        textarea::placeholder {
-          color: rgba(7, 16, 12, 0.48) !important;
-        }
-        textarea {
-          color: #111 !important;
-          caret-color: #111 !important;
-        }
-
-        textarea::placeholder {
-          color: rgba(0,0,0,0.4) !important;
-        }
-        .ajxToolsIconBtn {
-          width: 46px;
-          height: 46px;
-          border-radius: 16px;
-          border: 1px solid rgba(91, 255, 139, 0.28);
-          background: rgba(91, 255, 139, 0.12);
-          color: #35d96f;
-          display: grid;
-          place-items: center;
-          font-size: 19px;
-          font-weight: 950;
-          cursor: pointer;
-        }
-
-        .ajxToolsDrawerMoved {
-          margin-top: 10px;
-          margin-bottom: 10px;
-        }
-
-        .ajxToolsDrawer {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
-          padding: 10px;
-          border-radius: 18px;
-          border: 1px solid rgba(91, 255, 139, 0.20);
-          background: rgba(5, 10, 16, 0.92);
-        }
-
-        .ajxToolsDrawerBtn {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
-          border: 1px solid rgba(91, 255, 139, 0.16);
-          background: rgba(255, 255, 255, 0.045);
-          color: #ffffff;
-          border-radius: 14px;
-          padding: 11px 12px;
-          font-size: 12px;
-          font-weight: 900;
-          cursor: pointer;
-          text-align: left;
-        }
-
-        .ajxToolsDrawerBtn b {
-          color: rgba(91, 255, 139, 0.95);
-          font-size: 16px;
-        }
-
-        @media (max-width: 520px) {
-          .ajxToolsIconBtn {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            font-size: 18px;
-          }
-
-          .ajxToolsDrawer {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .ajxToolsIconBtn {
-          width: 46px;
-          height: 46px;
-          border-radius: 16px;
-          border: 1px solid rgba(91, 255, 139, 0.28);
-          background: rgba(91, 255, 139, 0.12);
-          color: #35d96f;
-          display: grid;
-          place-items: center;
-          font-size: 20px;
-          font-weight: 950;
-          cursor: pointer;
-          box-shadow: 0 10px 24px rgba(21, 80, 42, 0.12);
-        }
-
-        .ajxToolsIconBtn:hover {
-          background: rgba(91, 255, 139, 0.18);
-          border-color: rgba(91, 255, 139, 0.42);
-        }
-
-        .ajxToolsDrawerMoved {
-          margin-top: 10px;
-        }
-
-        .ajxToolsMiniRow {
-          display: none !important;
-        }
-
-        body {
-          background: #07100c !important;
-        }
-
-        .ajxTopControls,
-        .ajxControlGroup,
-        .ajxSelect,
-        .ajxHelpLink {
-          border-color: rgba(91, 255, 139, 0.18) !important;
-        }
-
-        [data-ajx-card-themed="true"] {
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.08), transparent 36%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.20) !important;
-        }
-
-        [data-ajx-themed="true"] {
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.22) !important;
-        }
-
-        [data-ajx-themed="true"] textarea {
-          background: rgba(255, 255, 255, 0.94) !important;
-        }
-
-        @media (max-width: 520px) {
-          .ajxToolsIconBtn {
-            width: 42px;
-            height: 42px;
-            border-radius: 14px;
-            font-size: 18px;
-          }
-        }
-
-        [data-ajx-themed="true"] {
-          border-top: 1px solid rgba(91, 255, 139, 0.18) !important;
-          background:
-            linear-gradient(180deg, rgba(255,255,255,0.96), rgba(245,255,249,0.96)) !important;
-          box-shadow: 0 -18px 60px rgba(21, 80, 42, 0.10) !important;
-        }
-
-        [data-ajx-card-themed="true"] {
-          border: 1px solid rgba(91, 255, 139, 0.14) !important;
-          box-shadow: 0 20px 80px rgba(21, 80, 42, 0.10) !important;
-        }
-
-        .ajxToolsMiniRow {
-          display: flex;
-          justify-content: flex-start;
-          margin-bottom: 8px;
-        }
-
-        .ajxToolsMiniBtn {
-          border: 1px solid rgba(91, 255, 139, 0.24);
-          background: rgba(91, 255, 139, 0.10);
-          color: #122018;
-          border-radius: 999px;
-          padding: 8px 13px;
-          font-size: 12px;
-          font-weight: 950;
-          cursor: pointer;
-        }
-
-        .ajxToolsDrawer {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 8px;
-          margin-bottom: 10px;
-          padding: 10px;
-          border-radius: 18px;
-          border: 1px solid rgba(91, 255, 139, 0.20);
-          background: rgba(5, 10, 16, 0.88);
-        }
-
-        .ajxToolsDrawerBtn {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
-          border: 1px solid rgba(91, 255, 139, 0.16);
-          background: rgba(255, 255, 255, 0.045);
-          color: #ffffff;
-          border-radius: 14px;
-          padding: 11px 12px;
-          font-size: 12px;
-          font-weight: 900;
-          cursor: pointer;
-          text-align: left;
-        }
-
-        .ajxToolsDrawerBtn b {
-          color: rgba(91, 255, 139, 0.95);
-          font-size: 16px;
-        }
-
-        .ajxToolsDrawerBtn:hover {
-          background: rgba(91, 255, 139, 0.10);
-          border-color: rgba(91, 255, 139, 0.32);
-        }
-
-        @media (max-width: 520px) {
-          .ajxToolsDrawer {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        .ajxCompactTools {
-          margin: 8px 0 18px 0;
-          padding: 16px;
-          border-radius: 24px;
-          border: 1px solid rgba(91, 255, 139, 0.20);
-          background:
-            radial-gradient(circle at top left, rgba(91, 255, 139, 0.13), transparent 38%),
-            rgba(8, 12, 18, 0.88);
-          box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
-        }
-
-        .ajxCompactTop {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 12px;
-          margin-bottom: 14px;
-        }
-
-        .ajxCompactKicker {
-          font-size: 11px;
-          font-weight: 950;
-          letter-spacing: 0.20em;
-          color: rgba(91, 255, 139, 0.95);
-        }
-
-        .ajxCompactTitle {
-          margin-top: 5px;
-          font-size: 22px;
-          line-height: 1.15;
-          font-weight: 950;
-          color: #ffffff;
-        }
-
-        .ajxCompactPlan {
-          flex: 0 0 auto;
-          padding: 6px 10px;
-          border-radius: 999px;
-          background: rgba(91, 255, 139, 0.12);
-          color: rgba(91, 255, 139, 0.98);
-          border: 1px solid rgba(91, 255, 139, 0.22);
-          font-size: 11px;
-          font-weight: 950;
-        }
-
-        .ajxCompactGrid {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 10px;
-        }
-
-        .ajxCompactToolBtn {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 10px;
-          min-height: 52px;
-          padding: 12px 13px;
-          border-radius: 17px;
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          background: rgba(255, 255, 255, 0.045);
-          color: #ffffff;
-          cursor: pointer;
-          text-align: left;
-          font-size: 13px;
-          font-weight: 900;
-          line-height: 1.25;
-          transition: transform 0.14s ease, background 0.14s ease, border 0.14s ease;
-        }
-
-        .ajxCompactToolBtn:hover {
-          transform: translateY(-1px);
-          background: rgba(91, 255, 139, 0.09);
-          border-color: rgba(91, 255, 139, 0.28);
-        }
-
-        .ajxCompactToolBtn b {
-          flex: 0 0 auto;
-          width: 28px;
-          height: 28px;
-          display: grid;
-          place-items: center;
-          border-radius: 999px;
-          background: rgba(91, 255, 139, 0.13);
-          color: rgba(91, 255, 139, 0.98);
-          font-size: 17px;
-        }
-
-        @media (max-width: 520px) {
-          .ajxCompactTools {
-            margin: 4px 0 14px 0;
-            padding: 14px;
-            border-radius: 22px;
-          }
-
-          .ajxCompactTitle {
-            font-size: 20px;
-          }
-
-          .ajxCompactGrid {
-            grid-template-columns: 1fr;
-            gap: 8px;
-          }
-
-          .ajxCompactToolBtn {
-            min-height: 48px;
-            font-size: 13px;
-          }
-        }
-
         .ajxTopControls {
           display: flex;
           gap: 10px;
@@ -4289,7 +3836,6 @@ export default function ChatPage(): React.JSX.Element {
           >
             <section
               className={styles.chatCard}
-              data-ajx-card-themed="true"
               style={
                 isMobile
                   ? {
@@ -4320,37 +3866,6 @@ export default function ChatPage(): React.JSX.Element {
                       }
                 }
               >
-                {showQuickActions && messages.length <= 1 ? (
-                  <div className="ajxCompactTools">
-                    <div className="ajxCompactTop">
-                      <div>
-                        <div className="ajxCompactKicker">AJX AI</div>
-                        <div className="ajxCompactTitle">
-                          {locale === "es"
-                            ? "¿Qué quieres hacer?"
-                            : locale === "en"
-                              ? "What do you want to do?"
-                              : "Mitä haluat tehdä?"}
-                        </div>
-                      </div>
-                      <div className="ajxCompactPlan">{planLabel}</div>
-                    </div>
-
-                    <div className="ajxCompactGrid">
-                      {quickActions.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          className="ajxCompactToolBtn"
-                          onClick={() => runQuickAction(action).catch(() => {})}
-                        >
-                          <span>{action.label}</span>
-                          <b>→</b>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
                 {messages.map((m, idx) => {
                   const isUser = m.role === "user";
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
@@ -4402,7 +3917,7 @@ export default function ChatPage(): React.JSX.Element {
                 <div ref={bottomRef} />
               </div>
 
-              {false && showQuickActions ? (
+              {showQuickActions ? (
                 <div className="ajxQuickActionsWrap">
                   <div className="ajxQuickActionsRow">
                     {quickActions.map((action) => (
@@ -4422,7 +3937,6 @@ export default function ChatPage(): React.JSX.Element {
               <div
                 ref={composerRef}
                 className={styles.composer}
-                data-ajx-themed="true"
                 style={{
                   bottom: 0,
                   transition: "none",
@@ -4433,7 +3947,6 @@ export default function ChatPage(): React.JSX.Element {
                 }}
               >
                 <div className={styles.composerInner}>
-
                   <div className="ajxComposerActions">
                     <div className="ajxComposerLeft">
                       {canOpenPlusMenu ? (
@@ -4449,16 +3962,6 @@ export default function ChatPage(): React.JSX.Element {
                           +
                         </button>
                       ) : null}
-
-                      <button
-                        type="button"
-                        className="ajxToolsIconBtn"
-                        onClick={() => setToolsOpen((v) => !v)}
-                        title="Työkalut"
-                        aria-label="Työkalut"
-                      >
-                        ✦
-                      </button>
 
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
@@ -4547,15 +4050,6 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
 
                     <div className="ajxComposerRight">
-                      <button
-                        type="button"
-                        className="ajxToolsIconBtn"
-                        onClick={() => setToolsOpen((v) => !v)}
-                        title="Työkalut"
-                        aria-label="Työkalut"
-                      >
-                        ⚡
-                      </button>
                       <a
                         href={`/help?lang=${locale}`}
                         className="ajxHelpLink ajxComposerHelp"
@@ -4610,43 +4104,6 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
                   </div>
 
-                  {toolsOpen ? (
-                    <div className="ajxToolsDrawer ajxToolsDrawerMoved">
-                      {quickActions.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          className="ajxToolsDrawerBtn"
-                          onClick={() => {
-                            setToolsOpen(false);
-                            runQuickAction(action).catch(() => {});
-                          }}
-                        >
-                          <span>{action.label}</span>
-                          <b>→</b>
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  {toolsOpen ? (
-                    <div className="ajxToolsDrawer ajxToolsDrawerMoved">
-                      {quickActions.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          className="ajxToolsDrawerBtn"
-                          onClick={() => {
-                            setToolsOpen(false);
-                            runQuickAction(action).catch(() => {});
-                          }}
-                        >
-                          <span>{action.label}</span>
-                          <b>→</b>
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
                   {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">{imageIntentHint}</div>
@@ -4839,20 +4296,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

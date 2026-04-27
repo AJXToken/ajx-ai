@@ -1,4 +1,4 @@
-﻿:global(html), :global(body) {
+:global(html), :global(body) {
   height: 100%;
   overflow: hidden;
 }
@@ -1081,29 +1081,4 @@
   :global(.ajxComposerRight) {
     gap: 6px;
   }
-}
-/* AJX visibility fix */
-.bubbleUser,
-.bubbleUser *,
-.rowUser,
-.rowUser * {
-  color: #07100c !important;
-  -webkit-text-fill-color: #07100c !important;
-}
-
-.bubbleAi,
-.bubbleAi * {
-  color: #f4fff7 !important;
-}
-
-.input {
-  background: rgba(244, 255, 247, 0.96) !important;
-  color: #07100c !important;
-  -webkit-text-fill-color: #07100c !important;
-  caret-color: #07100c !important;
-}
-
-.input::placeholder {
-  color: rgba(7, 16, 12, 0.48) !important;
-  -webkit-text-fill-color: rgba(7, 16, 12, 0.48) !important;
 }
