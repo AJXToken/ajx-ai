@@ -1465,6 +1465,16 @@ function freeLiteModeInstruction(locale: Locale): string {
 - Write like a real small business, not a marketing agency.
 - Prefer simple, concrete sentences.
 - Make it feel local, practical and believable.
+- Avoid marketing tone completely.
+- Write like a small local business owner, not a marketing agency.
+- Use realistic wording that a real company would actually send.
+- Avoid hype, exaggeration and sales language.
+- Prefer plain Finnish that sounds normal, not polished marketing text.
+- Avoid marketing tone completely.
+- Write like a small local business owner, not a marketing agency.
+- Use realistic wording that a real company would actually send.
+- Avoid hype, exaggeration and sales language.
+- Prefer plain Finnish that sounds normal, not polished marketing text.
 `.trim(),
     `
 - User is on FREE plan.
@@ -1485,6 +1495,16 @@ function freeLiteModeInstruction(locale: Locale): string {
 - Write like a real small business, not a marketing agency.
 - Prefer simple, concrete sentences.
 - Make it feel local, practical and believable.
+- Avoid marketing tone completely.
+- Write like a small local business owner, not a marketing agency.
+- Use realistic wording that a real company would actually send.
+- Avoid hype, exaggeration and sales language.
+- Prefer plain Finnish that sounds normal, not polished marketing text.
+- Avoid marketing tone completely.
+- Write like a small local business owner, not a marketing agency.
+- Use realistic wording that a real company would actually send.
+- Avoid hype, exaggeration and sales language.
+- Prefer plain Finnish that sounds normal, not polished marketing text.
 `.trim(),
     `
 - User is on FREE plan.
@@ -1505,6 +1525,16 @@ function freeLiteModeInstruction(locale: Locale): string {
 - Write like a real small business, not a marketing agency.
 - Prefer simple, concrete sentences.
 - Make it feel local, practical and believable.
+- Avoid marketing tone completely.
+- Write like a small local business owner, not a marketing agency.
+- Use realistic wording that a real company would actually send.
+- Avoid hype, exaggeration and sales language.
+- Prefer plain Finnish that sounds normal, not polished marketing text.
+- Avoid marketing tone completely.
+- Write like a small local business owner, not a marketing agency.
+- Use realistic wording that a real company would actually send.
+- Avoid hype, exaggeration and sales language.
+- Prefer plain Finnish that sounds normal, not polished marketing text.
 `.trim()
   );
 }
@@ -3218,6 +3248,8 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
+
 
 
 
