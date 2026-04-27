@@ -1459,7 +1459,7 @@ function attachmentHintText(locale: Locale): string {
 function attachFileMenuLabel(locale: Locale): string {
   if (locale === "es") return "Adjuntar archivo (PDF, TXT, CSV...)";
   if (locale === "en") return "Attach file (PDF, TXT, CSV...)";
-  return "LiitÃ¤ tiedosto (PDF, TXT, CSV...)";
+  return "Liitä tiedosto (PDF, TXT, CSV...)";
 }
 
 export default function ChatPage(): React.JSX.Element {
@@ -4612,6 +4612,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
