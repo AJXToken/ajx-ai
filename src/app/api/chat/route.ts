@@ -1448,39 +1448,46 @@ function freeLiteModeInstruction(locale: Locale): string {
     locale,
     [
       "- User is on FREE plan.",
-      "- Provide a LIGHT, simplified version of the result.",
-      "- Keep output SHORT and directly usable.",
-      "- Avoid generic marketing phrases like laadukas, paras, huippu, optimaalinen, alan johtava, taattu.",
-      "- Do not sound like an agency or AI.",
-      "- Write like a real small local business.",
-      "- Use simple, believable language.",
-      "- Do not invent strong promises or guarantees.",
-      "- Avoid long lists and long explanations.",
-      "- If needed, ask 1–3 short clarifying questions instead of guessing.",
-      "- Output should feel copy-paste usable immediately."
+      "- Output must be short, plain and usable.",
+      "- No emojis.",
+      "- No hype.",
+      "- No slogans.",
+      "- No generic claims.",
+      "- Do not use words like: laadukas, ammattitaitoinen, asiantunteva, kattava, paras, huippu, optimaalinen, energiatehokkuus unless the user specifically gave proof.",
+      "- Do not say: puhdas ilma on vain yhden puhdistuksen päässä.",
+      "- Do not create fake guarantees, discounts, exact prices or promises.",
+      "- Write like a normal small business owner.",
+      "- For ads: write only one simple ad text, max 6 short lines.",
+      "- For offers: write a simple offer skeleton, not a polished full contract.",
+      "- For pricing: give one practical price range and one recommendation.",
+      "- Avoid long lists.",
+      "- Avoid repeating the task title.",
+      "- Do not add 'Seuraava askel' unless truly needed."
     ].join("\n"),
     [
       "- User is on FREE plan.",
-      "- Provide a LIGHT, simplified version of the result.",
-      "- Keep output SHORT and directly usable.",
-      "- Avoid generic marketing phrases like high quality, best, top, industry leading, guaranteed.",
-      "- Do not sound like an agency or AI.",
-      "- Write like a real small business.",
-      "- Use simple, believable language.",
-      "- Avoid long lists and long explanations.",
-      "- If needed, ask 1–3 short clarifying questions.",
-      "- Output should be immediately usable."
+      "- Output must be short, plain and usable.",
+      "- No emojis, no hype, no slogans.",
+      "- Avoid generic claims like professional, high quality, best, top, optimized.",
+      "- Do not invent guarantees, discounts, exact prices or promises.",
+      "- Write like a normal small business owner.",
+      "- For ads: max 6 short lines.",
+      "- For offers: simple skeleton only.",
+      "- For pricing: one practical range and one recommendation.",
+      "- Avoid long lists.",
+      "- Do not add 'Next step' unless truly needed."
     ].join("\n"),
     [
       "- Usuario en plan FREE.",
-      "- Proporciona una versión simple y utilizable.",
-      "- Mantén la respuesta corta.",
-      "- Evita frases de marketing como alta calidad, mejor, líder, garantizado.",
-      "- No suenes como agencia.",
-      "- Escribe simple, claro y realista.",
-      "- No prometas demasiado.",
-      "- Si falta información, haz 1–3 preguntas cortas.",
-      "- El resultado debe poder usarse directamente."
+      "- Respuesta corta, simple y utilizable.",
+      "- Sin emojis, sin exageración, sin eslóganes.",
+      "- Evita frases genéricas como profesional, alta calidad, mejor, líder, optimizado.",
+      "- No inventes garantías, descuentos, precios exactos ni promesas.",
+      "- Escribe como una pequeña empresa real.",
+      "- Para anuncios: máximo 6 líneas cortas.",
+      "- Para ofertas: solo estructura simple.",
+      "- Para precios: un rango práctico y una recomendación.",
+      "- Evita listas largas."
     ].join("\n")
   );
 }
@@ -3194,6 +3201,8 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
+
 
 
 
