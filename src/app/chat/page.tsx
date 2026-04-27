@@ -2755,6 +2755,69 @@ export default function ChatPage(): React.JSX.Element {
           color: #35d96f;
           display: grid;
           place-items: center;
+          font-size: 19px;
+          font-weight: 950;
+          cursor: pointer;
+        }
+
+        .ajxToolsDrawerMoved {
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+
+        .ajxToolsDrawer {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 8px;
+          padding: 10px;
+          border-radius: 18px;
+          border: 1px solid rgba(91, 255, 139, 0.20);
+          background: rgba(5, 10, 16, 0.92);
+        }
+
+        .ajxToolsDrawerBtn {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          border: 1px solid rgba(91, 255, 139, 0.16);
+          background: rgba(255, 255, 255, 0.045);
+          color: #ffffff;
+          border-radius: 14px;
+          padding: 11px 12px;
+          font-size: 12px;
+          font-weight: 900;
+          cursor: pointer;
+          text-align: left;
+        }
+
+        .ajxToolsDrawerBtn b {
+          color: rgba(91, 255, 139, 0.95);
+          font-size: 16px;
+        }
+
+        @media (max-width: 520px) {
+          .ajxToolsIconBtn {
+            width: 42px;
+            height: 42px;
+            border-radius: 14px;
+            font-size: 18px;
+          }
+
+          .ajxToolsDrawer {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        .ajxToolsIconBtn {
+          width: 46px;
+          height: 46px;
+          border-radius: 16px;
+          border: 1px solid rgba(91, 255, 139, 0.28);
+          background: rgba(91, 255, 139, 0.12);
+          color: #35d96f;
+          display: grid;
+          place-items: center;
           font-size: 20px;
           font-weight: 950;
           cursor: pointer;
@@ -4347,6 +4410,15 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
 
                     <div className="ajxComposerRight">
+                      <button
+                        type="button"
+                        className="ajxToolsIconBtn"
+                        onClick={() => setToolsOpen((v) => !v)}
+                        title="Työkalut"
+                        aria-label="Työkalut"
+                      >
+                        ⚡
+                      </button>
                       <a
                         href={`/help?lang=${locale}`}
                         className="ajxHelpLink ajxComposerHelp"
@@ -4420,6 +4492,24 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
                   ) : null}
 
+                  {toolsOpen ? (
+                    <div className="ajxToolsDrawer ajxToolsDrawerMoved">
+                      {quickActions.map((action) => (
+                        <button
+                          key={action.id}
+                          type="button"
+                          className="ajxToolsDrawerBtn"
+                          onClick={() => {
+                            setToolsOpen(false);
+                            runQuickAction(action).catch(() => {});
+                          }}
+                        >
+                          <span>{action.label}</span>
+                          <b>→</b>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                   {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">{imageIntentHint}</div>
@@ -4612,6 +4702,11 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
+
+
+
 
 
 
