@@ -4450,16 +4450,6 @@ export default function ChatPage(): React.JSX.Element {
                         </button>
                       ) : null}
 
-                      <button
-                        type="button"
-                        className="ajxToolsIconBtn"
-                        onClick={() => setToolsOpen((v) => !v)}
-                        title="Työkalut"
-                        aria-label="Työkalut"
-                      >
-                        ✦
-                      </button>
-
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
                           <ImageButton
@@ -4609,25 +4599,6 @@ export default function ChatPage(): React.JSX.Element {
                       </button>
                     </div>
                   </div>
-
-                  {toolsOpen ? (
-                    <div className="ajxToolsDrawer ajxToolsDrawerMoved">
-                      {quickActions.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          className="ajxToolsDrawerBtn"
-                          onClick={() => {
-                            setToolsOpen(false);
-                            runQuickAction(action).catch(() => {});
-                          }}
-                        >
-                          <span>{action.label}</span>
-                          <b>→</b>
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
 
                   {toolsOpen ? (
                     <div className="ajxToolsDrawer ajxToolsDrawerMoved">
@@ -4839,6 +4810,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 

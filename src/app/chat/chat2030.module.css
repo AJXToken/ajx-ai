@@ -1107,3 +1107,107 @@
   color: rgba(7, 16, 12, 0.48) !important;
   -webkit-text-fill-color: rgba(7, 16, 12, 0.48) !important;
 }
+
+/* ===== AJX DARK GREEN THEME FINAL ===== */
+
+.shell {
+  --bg0: #050b08;
+  --bg1: #07100c;
+  --surface: rgba(7, 16, 12, 0.86);
+  --surface2: rgba(10, 24, 17, 0.72);
+  --text: #f4fff7;
+  --muted: rgba(244, 255, 247, 0.62);
+  --line: rgba(91, 255, 139, 0.18);
+  --line2: rgba(91, 255, 139, 0.12);
+  --focus: 0 0 0 4px rgba(91, 255, 139, 0.12);
+}
+
+.bg {
+  background:
+    radial-gradient(900px 650px at 18% 12%, rgba(91, 255, 139, 0.10), transparent 60%),
+    radial-gradient(950px 700px at 82% 18%, rgba(91, 255, 139, 0.06), transparent 60%),
+    linear-gradient(180deg, #050b08, #07100c 55%, #08140e) !important;
+}
+
+.sidebar,
+.topbar,
+.chatCard,
+.composer {
+  background: rgba(7, 16, 12, 0.86) !important;
+  border-color: rgba(91, 255, 139, 0.14) !important;
+}
+
+.threadItem,
+.bubbleAi {
+  background: rgba(244, 255, 247, 0.08) !important;
+  border-color: rgba(91, 255, 139, 0.12) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+}
+
+.bubbleAi * {
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+}
+
+.bubbleUser {
+  background: rgba(91, 255, 139, 0.14) !important;
+  border-color: rgba(91, 255, 139, 0.22) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+}
+
+.bubbleUser * {
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+}
+
+.input {
+  background: rgba(244, 255, 247, 0.96) !important;
+  color: #07100c !important;
+  -webkit-text-fill-color: #07100c !important;
+  caret-color: #07100c !important;
+  border-color: rgba(91, 255, 139, 0.28) !important;
+}
+
+.input::placeholder {
+  color: rgba(7, 16, 12, 0.48) !important;
+  -webkit-text-fill-color: rgba(7, 16, 12, 0.48) !important;
+}
+
+.btnGhost,
+.btnTiny,
+.btnTinyDanger,
+:global(.ajxSelect),
+:global(.ajxControlGroup),
+:global(.ajxHelpLink),
+:global(.ajxCopyBtn) {
+  background: rgba(244, 255, 247, 0.08) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+  border-color: rgba(91, 255, 139, 0.18) !important;
+}
+
+:global(.ajxDisclaimerRow) {
+  color: rgba(244, 255, 247, 0.62) !important;
+}
+
+:global(.ajxToolsIconBtn) {
+  background: rgba(91, 255, 139, 0.14) !important;
+  color: #5bff8b !important;
+  -webkit-text-fill-color: #5bff8b !important;
+  border-color: rgba(91, 255, 139, 0.30) !important;
+}
+
+:global(.ajxToolsDrawer) {
+  background: rgba(5, 11, 8, 0.96) !important;
+  border-color: rgba(91, 255, 139, 0.22) !important;
+}
+
+:global(.ajxToolsDrawerBtn) {
+  background: rgba(244, 255, 247, 0.06) !important;
+  color: #f4fff7 !important;
+  -webkit-text-fill-color: #f4fff7 !important;
+  border-color: rgba(91, 255, 139, 0.18) !important;
+}
+
