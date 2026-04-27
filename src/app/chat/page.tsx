@@ -1466,7 +1466,11 @@ export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
 
   const titleDefault = useMemo(() => t(locale, "thread.title_default"), [locale]);
-  const greeting = useMemo(() => t(locale, "chat.greeting"), [locale]);
+  const greeting = useMemo(() => {
+    if (locale === "es") return "¿Qué quieres hacer hoy?";
+    if (locale === "en") return "What do you want to do today?";
+    return "Mitä haluat tehdä tänään?";
+  }, [locale]);
 
   const [threads, setThreads] = useState<ChatThread[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -2741,6 +2745,116 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
+        .ajxCompactTools {
+          margin: 8px 0 18px 0;
+          padding: 16px;
+          border-radius: 24px;
+          border: 1px solid rgba(91, 255, 139, 0.20);
+          background:
+            radial-gradient(circle at top left, rgba(91, 255, 139, 0.13), transparent 38%),
+            rgba(8, 12, 18, 0.88);
+          box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
+        }
+
+        .ajxCompactTop {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 14px;
+        }
+
+        .ajxCompactKicker {
+          font-size: 11px;
+          font-weight: 950;
+          letter-spacing: 0.20em;
+          color: rgba(91, 255, 139, 0.95);
+        }
+
+        .ajxCompactTitle {
+          margin-top: 5px;
+          font-size: 22px;
+          line-height: 1.15;
+          font-weight: 950;
+          color: #ffffff;
+        }
+
+        .ajxCompactPlan {
+          flex: 0 0 auto;
+          padding: 6px 10px;
+          border-radius: 999px;
+          background: rgba(91, 255, 139, 0.12);
+          color: rgba(91, 255, 139, 0.98);
+          border: 1px solid rgba(91, 255, 139, 0.22);
+          font-size: 11px;
+          font-weight: 950;
+        }
+
+        .ajxCompactGrid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .ajxCompactToolBtn {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          min-height: 52px;
+          padding: 12px 13px;
+          border-radius: 17px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.045);
+          color: #ffffff;
+          cursor: pointer;
+          text-align: left;
+          font-size: 13px;
+          font-weight: 900;
+          line-height: 1.25;
+          transition: transform 0.14s ease, background 0.14s ease, border 0.14s ease;
+        }
+
+        .ajxCompactToolBtn:hover {
+          transform: translateY(-1px);
+          background: rgba(91, 255, 139, 0.09);
+          border-color: rgba(91, 255, 139, 0.28);
+        }
+
+        .ajxCompactToolBtn b {
+          flex: 0 0 auto;
+          width: 28px;
+          height: 28px;
+          display: grid;
+          place-items: center;
+          border-radius: 999px;
+          background: rgba(91, 255, 139, 0.13);
+          color: rgba(91, 255, 139, 0.98);
+          font-size: 17px;
+        }
+
+        @media (max-width: 520px) {
+          .ajxCompactTools {
+            margin: 4px 0 14px 0;
+            padding: 14px;
+            border-radius: 22px;
+          }
+
+          .ajxCompactTitle {
+            font-size: 20px;
+          }
+
+          .ajxCompactGrid {
+            grid-template-columns: 1fr;
+            gap: 8px;
+          }
+
+          .ajxCompactToolBtn {
+            min-height: 48px;
+            font-size: 13px;
+          }
+        }
+
         .ajxTopControls {
           display: flex;
           gap: 10px;
@@ -3866,6 +3980,37 @@ export default function ChatPage(): React.JSX.Element {
                       }
                 }
               >
+                {showQuickActions && messages.length <= 1 ? (
+                  <div className="ajxCompactTools">
+                    <div className="ajxCompactTop">
+                      <div>
+                        <div className="ajxCompactKicker">AJX AI</div>
+                        <div className="ajxCompactTitle">
+                          {locale === "es"
+                            ? "¿Qué quieres hacer?"
+                            : locale === "en"
+                              ? "What do you want to do?"
+                              : "Mitä haluat tehdä?"}
+                        </div>
+                      </div>
+                      <div className="ajxCompactPlan">{planLabel}</div>
+                    </div>
+
+                    <div className="ajxCompactGrid">
+                      {quickActions.map((action) => (
+                        <button
+                          key={action.id}
+                          type="button"
+                          className="ajxCompactToolBtn"
+                          onClick={() => runQuickAction(action).catch(() => {})}
+                        >
+                          <span>{action.label}</span>
+                          <b>→</b>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
                 {messages.map((m, idx) => {
                   const isUser = m.role === "user";
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
@@ -3917,7 +4062,7 @@ export default function ChatPage(): React.JSX.Element {
                 <div ref={bottomRef} />
               </div>
 
-              {showQuickActions ? (
+              {false && showQuickActions ? (
                 <div className="ajxQuickActionsWrap">
                   <div className="ajxQuickActionsRow">
                     {quickActions.map((action) => (
@@ -4296,6 +4441,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
