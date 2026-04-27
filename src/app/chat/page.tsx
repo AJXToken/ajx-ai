@@ -2746,6 +2746,42 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
+        :global(body) {
+          background: #07100c !important;
+        }
+
+        :global(.ajxControlGroup),
+        :global(.ajxSelect),
+        :global(.ajxHelpLink),
+        :global(.ajxDisclaimerPlan),
+        :global(.ajxCopyBtn) {
+          background: rgba(8, 18, 13, 0.92) !important;
+          color: #f4fff7 !important;
+          border-color: rgba(91, 255, 139, 0.22) !important;
+        }
+
+        :global(.ajxDisclaimerRow) {
+          color: rgba(244, 255, 247, 0.68) !important;
+        }
+
+        :global(textarea),
+        :global(.ajxComposerText) {
+          background: rgba(244, 255, 247, 0.96) !important;
+          color: #07100c !important;
+          caret-color: #07100c !important;
+        }
+
+        :global(textarea::placeholder) {
+          color: rgba(7, 16, 12, 0.48) !important;
+        }
+
+        :global([data-ajx-card-themed="true"]),
+        :global([data-ajx-themed="true"]) {
+          background:
+            radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
+            #07100c !important;
+          border-color: rgba(91, 255, 139, 0.22) !important;
+        }
         body {
           background: #07100c !important;
         }
@@ -4790,6 +4826,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
