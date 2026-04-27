@@ -1107,3 +1107,76 @@
   color: rgba(7, 16, 12, 0.48) !important;
   -webkit-text-fill-color: rgba(7, 16, 12, 0.48) !important;
 }
+
+
+
+
+
+
+/* =========================
+   AJX FORCE CLEAN LIGHT UI
+   ========================= */
+
+.shell {
+  --bg0: #f6f7fb !important;
+  --bg1: #eef1f6 !important;
+  --surface: #ffffff !important;
+  --surface2: #ffffff !important;
+  --text: #0b0d12 !important;
+}
+
+/* koko tausta */
+.bg {
+  background: #f6f7fb !important;
+}
+
+/* chat alue */
+.chatCard {
+  background: #ffffff !important;
+}
+
+/* AI viestit */
+.bubbleAi {
+  background: #ffffff !important;
+  color: #0b0d12 !important;
+}
+
+/* user viestit */
+.bubbleUser {
+  background: #e9eef5 !important;
+  color: #0b0d12 !important;
+}
+
+/* input area */
+.composer {
+  background: #ffffff !important;
+  border-top: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* tekstikenttä */
+.input {
+  background: #ffffff !important;
+  color: #0b0d12 !important;
+  -webkit-text-fill-color: #0b0d12 !important;
+}
+
+/* top bar (agent + kieli) */
+:global(.ajxTopControls) {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* napit */
+:global(.ajxComposerActions button) {
+  background: #f3f5f9 !important;
+  color: #0b0d12 !important;
+}
+
+/* POISTA vihreä tumma override */
+:global([data-ajx-themed="true"]),
+:global([data-ajx-card-themed="true"]) {
+  background: #ffffff !important;
+  color: #0b0d12 !important;
+}
+
+
