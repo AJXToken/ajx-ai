@@ -1538,6 +1538,51 @@ function plusLiteBusinessToolInstruction(locale: Locale): string {
     ].join("\n")
   );
 }
+function plusBusinessClarifyingQuestions(text: string, locale: Locale): string {
+  const t = String(text || "").toLowerCase();
+
+  if (/mainos|ad|anuncio/.test(t)) {
+    return l(
+      locale,
+      "Teen tästä Plus-versiona paremman, mutta tarvitsen ensin 3 tietoa:\n\nMikä yrityksen nimi on?\nMitä palvelua tai tuotetta mainos koskee?\nKenelle mainos on tarkoitettu?",
+      "I’ll make a better Plus version, but first I need 3 details:\n\nWhat is the company name?\nWhat product or service is the ad for?\nWho is the ad aimed at?",
+      "Haré una versión Plus mejor, pero primero necesito 3 datos:\n\n¿Cuál es el nombre de la empresa?\n¿Qué producto o servicio anuncia?\n¿A quién va dirigido?"
+    );
+  }
+
+  if (/tarjous|offer|oferta/.test(t)) {
+    return l(
+      locale,
+      "Teen tästä Plus-versiona selkeämmän tarjouksen, mutta tarvitsen ensin 3 tietoa:\n\nMikä yritys tai asiakas on kyseessä?\nMitä työ sisältää konkreettisesti?\nOnko sinulla hinta tai arvioitu hintahaarukka?",
+      "I’ll make this a clearer Plus-level offer, but first I need 3 details:\n\nWho is the customer?\nWhat exactly does the work include?\nDo you already have a price or price range?",
+      "Haré una oferta Plus más clara, pero primero necesito 3 datos:\n\n¿Quién es el cliente?\n¿Qué incluye exactamente el trabajo?\n¿Tienes un precio o rango de precio?"
+    );
+  }
+
+  if (/hinnoit|pricing|precio|precios/.test(t)) {
+    return l(
+      locale,
+      "Teen tästä Plus-versiona paremman hinnoittelun, mutta tarvitsen ensin 3 tietoa:\n\nPaljonko työ vie aikaa yhdeltä kohteelta?\nMitä kuluja työhön liittyy?\nMillä alueella palvelua myydään?",
+      "I’ll make this a better Plus-level pricing plan, but first I need 3 details:\n\nHow long does one job take?\nWhat costs are involved?\nIn what area is the service sold?",
+      "Haré una mejor propuesta de precios Plus, pero primero necesito 3 datos:\n\n¿Cuánto tarda un trabajo?\n¿Qué costes tiene?\n¿En qué zona vendes el servicio?"
+    );
+  }
+
+  return l(
+    locale,
+    "Teen tästä Plus-versiona paremman, mutta tarvitsen ensin 3 tarkentavaa tietoa:\n\nMikä yritys tai palvelu on kyseessä?\nKenelle tämä tehdään?\nMikä on tärkein tavoite?",
+    "I’ll make this better as a Plus workflow, but first I need 3 details:\n\nWhat company or service is this about?\nWho is it for?\nWhat is the main goal?",
+    "Haré una versión Plus mejor, pero primero necesito 3 datos:\n\n¿De qué empresa o servicio se trata?\n¿Para quién es?\n¿Cuál es el objetivo principal?"
+  );
+}
+
+function shouldPlusAskClarifyingFirst(plan: PlanId, text: string): boolean {
+  if (plan !== ("plus" as any)) return false;
+  if (!isFreePremiumToolAttempt(text)) return false;
+  const s = String(text || "").trim();
+  if (s.length > 140) return false;
+  return true;
+}
 // ====== Attachments parsing ======
 type PreparedAttachment = {
   kind: "image" | "file";
@@ -3239,6 +3284,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
