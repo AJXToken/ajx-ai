@@ -1446,96 +1446,42 @@ function isFreePremiumToolAttempt(text: string): boolean {
 function freeLiteModeInstruction(locale: Locale): string {
   return l(
     locale,
-    `
-- User is on FREE plan.
-- Provide a LIGHT version of the result.
-- Do NOT start with filler phrases like "Ymmärrän että", "I understand that", "Entiendo que".
-- Start directly with the useful answer.
-- Avoid filler introductions completely.
-- Output must be immediately usable.
-- If user asks for an offer, ad, or business content, produce it directly.
-- Do not explain what you will do. Just do it.
-- Avoid generic marketing phrases like "high quality", "best service", "industry leading".
-- Avoid emojis unless absolutely necessary.
-- Prefer simple, direct, believable language.
-- Make the output feel like it could actually be used immediately.
-- Do not sound like typical AI-generated marketing text.
-- Avoid phrases like "luotettava kumppani", "asiantunteva palvelu", "laadukas", "alan huipulta".
-- Do NOT list generic bullet points.
-- Write like a real small business, not a marketing agency.
-- Prefer simple, concrete sentences.
-- Make it feel local, practical and believable.
-- Avoid marketing tone completely.
-- Write like a small local business owner, not a marketing agency.
-- Use realistic wording that a real company would actually send.
-- Avoid hype, exaggeration and sales language.
-- Prefer plain Finnish that sounds normal, not polished marketing text.
-- Avoid marketing tone completely.
-- Write like a small local business owner, not a marketing agency.
-- Use realistic wording that a real company would actually send.
-- Avoid hype, exaggeration and sales language.
-- Prefer plain Finnish that sounds normal, not polished marketing text.
-`.trim(),
-    `
-- User is on FREE plan.
-- Provide a LIGHT version of the result.
-- Do NOT start with filler phrases like "Ymmärrän että", "I understand that", "Entiendo que".
-- Start directly with the useful answer.
-- Avoid filler introductions completely.
-- Output must be immediately usable.
-- If user asks for an offer, ad, or business content, produce it directly.
-- Do not explain what you will do. Just do it.
-- Avoid generic marketing phrases like "high quality", "best service", "industry leading".
-- Avoid emojis unless absolutely necessary.
-- Prefer simple, direct, believable language.
-- Make the output feel like it could actually be used immediately.
-- Do not sound like typical AI-generated marketing text.
-- Avoid phrases like "luotettava kumppani", "asiantunteva palvelu", "laadukas", "alan huipulta".
-- Do NOT list generic bullet points.
-- Write like a real small business, not a marketing agency.
-- Prefer simple, concrete sentences.
-- Make it feel local, practical and believable.
-- Avoid marketing tone completely.
-- Write like a small local business owner, not a marketing agency.
-- Use realistic wording that a real company would actually send.
-- Avoid hype, exaggeration and sales language.
-- Prefer plain Finnish that sounds normal, not polished marketing text.
-- Avoid marketing tone completely.
-- Write like a small local business owner, not a marketing agency.
-- Use realistic wording that a real company would actually send.
-- Avoid hype, exaggeration and sales language.
-- Prefer plain Finnish that sounds normal, not polished marketing text.
-`.trim(),
-    `
-- User is on FREE plan.
-- Provide a LIGHT version of the result.
-- Do NOT start with filler phrases like "Ymmärrän että", "I understand that", "Entiendo que".
-- Start directly with the useful answer.
-- Avoid filler introductions completely.
-- Output must be immediately usable.
-- If user asks for an offer, ad, or business content, produce it directly.
-- Do not explain what you will do. Just do it.
-- Avoid generic marketing phrases like "alta calidad", "mejor servicio", "líder del sector".
-- Avoid emojis unless absolutely necessary.
-- Prefer simple, direct, believable language.
-- Make the output feel like it could actually be used immediately.
-- Do not sound like typical AI-generated marketing text.
-- Avoid phrases like "luotettava kumppani", "asiantunteva palvelu", "laadukas", "alan huipulta".
-- Do NOT list generic bullet points.
-- Write like a real small business, not a marketing agency.
-- Prefer simple, concrete sentences.
-- Make it feel local, practical and believable.
-- Avoid marketing tone completely.
-- Write like a small local business owner, not a marketing agency.
-- Use realistic wording that a real company would actually send.
-- Avoid hype, exaggeration and sales language.
-- Prefer plain Finnish that sounds normal, not polished marketing text.
-- Avoid marketing tone completely.
-- Write like a small local business owner, not a marketing agency.
-- Use realistic wording that a real company would actually send.
-- Avoid hype, exaggeration and sales language.
-- Prefer plain Finnish that sounds normal, not polished marketing text.
-`.trim()
+    [
+      "- User is on FREE plan.",
+      "- Provide a LIGHT, simplified version of the result.",
+      "- Keep output SHORT and directly usable.",
+      "- Avoid generic marketing phrases like laadukas, paras, huippu, optimaalinen, alan johtava, taattu.",
+      "- Do not sound like an agency or AI.",
+      "- Write like a real small local business.",
+      "- Use simple, believable language.",
+      "- Do not invent strong promises or guarantees.",
+      "- Avoid long lists and long explanations.",
+      "- If needed, ask 1–3 short clarifying questions instead of guessing.",
+      "- Output should feel copy-paste usable immediately."
+    ].join("\n"),
+    [
+      "- User is on FREE plan.",
+      "- Provide a LIGHT, simplified version of the result.",
+      "- Keep output SHORT and directly usable.",
+      "- Avoid generic marketing phrases like high quality, best, top, industry leading, guaranteed.",
+      "- Do not sound like an agency or AI.",
+      "- Write like a real small business.",
+      "- Use simple, believable language.",
+      "- Avoid long lists and long explanations.",
+      "- If needed, ask 1–3 short clarifying questions.",
+      "- Output should be immediately usable."
+    ].join("\n"),
+    [
+      "- Usuario en plan FREE.",
+      "- Proporciona una versión simple y utilizable.",
+      "- Mantén la respuesta corta.",
+      "- Evita frases de marketing como alta calidad, mejor, líder, garantizado.",
+      "- No suenes como agencia.",
+      "- Escribe simple, claro y realista.",
+      "- No prometas demasiado.",
+      "- Si falta información, haz 1–3 preguntas cortas.",
+      "- El resultado debe poder usarse directamente."
+    ].join("\n")
   );
 }
 function freeLitePrefix(locale: Locale): string {
@@ -3248,6 +3194,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
