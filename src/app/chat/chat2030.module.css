@@ -1478,3 +1478,176 @@
   box-shadow: 0 6px 18px rgba(11,13,18,0.06) !important;
 }
 
+
+/* =========================
+   AJX CLEAN LIGHT V1
+   ========================= */
+
+.shell {
+  --bg0: #f7f8fb !important;
+  --bg1: #eef1f5 !important;
+  --surface: #ffffff !important;
+  --surface2: #ffffff !important;
+  --text: #101318 !important;
+  --muted: rgba(16,19,24,0.58) !important;
+  --line: rgba(16,19,24,0.10) !important;
+  --line2: rgba(16,19,24,0.08) !important;
+  background: #f7f8fb !important;
+  color: #101318 !important;
+}
+
+.bg {
+  background: linear-gradient(180deg, #f7f8fb, #eef1f5) !important;
+}
+
+.topbar,
+.mainPane,
+.main,
+.chatCard,
+.msgList,
+.composer,
+.composerInner,
+.sidebar {
+  background: #ffffff !important;
+  color: #101318 !important;
+  border-color: rgba(16,19,24,0.08) !important;
+}
+
+.chatCard {
+  border-radius: 22px !important;
+  box-shadow: 0 16px 48px rgba(16,19,24,0.08) !important;
+}
+
+.bubbleAi,
+.bubbleUser {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+  box-shadow: 0 8px 24px rgba(16,19,24,0.05) !important;
+}
+
+.bubbleAi *,
+.bubbleUser * {
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+}
+
+.avatarAi,
+.avatarUser {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.10) !important;
+}
+
+.input {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  caret-color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.10) !important;
+  box-shadow: 0 8px 26px rgba(16,19,24,0.06) !important;
+}
+
+.input::placeholder {
+  color: rgba(16,19,24,0.42) !important;
+  -webkit-text-fill-color: rgba(16,19,24,0.42) !important;
+}
+
+:global(.ajxTopControls),
+:global(.ajxControlGroup),
+:global(.ajxSelectWrap),
+:global(.ajxSelect),
+:global(.ajxHelpLink),
+:global(.ajxCopyBtn),
+:global(.ajxActionBtn),
+.btnGhost,
+.btnTiny,
+.btnTinyDanger {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border-color: rgba(16,19,24,0.10) !important;
+  box-shadow: 0 8px 22px rgba(16,19,24,0.05) !important;
+}
+
+.btnPrimarySmall {
+  background: #101318 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #101318 !important;
+}
+
+:global(.ajxToolsIconBtn) {
+  background: #ecfdf3 !important;
+  color: #15803d !important;
+  -webkit-text-fill-color: #15803d !important;
+  border: 1px solid rgba(22,163,74,0.22) !important;
+}
+
+:global(.ajxCompactTools) {
+  background: #ffffff !important;
+  color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+  box-shadow: 0 12px 34px rgba(16,19,24,0.06) !important;
+}
+
+:global(.ajxCompactTools *),
+:global(.ajxCompactTitle),
+:global(.ajxCompactSubtitle),
+:global(.ajxCompactKicker) {
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+}
+
+:global(.ajxCompactKicker) {
+  color: #16a34a !important;
+  -webkit-text-fill-color: #16a34a !important;
+}
+
+:global(.ajxCompactAction),
+:global(.ajxCompactTools button),
+:global(.ajxToolsDrawerBtn) {
+  background: #f7f8fb !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+}
+
+:global(.ajxCompactAction b),
+:global(.ajxToolsDrawerBtn b) {
+  color: #16a34a !important;
+  -webkit-text-fill-color: #16a34a !important;
+}
+
+:global(.ajxToolsDrawer) {
+  background: #ffffff !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+  box-shadow: 0 12px 34px rgba(16,19,24,0.08) !important;
+}
+
+:global(.ajxDisclaimerRow),
+:global(.ajxDisclaimerRow span) {
+  color: rgba(16,19,24,0.56) !important;
+  -webkit-text-fill-color: rgba(16,19,24,0.56) !important;
+}
+
+:global(.ajxDisclaimerPlan) {
+  background: #ecfdf3 !important;
+  color: #15803d !important;
+  -webkit-text-fill-color: #15803d !important;
+  border: 1px solid rgba(22,163,74,0.22) !important;
+}
+
+.threadItem {
+  background: #ffffff !important;
+  color: #101318 !important;
+  border-color: rgba(16,19,24,0.08) !important;
+}
+
+.threadActive {
+  border-color: rgba(22,163,74,0.35) !important;
+  background: #ecfdf3 !important;
+}
+
