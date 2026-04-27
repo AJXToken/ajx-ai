@@ -2746,6 +2746,14 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx>{`
+        textarea {
+          color: #111 !important;
+          caret-color: #111 !important;
+        }
+
+        textarea::placeholder {
+          color: rgba(0,0,0,0.4) !important;
+        }
         .ajxToolsIconBtn {
           width: 46px;
           height: 46px;
@@ -4702,6 +4710,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
