@@ -1744,3 +1744,27 @@
   -webkit-text-fill-color: rgba(16,19,24,0.56) !important;
 }
 
+
+/* ===== AJX TOPBAR + HELP WHITE FIX ===== */
+
+.topbar,
+:global(.ajxTopControls),
+:global(.ajxControlGroup),
+:global(.ajxSelectWrap),
+:global(.ajxSelect) {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border-color: rgba(16,19,24,0.08) !important;
+  box-shadow: none !important;
+}
+
+:global(.ajxHelpLink),
+:global(.ajxComposerHelp) {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+  box-shadow: none !important;
+}
+
