@@ -2766,6 +2766,32 @@ export default function ChatPage(): React.JSX.Element {
       <style jsx global>{`
         .ajxCompactToolBtn b,
         .ajxToolsDrawerBtn b {
+          all: unset !important;
+          display: inline-block !important;
+          margin-left: 10px !important;
+          color: #16a34a !important;
+          font-size: 22px !important;
+          font-weight: 950 !important;
+          line-height: 1 !important;
+        }
+
+        .ajxCompactToolBtn b::before,
+        .ajxCompactToolBtn b::after,
+        .ajxToolsDrawerBtn b::before,
+        .ajxToolsDrawerBtn b::after {
+          content: none !important;
+          display: none !important;
+        }
+
+        .ajxSidebarToggleText {
+          display: none !important;
+        }
+      `}</style>
+
+
+      <style jsx global>{`
+        .ajxCompactToolBtn b,
+        .ajxToolsDrawerBtn b {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
@@ -5318,6 +5344,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
