@@ -175,7 +175,7 @@ function renderInlineFormatting(text: string): React.ReactNode[] {
 }
 
 function isBulletLine(line: string) {
-  return /^(\-|\*|â€¢)\s+/.test(line.trim());
+  return /^(\-|\*|{"\u2022"})\s+/.test(line.trim());
 }
 
 function isOrderedLine(line: string) {
@@ -254,7 +254,7 @@ function normalizeInlineListSequences(text: string): string {
   if (!text) return "";
 
   return normalizeDetachedOrderedMarkers(text)
-    .replace(/([^\n])\s+(â€¢\s)/g, "$1\n$2")
+    .replace(/([^\n])\s+({"\u2022"}\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\-\s)/g, "$1\n$2")
     .replace(/([^\n])\s+(\*\s)/g, "$1\n$2");
 }
@@ -314,7 +314,7 @@ function isHeadingLine(line: string, prevRaw?: string, nextRaw?: string) {
 }
 
 function cleanBulletText(line: string) {
-  return line.trim().replace(/^(\-|\*|â€¢)\s+/, "");
+  return line.trim().replace(/^(\-|\*|{"\u2022"})\s+/, "");
 }
 
 function cleanOrderedText(line: string) {
@@ -494,7 +494,7 @@ function cleanCopyLabelLine(line: string) {
     .trim()
     .replace(/^\*+/, "")
     .replace(/\*+$/, "")
-    .replace(/^[_`>#\-\sâ€¢]+/, "")
+    .replace(/^[_`>#\-\s{"\u2022"}]+/, "")
     .trim();
 }
 
@@ -4162,7 +4162,7 @@ export default function ChatPage(): React.JSX.Element {
                         locale === "fi" ? "fi-FI" : locale === "es" ? "es-ES" : "en-US"
                       )}
                     </span>
-                    <span>â€¢</span>
+                    <span>{"\u2022"}</span>
                     <span>
                       {th.messages.length} {t(locale, "ui.msg")}
                     </span>
@@ -4819,6 +4819,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
