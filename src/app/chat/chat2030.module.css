@@ -1651,3 +1651,96 @@
   background: #ecfdf3 !important;
 }
 
+
+/* =========================
+   AJX CLEAN POLISH V2
+   ========================= */
+
+/* YLÄPALKKI pois tummasta */
+:global(.ajxTopControls),
+:global(.ajxSelectWrap),
+:global(.ajxSelect) {
+  background: #ffffff !important;
+  border: 1px solid rgba(16,19,24,0.10) !important;
+  box-shadow: 0 6px 16px rgba(16,19,24,0.05) !important;
+}
+
+/* INPUT – moderni, ei paksua reunaa */
+.input {
+  border: 1px solid rgba(16,19,24,0.08) !important;
+  box-shadow: 0 4px 14px rgba(16,19,24,0.06) !important;
+}
+
+/* INPUT FOCUS */
+.input:focus {
+  border-color: rgba(22,163,74,0.35) !important;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.12) !important;
+}
+
+/* OHJEET nappi neutraaliksi */
+:global(.ajxHelpLink) {
+  background: #f3f5f9 !important;
+  color: #101318 !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+}
+
+/* IKONINAPIT yhtenäisiksi */
+:global(.ajxActionBtn),
+:global(.ajxComposerActions button),
+.btnGhost {
+  background: #f7f8fb !important;
+  border: 1px solid rgba(16,19,24,0.08) !important;
+  color: #101318 !important;
+}
+
+/* HOVER */
+:global(.ajxActionBtn:hover),
+:global(.ajxComposerActions button:hover) {
+  background: #eef1f5 !important;
+}
+
+/* PLUS badge hillityksi */
+:global(.ajxDisclaimerPlan) {
+  background: #e9f8ef !important;
+  color: #15803d !important;
+  border: 1px solid rgba(22,163,74,0.25) !important;
+}
+
+/* PIKATOIMINTO NUOLI paremmaksi */
+:global(.ajxCompactAction svg) {
+  color: #16a34a !important;
+  opacity: 0.8;
+}
+
+
+/* FINAL LIGHT OVERRIDE - CSS MODULE SAFE */
+
+:global(.ajxTopControls),
+:global(.ajxControlGroup),
+:global(.ajxSelectWrap),
+:global(.ajxSelect),
+:global(.ajxCopyBtn),
+:global(.ajxHelpLink),
+:global(.ajxActionBtn),
+:global(.ajxToolsIconBtn),
+:global(.ajxComposerActions button) {
+  background: #ffffff !important;
+  color: #101318 !important;
+  -webkit-text-fill-color: #101318 !important;
+  border-color: rgba(16,19,24,0.10) !important;
+  box-shadow: 0 6px 16px rgba(16,19,24,0.05) !important;
+}
+
+:global(.ajxDisclaimerPlan) {
+  background: #ecfdf3 !important;
+  color: #15803d !important;
+  -webkit-text-fill-color: #15803d !important;
+  border-color: rgba(22,163,74,0.22) !important;
+}
+
+:global(.ajxDisclaimerRow),
+:global(.ajxDisclaimerRow span) {
+  color: rgba(16,19,24,0.56) !important;
+  -webkit-text-fill-color: rgba(16,19,24,0.56) !important;
+}
+
