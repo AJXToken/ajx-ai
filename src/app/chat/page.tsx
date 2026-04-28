@@ -4643,7 +4643,7 @@ export default function ChatPage(): React.JSX.Element {
                 type="button"
               >
                 <span className="ajxSidebarToggleIcon">{sidebarOpen ? "\u2715" : "\u2630"}</span>
-                <span className="ajxSidebarToggleText">{chatsLabel}</span>
+                <span className="ajxSidebarToggleText" style={{ display: "none" }}>{chatsLabel}</span>
               </button>
 
               <div className={styles.topTitle}>
@@ -5245,6 +5245,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
