@@ -4192,6 +4192,109 @@ export default function ChatPage(): React.JSX.Element {
             margin: 8px 14px 18px 14px !important;
           }
         }
+
+        /* ===== AJX PREMIUM LIGHT UI V2 ===== */
+
+        .ajxCompactTools {
+          max-width: 980px !important;
+          margin: 26px auto 26px auto !important;
+          padding: 30px !important;
+          border-radius: 26px !important;
+          background: rgba(255,255,255,0.92) !important;
+          border: 1px solid rgba(16,24,40,0.08) !important;
+          box-shadow: 0 24px 70px rgba(16,24,40,0.10) !important;
+        }
+
+        .ajxCompactTitle {
+          color: #101318 !important;
+          font-size: 30px !important;
+          letter-spacing: -0.04em !important;
+        }
+
+        .ajxCompactToolBtn {
+          min-height: 68px !important;
+          background: rgba(255,255,255,0.92) !important;
+          color: #101318 !important;
+          border: 1px solid rgba(16,24,40,0.08) !important;
+          box-shadow: 0 10px 26px rgba(16,24,40,0.05) !important;
+        }
+
+        .ajxCompactToolBtn:first-child {
+          background: linear-gradient(90deg, #effdf4, #ffffff) !important;
+          border-color: rgba(22,163,74,0.24) !important;
+        }
+
+        .ajxCompactToolBtn span {
+          color: #101318 !important;
+          font-size: 15px !important;
+          font-weight: 950 !important;
+        }
+
+        .ajxCompactToolBtn b {
+          background: #dcfce7 !important;
+          color: #0f7a35 !important;
+        }
+
+        .ajxCompactToolBtn:first-child b {
+          background: #16a34a !important;
+          color: #ffffff !important;
+        }
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow {
+          min-width: 0 !important;
+          background: transparent !important;
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+        }
+
+        .ajxBubbleScroll,
+        .ajxBubbleScrollInner,
+        .ajxOutputBody {
+          min-width: 0 !important;
+        }
+
+        .ajxComposerText,
+        textarea {
+          background: #f4fff8 !important;
+          border: 1px solid rgba(16,24,40,0.10) !important;
+          box-shadow: inset 0 0 0 1px rgba(22,163,74,0.06) !important;
+        }
+
+        .ajxHelpLink,
+        .ajxActionBtn,
+        .ajxToolsIconBtn,
+        .ajxCopyBtn {
+          background: #ffffff !important;
+          color: #101318 !important;
+          border-color: rgba(16,24,40,0.10) !important;
+          box-shadow: 0 10px 24px rgba(16,24,40,0.06) !important;
+        }
+
+        .ajxDisclaimerPlan {
+          background: #f0fdf4 !important;
+          color: #15803d !important;
+          border-color: rgba(22,163,74,0.20) !important;
+        }
+
+        @media (max-width: 980px) {
+          .ajxCompactTools {
+            margin: 18px auto 18px auto !important;
+            padding: 24px !important;
+          }
+
+          .ajxCompactTitle {
+            font-size: 30px !important;
+          }
+
+          .ajxCompactToolBtn {
+            min-height: 76px !important;
+          }
+        }
+
       `}</style>
 
       <div
@@ -4906,6 +5009,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
