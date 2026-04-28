@@ -2749,18 +2749,18 @@ export default function ChatPage(): React.JSX.Element {
         :global(.bubbleUser),
         :global(.rowUser),
         :global([class*="bubbleUser"]) {
-          color: #07100c !important;
+          color: #ffffff !important;
         }
 
         :global([class*="bubbleUser"] *) {
-          color: #07100c !important;
+          color: #ffffff !important;
         }
 
         :global([class*="bubbleAi"]) {
-          color: #f4fff7 !important;
+          color: #101318 !important;
         }
         :global(body) {
-          background: #07100c !important;
+          background: #ffffff !important;
         }
 
         :global(.ajxControlGroup),
@@ -2768,9 +2768,9 @@ export default function ChatPage(): React.JSX.Element {
         :global(.ajxHelpLink),
         :global(.ajxDisclaimerPlan),
         :global(.ajxCopyBtn) {
-          background: rgba(8, 18, 13, 0.92) !important;
-          color: #f4fff7 !important;
-          border-color: rgba(91, 255, 139, 0.22) !important;
+          background: #ffffff !important;
+          color: #101318 !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         :global(.ajxDisclaimerRow) {
@@ -2780,8 +2780,8 @@ export default function ChatPage(): React.JSX.Element {
         :global(textarea),
         :global(.ajxComposerText) {
           background: rgba(244, 255, 247, 0.96) !important;
-          color: #07100c !important;
-          caret-color: #07100c !important;
+          color: #ffffff !important;
+          caret-color: #ffffff !important;
         }
 
         :global(textarea::placeholder) {
@@ -2792,11 +2792,11 @@ export default function ChatPage(): React.JSX.Element {
         :global([data-ajx-themed="true"]) {
           background:
             radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.22) !important;
+            #ffffff !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
         body {
-          background: #07100c !important;
+          background: #ffffff !important;
         }
 
         .ajxTopControls,
@@ -2804,22 +2804,22 @@ export default function ChatPage(): React.JSX.Element {
         .ajxSelect,
         .ajxHelpLink,
         .ajxDisclaimerPlan {
-          background: rgba(8, 18, 13, 0.88) !important;
-          color: #f4fff7 !important;
-          border-color: rgba(91, 255, 139, 0.18) !important;
+          background: #ffffff !important;
+          color: #101318 !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         .ajxSelect option {
-          background: #07100c !important;
-          color: #f4fff7 !important;
+          background: #ffffff !important;
+          color: #101318 !important;
         }
 
         [data-ajx-card-themed="true"],
         [data-ajx-themed="true"] {
           background:
             radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.20) !important;
+            #ffffff !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         .ajxDisclaimerRow {
@@ -2828,15 +2828,15 @@ export default function ChatPage(): React.JSX.Element {
 
         textarea {
           background: rgba(244, 255, 247, 0.96) !important;
-          color: #07100c !important;
-          caret-color: #07100c !important;
+          color: #ffffff !important;
+          caret-color: #ffffff !important;
         }
 
         textarea::placeholder {
           color: rgba(7, 16, 12, 0.48) !important;
         }
         body {
-          background: #07100c !important;
+          background: #ffffff !important;
         }
 
         .ajxTopControls,
@@ -2844,22 +2844,22 @@ export default function ChatPage(): React.JSX.Element {
         .ajxSelect,
         .ajxHelpLink,
         .ajxDisclaimerPlan {
-          background: rgba(8, 18, 13, 0.88) !important;
-          color: #f4fff7 !important;
-          border-color: rgba(91, 255, 139, 0.18) !important;
+          background: #ffffff !important;
+          color: #101318 !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         .ajxSelect option {
-          background: #07100c !important;
-          color: #f4fff7 !important;
+          background: #ffffff !important;
+          color: #101318 !important;
         }
 
         [data-ajx-card-themed="true"],
         [data-ajx-themed="true"] {
           background:
             radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.20) !important;
+            #ffffff !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         .ajxDisclaimerRow {
@@ -2868,8 +2868,8 @@ export default function ChatPage(): React.JSX.Element {
 
         textarea {
           background: rgba(244, 255, 247, 0.96) !important;
-          color: #07100c !important;
-          caret-color: #07100c !important;
+          color: #ffffff !important;
+          caret-color: #ffffff !important;
         }
 
         textarea::placeholder {
@@ -2908,7 +2908,7 @@ export default function ChatPage(): React.JSX.Element {
           gap: 8px;
           padding: 10px;
           border-radius: 18px;
-          border: 1px solid rgba(91, 255, 139, 0.20);
+          border: 1px solid rgba(16,19,24,0.10);
           background: rgba(5, 10, 16, 0.92);
         }
 
@@ -2962,7 +2962,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxToolsIconBtn:hover {
-          background: rgba(91, 255, 139, 0.18);
+          background: rgba(16,19,24,0.10);
           border-color: rgba(91, 255, 139, 0.42);
         }
 
@@ -2975,28 +2975,28 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         body {
-          background: #07100c !important;
+          background: #ffffff !important;
         }
 
         .ajxTopControls,
         .ajxControlGroup,
         .ajxSelect,
         .ajxHelpLink {
-          border-color: rgba(91, 255, 139, 0.18) !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         [data-ajx-card-themed="true"] {
           background:
             radial-gradient(circle at top left, rgba(91, 255, 139, 0.08), transparent 36%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.20) !important;
+            #ffffff !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         [data-ajx-themed="true"] {
           background:
             radial-gradient(circle at top left, rgba(91, 255, 139, 0.10), transparent 42%),
-            #07100c !important;
-          border-color: rgba(91, 255, 139, 0.22) !important;
+            #ffffff !important;
+          border-color: rgba(16,19,24,0.10) !important;
         }
 
         [data-ajx-themed="true"] textarea {
@@ -3013,7 +3013,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         [data-ajx-themed="true"] {
-          border-top: 1px solid rgba(91, 255, 139, 0.18) !important;
+          border-top: 1px solid rgba(16,19,24,0.10) !important;
           background:
             linear-gradient(180deg, rgba(255,255,255,0.96), rgba(245,255,249,0.96)) !important;
           box-shadow: 0 -18px 60px rgba(21, 80, 42, 0.10) !important;
@@ -3048,7 +3048,7 @@ export default function ChatPage(): React.JSX.Element {
           margin-bottom: 10px;
           padding: 10px;
           border-radius: 18px;
-          border: 1px solid rgba(91, 255, 139, 0.20);
+          border: 1px solid rgba(16,19,24,0.10);
           background: rgba(5, 10, 16, 0.88);
         }
 
@@ -3088,7 +3088,7 @@ export default function ChatPage(): React.JSX.Element {
           margin: 8px 0 18px 0;
           padding: 16px;
           border-radius: 24px;
-          border: 1px solid rgba(91, 255, 139, 0.20);
+          border: 1px solid rgba(16,19,24,0.10);
           background:
             radial-gradient(circle at top left, rgba(91, 255, 139, 0.13), transparent 38%),
             rgba(8, 12, 18, 0.88);
@@ -3124,7 +3124,7 @@ export default function ChatPage(): React.JSX.Element {
           border-radius: 999px;
           background: rgba(91, 255, 139, 0.12);
           color: rgba(91, 255, 139, 0.98);
-          border: 1px solid rgba(91, 255, 139, 0.22);
+          border: 1px solid rgba(16,19,24,0.10);
           font-size: 11px;
           font-weight: 950;
         }
@@ -4808,6 +4808,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
