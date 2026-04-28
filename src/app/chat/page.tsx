@@ -1192,6 +1192,7 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       { id: "sales", label: "Aumentar ventas", prompt: "Ay\u00fadame a encontrar formas pr\u00e1cticas de aumentar mis ventas con acciones concretas.", mode: "analysis" },
       { id: "customers", label: "Conseguir clientes", prompt: "Ay\u00fadame a encontrar clientes nuevos y crear un plan pr\u00e1ctico para contactarlos.", mode: "research" },
       { id: "pricing", label: "Mejorar precios", prompt: "Analiza mi pricing y ay\u00fadame a mejorarlo.", mode: "analysis" },
+      { id: "plan", label: "Crear plan de acci\u00f3n", prompt: "Ay\u00fadame a crear un plan de acci\u00f3n claro y pr\u00e1ctico para mi objetivo. Primero haz preguntas concretas sobre el objetivo, plazo, recursos, obst\u00e1culos y nivel de detalle.", mode: "analysis" },
       { id: "problem", label: "Resolver problema", prompt: "Ay\u00fadame a resolver un problema de negocio paso a paso.", mode: "analysis" },
     ];
   }
@@ -1204,6 +1205,7 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
       { id: "sales", label: "Grow sales", prompt: "Help me find practical ways to grow my sales with concrete actions.", mode: "analysis" },
       { id: "customers", label: "Get customers", prompt: "Help me find new customers and create a practical outreach plan.", mode: "research" },
       { id: "pricing", label: "Improve pricing", prompt: "Analyze my pricing and help me improve it.", mode: "analysis" },
+      { id: "plan", label: "Create action plan", prompt: "Help me create a clear and practical action plan for my goal. First ask concrete questions about the goal, deadline, resources, obstacles and desired level of detail.", mode: "analysis" },
       { id: "problem", label: "Solve problem", prompt: "Help me solve a business problem step by step.", mode: "analysis" },
     ];
   }
@@ -1215,6 +1217,7 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
     { id: "sales", label: "Kasvata myynti\u00e4", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n konkreettisia tapoja kasvattaa myynti\u00e4.", mode: "analysis" },
     { id: "customers", label: "Hanki asiakkaita", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n uusia asiakkaita ja tee k\u00e4yt\u00e4nn\u00f6n suunnitelma, miten heit\u00e4 l\u00e4hestyt\u00e4\u00e4n.", mode: "research" },
     { id: "pricing", label: "Paranna hinnoittelua", prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sit\u00e4.", mode: "analysis" },
+    { id: "plan", label: "Tee toimintasuunnitelma", prompt: "Auta minua tekem\u00e4\u00e4n selke\u00e4 ja k\u00e4yt\u00e4nn\u00f6llinen toimintasuunnitelma tavoitteelleni. Kysy ensin konkreettiset kysymykset tavoitteesta, aikarajasta, resursseista, esteist\u00e4 ja halutusta tarkkuudesta.", mode: "analysis" },
     { id: "problem", label: "Ratkaise yritysongelma", prompt: "Auta minua ratkaisemaan yritysongelma askel askeleelta.", mode: "analysis" },
   ];
 }
@@ -1462,6 +1465,14 @@ function attachFileMenuLabel(locale: Locale): string {
   return "Liitä tiedosto (PDF, TXT, CSV...)";
 }
 
+
+function isFreePlan(plan: string) {
+  return plan === "free";
+}
+
+function handleLockedFeature() {
+  alert("Tämä toiminto kuuluu maksulliseen versioon 🚀");
+}
 export default function ChatPage(): React.JSX.Element {
   const [locale, setLocale] = useState<Locale>("fi");
 
@@ -4340,10 +4351,10 @@ export default function ChatPage(): React.JSX.Element {
                         <button
                           key={action.id}
                           type="button"
-                          className="ajxCompactToolBtn"
+                          className={`ajxCompactToolBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
                           onClick={() => runQuickAction(action).catch(() => {})}
                         >
-                          <span>{action.label}</span>
+                          <span>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</span>
                           <b>→</b>
                         </button>
                       ))}
@@ -4604,13 +4615,13 @@ export default function ChatPage(): React.JSX.Element {
                         <button
                           key={action.id}
                           type="button"
-                          className="ajxToolsDrawerBtn"
+                          className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
                           onClick={() => {
                             setToolsOpen(false);
                             runQuickAction(action).catch(() => {});
                           }}
                         >
-                          <span>{action.label}</span>
+                          <span>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</span>
                           <b>→</b>
                         </button>
                       ))}
@@ -4808,6 +4819,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
