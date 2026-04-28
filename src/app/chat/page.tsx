@@ -2763,6 +2763,37 @@ export default function ChatPage(): React.JSX.Element {
     <div className={styles.shell} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
 
+      <style jsx global>{`
+        .ajxCompactToolBtn b,
+        .ajxToolsDrawerBtn b {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          width: 28px !important;
+          height: 28px !important;
+          line-height: 1 !important;
+          font-size: 0 !important;
+          padding: 0 !important;
+        }
+
+        .ajxCompactToolBtn b::after,
+        .ajxToolsDrawerBtn b::after {
+          content: "→" !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 16px !important;
+          font-weight: 950 !important;
+          line-height: 1 !important;
+          transform: translateY(-1px) !important;
+        }
+
+        .ajxSidebarToggleText {
+          display: none !important;
+        }
+      `}</style>
+
+
       <style jsx>{`
         :global(.bubbleUser),
         :global(.rowUser),
@@ -4517,7 +4548,8 @@ export default function ChatPage(): React.JSX.Element {
             padding: 13px 14px !important;
           }
         }
-`}</style>
+`}
+</style>
 
       <div
         className={styles.layout}
@@ -5245,6 +5277,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
