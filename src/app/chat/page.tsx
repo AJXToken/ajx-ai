@@ -2772,6 +2772,89 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        /* ===== AJX MOBILE CHAT + TOPBAR FIX ===== */
+
+        .ajxControlGroup {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+        }
+
+        .ajxSelectWrap {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+        }
+
+        .ajxSelect {
+          border: 1px solid rgba(16,24,40,0.12) !important;
+          box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          background: #ffffff !important;
+        }
+
+        @media (max-width: 980px) {
+          :global([class*="msgList"]) {
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+          }
+
+          :global([class*="msgRow"]) {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+
+          :global([class*="bubble"]) {
+            max-width: calc(100vw - 48px) !important;
+            width: auto !important;
+          }
+
+          :global([class*="bubbleText"]) {
+            max-width: 100% !important;
+            min-width: 0 !important;
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+          }
+
+          .ajxCodeToolbar {
+            display: none !important;
+          }
+
+          .ajxCodeBlockWrap,
+          .ajxCodePre,
+          .ajxOutputBox,
+          .ajxOutputBody {
+            max-width: 100% !important;
+            min-width: 0 !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+          }
+
+          .ajxCodePre,
+          .ajxCodePre code,
+          .ajxOutputBody {
+            white-space: pre-wrap !important;
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+            font-family: inherit !important;
+            font-size: 15px !important;
+            line-height: 1.65 !important;
+          }
+
+          .ajxParagraph,
+          .ajxHeadingBlock,
+          .ajxSummaryText,
+          .ajxQuestionRow {
+            min-width: 0 !important;
+            max-width: 100% !important;
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         /* ===== FINAL FIX: REMOVE ARROW BALLS COMPLETELY ===== */
 
         .ajxActionArrow {
@@ -5409,6 +5492,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
