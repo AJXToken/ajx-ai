@@ -2858,7 +2858,24 @@ export default function ChatPage(): React.JSX.Element {
         .ajxSidebarToggleText {
           display: none !important;
         }
-      `}</style>
+      
+        /* ===== AJX REAL ARROW FIX: NO BALLS ===== */
+        .ajxPlainArrow {
+          flex: 0 0 auto !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin-left: 8px !important;
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          color: #16a34a !important;
+          font-size: 22px !important;
+          font-weight: 950 !important;
+          line-height: 1 !important;
+        }
+`}</style>
 
 
       <style jsx>{`
@@ -5344,6 +5361,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
