@@ -64,6 +64,7 @@ type ImageIntentChoice = "analyze" | "edit" | null;
 type QuickAction = {
   id: string;
   label: string;
+  subtitle?: string;
   prompt: string;
   mode: AjxMode;
 };
@@ -1211,14 +1212,14 @@ function quickActionsForLocale(locale: Locale): QuickAction[] {
   }
 
   return [
-    { id: "offer", label: "Luo tarjous", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 tarjous asiakkaalle.", mode: "research" },
-    { id: "funding", label: "Hanki tukia ja rahoitusta", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n yritykselleni rahoitusta: EU-tukia, julkisia avustuksia, paikallisia tukiohjelmia, sijoittajia, yrityslainoja ja muita realistisia rahoituskanavia. Kysy ensin konkreettiset taustakysymykset.", mode: "research" },
-    { id: "ad", label: "Luo mainos", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 mainos tuotteelleni tai palvelulleni.", mode: "ideation" },
-    { id: "sales", label: "Kasvata myynti\u00e4", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n konkreettisia tapoja kasvattaa myynti\u00e4.", mode: "analysis" },
-    { id: "customers", label: "Hanki asiakkaita", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n uusia asiakkaita ja tee k\u00e4yt\u00e4nn\u00f6n suunnitelma, miten heit\u00e4 l\u00e4hestyt\u00e4\u00e4n.", mode: "research" },
-    { id: "pricing", label: "Paranna hinnoittelua", prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sit\u00e4.", mode: "analysis" },
-    { id: "plan", label: "Tee toimintasuunnitelma", prompt: "Auta minua tekem\u00e4\u00e4n selke\u00e4 ja k\u00e4yt\u00e4nn\u00f6llinen toimintasuunnitelma tavoitteelleni. Kysy ensin konkreettiset kysymykset tavoitteesta, aikarajasta, resursseista, esteist\u00e4 ja halutusta tarkkuudesta.", mode: "analysis" },
-    { id: "problem", label: "Ratkaise yritysongelma", prompt: "Auta minua ratkaisemaan yritysongelma askel askeleelta.", mode: "analysis" },
+    { id: "offer", label: "Luo tarjous", subtitle: "Luo ammattimainen tarjous asiakkaalle minuuteissa", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 tarjous asiakkaalle.", mode: "research" },
+    { id: "funding", label: "Hanki tukia ja rahoitusta", subtitle: "Löydä realistiset rahoituskanavat ja tuet yrityksellesi", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n yritykselleni rahoitusta: EU-tukia, julkisia avustuksia, paikallisia tukiohjelmia, sijoittajia, yrityslainoja ja muita realistisia rahoituskanavia. Kysy ensin konkreettiset taustakysymykset.", mode: "research" },
+    { id: "ad", label: "Luo mainos", subtitle: "Kirjoita mainos joka myy eikä vain näytä hyvältä", prompt: "Auta minua luomaan selke\u00e4 ja myyv\u00e4 mainos tuotteelleni tai palvelulleni.", mode: "ideation" },
+    { id: "sales", label: "Kasvata myynti\u00e4", subtitle: "Löydä konkreettiset keinot myynnin kasvattamiseen", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n konkreettisia tapoja kasvattaa myynti\u00e4.", mode: "analysis" },
+    { id: "customers", label: "Hanki asiakkaita", subtitle: "Käytännön keinot uusien asiakkaiden hankintaan", prompt: "Auta minua l\u00f6yt\u00e4m\u00e4\u00e4n uusia asiakkaita ja tee k\u00e4yt\u00e4nn\u00f6n suunnitelma, miten heit\u00e4 l\u00e4hestyt\u00e4\u00e4n.", mode: "research" },
+    { id: "pricing", label: "Paranna hinnoittelua", subtitle: "Nosta katetta ilman että menetät asiakkaita", prompt: "Analysoi nykyinen hinnoitteluni ja auta parantamaan sit\u00e4.", mode: "analysis" },
+    { id: "plan", label: "Tee toimintasuunnitelma", subtitle: "Selkeä suunnitelma tavoitteesi saavuttamiseen", prompt: "Auta minua tekem\u00e4\u00e4n selke\u00e4 ja k\u00e4yt\u00e4nn\u00f6llinen toimintasuunnitelma tavoitteelleni. Kysy ensin konkreettiset kysymykset tavoitteesta, aikarajasta, resursseista, esteist\u00e4 ja halutusta tarkkuudesta.", mode: "analysis" },
+    { id: "problem", label: "Ratkaise yritysongelma", subtitle: "Selkeä ratkaisu ongelmaan askel askeleelta", prompt: "Auta minua ratkaisemaan yritysongelma askel askeleelta.", mode: "analysis" },
   ];
 }
 function quickActionQuestionInstruction(action: QuickAction, locale: Locale): string {
@@ -4544,8 +4545,22 @@ export default function ChatPage(): React.JSX.Element {
                           className={`ajxCompactToolBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
                           onClick={() => runQuickAction(action).catch(() => {})}
                         >
-                          <span>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</span>
-                          <b>→</b>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+  <span>
+    {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+  </span>
+  <span
+    style={{
+      fontSize: 12,
+      fontWeight: 600,
+      opacity: 0.6,
+      lineHeight: 1.3,
+    }}
+  >
+    {action.subtitle}
+  </span>
+</div>
+<b>→</b>
                         </button>
                       ))}
                     </div>
@@ -4811,8 +4826,22 @@ export default function ChatPage(): React.JSX.Element {
                             runQuickAction(action).catch(() => {});
                           }}
                         >
-                          <span>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</span>
-                          <b>→</b>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+  <span>
+    {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+  </span>
+  <span
+    style={{
+      fontSize: 12,
+      fontWeight: 600,
+      opacity: 0.6,
+      lineHeight: 1.3,
+    }}
+  >
+    {action.subtitle}
+  </span>
+</div>
+<b>→</b>
                         </button>
                       ))}
                     </div>
@@ -5009,6 +5038,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
