@@ -4105,6 +4105,93 @@ export default function ChatPage(): React.JSX.Element {
             padding-bottom: env(safe-area-inset-bottom, 0px);
           }
         }
+        /* ===== AJX DEPTH POLISH V1 ===== */
+
+        :global(body) {
+          background: #eef1f6 !important;
+        }
+
+        .ajxCompactTools {
+          background:
+            radial-gradient(circle at 12% 0%, rgba(34,197,94,0.10), transparent 34%),
+            linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%) !important;
+          border: 1px solid rgba(16,19,24,0.10) !important;
+          box-shadow: 0 18px 48px rgba(16,19,24,0.10) !important;
+        }
+
+        .ajxCompactTitle {
+          color: #101318 !important;
+        }
+
+        .ajxCompactPlan {
+          background: #ecfdf3 !important;
+          color: #15803d !important;
+          border: 1px solid rgba(22,163,74,0.22) !important;
+        }
+
+        .ajxCompactToolBtn {
+          background: linear-gradient(180deg, #ffffff, #f4f6fa) !important;
+          color: #101318 !important;
+          border: 1px solid rgba(16,19,24,0.10) !important;
+          box-shadow: 0 10px 26px rgba(16,19,24,0.06) !important;
+        }
+
+        .ajxCompactToolBtn:first-child {
+          background: linear-gradient(180deg, #ecfdf3, #dcfce7) !important;
+          border-color: rgba(22,163,74,0.26) !important;
+          box-shadow: 0 14px 34px rgba(22,163,74,0.14) !important;
+        }
+
+        .ajxCompactToolBtn b {
+          background: #ecfdf3 !important;
+          color: #15803d !important;
+        }
+
+        .ajxCompactToolBtn:first-child b {
+          background: #16a34a !important;
+          color: #ffffff !important;
+        }
+
+        :global([class*="chatCard"]),
+        :global([class*="msgList"]) {
+          background:
+            radial-gradient(circle at 20% 0%, rgba(34,197,94,0.045), transparent 34%),
+            linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+        }
+
+        :global([class*="bubble"]) {
+          border: 1px solid rgba(16,19,24,0.08) !important;
+          box-shadow: 0 12px 30px rgba(16,19,24,0.06) !important;
+        }
+
+        :global([class*="composer"]) {
+          background: rgba(255,255,255,0.96) !important;
+          border-top: 1px solid rgba(16,19,24,0.10) !important;
+          box-shadow: 0 -18px 40px rgba(16,19,24,0.08) !important;
+        }
+
+        .ajxToolsDrawer {
+          background: #ffffff !important;
+          border: 1px solid rgba(16,19,24,0.10) !important;
+          box-shadow: 0 18px 42px rgba(16,19,24,0.12) !important;
+        }
+
+        .ajxToolsDrawerBtn {
+          background: #f7f8fb !important;
+          color: #101318 !important;
+          border: 1px solid rgba(16,19,24,0.08) !important;
+        }
+
+        .ajxToolsDrawerBtn b {
+          background: #ecfdf3 !important;
+          color: #15803d !important;
+        }
+
+        @media (max-width: 980px) {
+          .ajxCompactTools {
+            margin: 8px 14px 18px 14px !important;
+          }
+        }
       `}</style>
 
       <div
@@ -4819,6 +4906,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
