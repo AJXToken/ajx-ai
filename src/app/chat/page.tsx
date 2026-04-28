@@ -4412,7 +4412,112 @@ export default function ChatPage(): React.JSX.Element {
           }
         }
 
-      `}</style>
+      
+        /* ===== AJX QUICK ACTION UNIFY V1 ===== */
+
+        .ajxCompactGrid,
+        .ajxToolsDrawer {
+          display: grid !important;
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 10px !important;
+        }
+
+        .ajxCompactToolBtn,
+        .ajxToolsDrawerBtn {
+          min-height: 58px !important;
+          padding: 12px 14px !important;
+          border-radius: 18px !important;
+          background: rgba(255,255,255,0.92) !important;
+          color: #101318 !important;
+          border: 1px solid rgba(16,24,40,0.08) !important;
+          box-shadow: 0 10px 24px rgba(16,24,40,0.045) !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 12px !important;
+        }
+
+        .ajxToolsDrawer {
+          max-width: 980px !important;
+          margin: 12px auto 10px auto !important;
+          padding: 14px !important;
+          border-radius: 24px !important;
+          background: rgba(255,255,255,0.94) !important;
+          border: 1px solid rgba(16,24,40,0.08) !important;
+          box-shadow: 0 18px 48px rgba(16,24,40,0.10) !important;
+        }
+
+        .ajxCompactToolBtn:first-child,
+        .ajxToolsDrawerBtn:first-child {
+          background: linear-gradient(90deg, #effdf4, #ffffff) !important;
+          border-color: rgba(22,163,74,0.24) !important;
+        }
+
+        .ajxCompactToolBtn > div,
+        .ajxToolsDrawerBtn > div {
+          min-width: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 2px !important;
+        }
+
+        .ajxCompactToolBtn > div > span:first-child,
+        .ajxToolsDrawerBtn > div > span:first-child {
+          font-size: 15px !important;
+          font-weight: 950 !important;
+          line-height: 1.18 !important;
+          color: #101318 !important;
+        }
+
+        .ajxCompactToolBtn > div > span:last-child,
+        .ajxToolsDrawerBtn > div > span:last-child {
+          font-size: 12px !important;
+          font-weight: 650 !important;
+          line-height: 1.22 !important;
+          color: rgba(16,24,40,0.58) !important;
+        }
+
+        .ajxCompactToolBtn b,
+        .ajxToolsDrawerBtn b {
+          flex: 0 0 auto !important;
+          width: 30px !important;
+          height: 30px !important;
+          min-width: 30px !important;
+          min-height: 30px !important;
+          border-radius: 999px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          line-height: 1 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          font-size: 18px !important;
+          font-weight: 950 !important;
+          background: #dcfce7 !important;
+          color: #0f7a35 !important;
+          transform: translateY(-1px) !important;
+        }
+
+        .ajxCompactToolBtn:first-child b,
+        .ajxToolsDrawerBtn:first-child b {
+          background: #16a34a !important;
+          color: #ffffff !important;
+        }
+
+        @media (max-width: 980px) {
+          .ajxCompactGrid,
+          .ajxToolsDrawer {
+            grid-template-columns: 1fr !important;
+            gap: 9px !important;
+          }
+
+          .ajxCompactToolBtn,
+          .ajxToolsDrawerBtn {
+            min-height: 62px !important;
+            padding: 13px 14px !important;
+          }
+        }
+`}</style>
 
       <div
         className={styles.layout}
@@ -5140,6 +5245,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
