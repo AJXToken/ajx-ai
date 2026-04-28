@@ -2753,6 +2753,12 @@ export default function ChatPage(): React.JSX.Element {
       ? `${planLabel} · ${Number(usage?.msgThisMonth || 0)}/${FREE_DISPLAY_LIMIT}`
       : planLabel;
 
+  const visibleMessages = messages.filter((m) => {
+    if (m.role !== "assistant") return true;
+    const c = String(m.content || "").trim();
+    return c !== String(t(locale, "chat.greeting") || "").trim();
+  });
+
   return (
     <div className={styles.shell} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
@@ -4296,6 +4302,116 @@ export default function ChatPage(): React.JSX.Element {
           }
         }
 
+
+        /* ===== AJX QUICK ACTION FINAL V3 ===== */
+
+        .ajxCompactTitle {
+          font-size: 22px !important;
+          line-height: 1.18 !important;
+          letter-spacing: -0.03em !important;
+          max-width: 720px !important;
+        }
+
+        .ajxCompactTools {
+          padding: 22px !important;
+          max-width: 900px !important;
+        }
+
+        .ajxCompactGrid {
+          gap: 8px !important;
+        }
+
+        .ajxCompactToolBtn,
+        .ajxToolsDrawerBtn {
+          min-height: 58px !important;
+          padding: 11px 12px !important;
+          border-radius: 16px !important;
+        }
+
+        .ajxActionText {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          min-width: 0;
+          text-align: left;
+        }
+
+        .ajxActionLabel {
+          font-size: 13px !important;
+          font-weight: 950 !important;
+          line-height: 1.15 !important;
+          color: #101318 !important;
+        }
+
+        .ajxActionSubtitle {
+          font-size: 10.5px !important;
+          font-weight: 650 !important;
+          line-height: 1.25 !important;
+          opacity: 0.56 !important;
+          color: #101318 !important;
+        }
+
+        .ajxActionArrow {
+          width: 25px !important;
+          height: 25px !important;
+          min-width: 25px !important;
+          border-radius: 999px !important;
+          display: grid !important;
+          place-items: center !important;
+          font-size: 21px !important;
+          line-height: 1 !important;
+          font-weight: 800 !important;
+          background: linear-gradient(180deg, #dcfce7, #bbf7d0) !important;
+          color: #0f7a35 !important;
+          box-shadow: inset 0 0 0 1px rgba(22,163,74,0.18) !important;
+        }
+
+        .ajxCompactToolBtn:first-child .ajxActionArrow {
+          background: #16a34a !important;
+          color: #ffffff !important;
+        }
+
+        .ajxToolsDrawer {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          gap: 8px !important;
+          padding: 10px !important;
+        }
+
+        .ajxToolsDrawerBtn {
+          background: rgba(255,255,255,0.94) !important;
+          box-shadow: 0 8px 22px rgba(16,24,40,0.05) !important;
+        }
+
+        @media (max-width: 520px) {
+          .ajxCompactTools {
+            margin: 10px 10px 16px 10px !important;
+            padding: 16px !important;
+            border-radius: 22px !important;
+          }
+
+          .ajxCompactTop {
+            margin-bottom: 12px !important;
+          }
+
+          .ajxCompactTitle {
+            font-size: 18px !important;
+          }
+
+          .ajxCompactPlan {
+            font-size: 10px !important;
+            padding: 5px 8px !important;
+          }
+
+          .ajxCompactToolBtn,
+          .ajxToolsDrawerBtn {
+            min-height: 54px !important;
+          }
+
+          .ajxToolsDrawer {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
       `}</style>
 
       <div
@@ -4528,10 +4644,10 @@ export default function ChatPage(): React.JSX.Element {
                         <div className="ajxCompactKicker">AJX AI</div>
                         <div className="ajxCompactTitle">
                           {locale === "es"
-                            ? "¿Qué quieres hacer?"
+                            ? "Elige una acción rápida o escribe tu propio objetivo."
                             : locale === "en"
-                              ? "What do you want to do?"
-                              : "Mitä haluat tehdä?"}
+                              ? "Choose a quick action or write your own goal."
+                              : "Valitse pikatoiminto tai kirjoita oma tavoitteesi."}
                         </div>
                       </div>
                       <div className="ajxCompactPlan">{planLabel}</div>
@@ -4545,28 +4661,21 @@ export default function ChatPage(): React.JSX.Element {
                           className={`ajxCompactToolBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
                           onClick={() => runQuickAction(action).catch(() => {})}
                         >
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-  <span>
-    {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
-  </span>
-  <span
-    style={{
-      fontSize: 12,
-      fontWeight: 600,
-      opacity: 0.6,
-      lineHeight: 1.3,
-    }}
-  >
-    {action.subtitle}
-  </span>
-</div>
-<b>→</b>
+                          <div className="ajxActionText">
+                            <span className="ajxActionLabel">
+                              {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+                            </span>
+                            {action.subtitle ? (
+                              <span className="ajxActionSubtitle">{action.subtitle}</span>
+                            ) : null}
+                          </div>
+                          <b className="ajxActionArrow">›</b>
                         </button>
                       ))}
                     </div>
                   </div>
                 ) : null}
-                {messages.map((m, idx) => {
+                {visibleMessages.map((m, idx) => {
                   const isUser = m.role === "user";
                   const messageCopyKey = `msg-${m.ts}-${idx}`;
                   const messageTextForCopy = stripMarkdownImages(m.content || "");
@@ -4826,22 +4935,15 @@ export default function ChatPage(): React.JSX.Element {
                             runQuickAction(action).catch(() => {});
                           }}
                         >
-                          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-  <span>
-    {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
-  </span>
-  <span
-    style={{
-      fontSize: 12,
-      fontWeight: 600,
-      opacity: 0.6,
-      lineHeight: 1.3,
-    }}
-  >
-    {action.subtitle}
-  </span>
-</div>
-<b>→</b>
+                          <div className="ajxActionText">
+                            <span className="ajxActionLabel">
+                              {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+                            </span>
+                            {action.subtitle ? (
+                              <span className="ajxActionSubtitle">{action.subtitle}</span>
+                            ) : null}
+                          </div>
+                          <b className="ajxActionArrow">›</b>
                         </button>
                       ))}
                     </div>
@@ -5038,6 +5140,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
