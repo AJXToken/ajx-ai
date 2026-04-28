@@ -2755,8 +2755,16 @@ export default function ChatPage(): React.JSX.Element {
 
   const visibleMessages = messages.filter((m) => {
     if (m.role !== "assistant") return true;
+
     const c = String(m.content || "").trim();
-    return c !== String(t(locale, "chat.greeting") || "").trim();
+    const hiddenGreetings = [
+      String(t(locale, "chat.greeting") || "").trim(),
+      "Mitä haluat tehdä tänään?",
+      "What do you want to do today?",
+      "¿Qué quieres hacer hoy?",
+    ];
+
+    return !hiddenGreetings.includes(c);
   });
 
   return (
@@ -4930,7 +4938,7 @@ export default function ChatPage(): React.JSX.Element {
                               <span className="ajxActionSubtitle">{action.subtitle}</span>
                             ) : null}
                           </div>
-                          <b className="ajxActionArrow">›</b>
+                          <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
                         </button>
                       ))}
                     </div>
@@ -5204,7 +5212,7 @@ export default function ChatPage(): React.JSX.Element {
                               <span className="ajxActionSubtitle">{action.subtitle}</span>
                             ) : null}
                           </div>
-                          <b className="ajxActionArrow">›</b>
+                          <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
                         </button>
                       ))}
                     </div>
@@ -5401,6 +5409,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
