@@ -2772,6 +2772,64 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        /* ===== AJX REMOVE EXTRA INNER FRAMES ===== */
+
+        @media (max-width: 980px) {
+          :global([class*="topbar"]) {
+            border: 0 !important;
+            box-shadow: none !important;
+            background: #ffffff !important;
+          }
+
+          .ajxTopControls {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+          }
+
+          .ajxControlGroup,
+          .ajxSelectWrap {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+          }
+
+          .ajxSelect {
+            box-shadow: 0 8px 20px rgba(16,24,40,0.07) !important;
+          }
+
+          .ajxCodeBlockWrap,
+          .ajxOutputBox {
+            border: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            border-radius: 0 !important;
+          }
+
+          .ajxCodePre,
+          .ajxOutputBody {
+            border: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+
+          .ajxCodeToolbar,
+          .ajxOutputTop {
+            border: 0 !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         /* ===== AJX MOBILE CHAT + TOPBAR FIX ===== */
 
         .ajxControlGroup {
@@ -5492,6 +5550,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
