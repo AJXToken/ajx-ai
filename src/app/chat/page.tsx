@@ -2764,6 +2764,46 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        /* ===== FINAL FIX: REMOVE ARROW BALLS COMPLETELY ===== */
+
+        .ajxActionArrow {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+
+          width: auto !important;
+          height: auto !important;
+          min-width: 0 !important;
+
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+
+          padding: 0 !important;
+          margin-left: 8px !important;
+
+          font-size: 20px !important;
+          font-weight: 950 !important;
+          line-height: 1 !important;
+
+          color: #16a34a !important;
+        }
+
+        .ajxCompactToolBtn:first-child .ajxActionArrow,
+        .ajxToolsDrawerBtn:first-child .ajxActionArrow {
+          color: #15803d !important;
+        }
+
+        /* POISTA greeting varmasti */
+        .ajxMessage[data-role="assistant"]:first-child {
+          display: none !important;
+        }
+
+      `}</style>
+
+
+      <style jsx global>{`
         .ajxCompactToolBtn b,
         .ajxToolsDrawerBtn b {
           all: unset !important;
@@ -5361,6 +5401,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
