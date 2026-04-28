@@ -2766,6 +2766,47 @@ export default function ChatPage(): React.JSX.Element {
       <style jsx global>{`
         .ajxCompactToolBtn b,
         .ajxToolsDrawerBtn b {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          border-radius: 0 !important;
+          width: auto !important;
+          height: auto !important;
+          min-width: 18px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          padding: 0 !important;
+          margin-left: 8px !important;
+          font-size: 0 !important;
+          line-height: 1 !important;
+        }
+
+        .ajxCompactToolBtn b::before,
+        .ajxToolsDrawerBtn b::before {
+          content: none !important;
+        }
+
+        .ajxCompactToolBtn b::after,
+        .ajxToolsDrawerBtn b::after {
+          content: "→" !important;
+          font-size: 20px !important;
+          font-weight: 950 !important;
+          line-height: 1 !important;
+          color: #15803d !important;
+          transform: none !important;
+        }
+
+        .ajxCompactToolBtn:first-child b::after,
+        .ajxToolsDrawerBtn:first-child b::after {
+          color: #16a34a !important;
+        }
+      `}</style>
+
+
+      <style jsx global>{`
+        .ajxCompactToolBtn b,
+        .ajxToolsDrawerBtn b {
           display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
@@ -5277,6 +5318,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
