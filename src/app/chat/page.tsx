@@ -1404,6 +1404,94 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   ].join("\n");
 }
 
+function presetQuickActionQuestions(actionId: string, locale: Locale): string {
+  const fi: Record<string, string[]> = {
+    offer: [
+      "Mitä tuotetta tai palvelua tarjoat:",
+      "Kenelle tarjous tehdään:",
+      "Mikä on hinta tai hintahaarukka:",
+      "Mitä hyötyjä haluat korostaa:",
+      "Onko tarjouksella deadline tai erityisehto:",
+    ],
+    funding: [
+      "Missä maassa ja kaupungissa yritys toimii:",
+      "Mikä on toimiala ja yrityksen koko:",
+      "Mihin rahoitusta tarvitaan:",
+      "Paljonko rahoitusta haetaan:",
+      "Onko yritys uusi vai jo toiminnassa:",
+    ],
+    ad: [
+      "Mitä tuotetta tai palvelua mainostetaan:",
+      "Kenelle mainos suunnataan:",
+      "Mikä on tärkein hyöty asiakkaalle:",
+      "Missä mainosta käytetään:",
+      "Millainen tyyli halutaan:",
+    ],
+    sales: [
+      "Mitä myyt:",
+      "Kenelle myyt:",
+      "Mikä on nykyinen myyntikanava:",
+      "Mikä on suurin myynnin este:",
+      "Mikä on tavoite seuraavaksi:",
+    ],
+    customers: [
+      "Millaisia asiakkaita haluat:",
+      "Missä asiakkaat todennäköisesti ovat:",
+      "Mitä tarjoat heille:",
+      "Mikä tekee tarjouksestasi kiinnostavan:",
+      "Miten haluat lähestyä asiakkaita:",
+    ],
+    pricing: [
+      "Mitä tuotetta tai palvelua hinnoitellaan:",
+      "Mikä on nykyinen hinta:",
+      "Mitä kilpailijat veloittavat:",
+      "Mikä on kustannus tai kate:",
+      "Haluatko nostaa hintaa, tehdä paketteja vai lisätä katetta:",
+    ],
+    plan: [
+      "Mikä on tavoite:",
+      "Mihin mennessä tavoite pitää saavuttaa:",
+      "Mitä resursseja sinulla on käytössä:",
+      "Mikä on suurin este:",
+      "Kuinka tarkka suunnitelma halutaan:",
+    ],
+    problem: [
+      "Mikä ongelma on:",
+      "Miten se vaikuttaa yritykseen:",
+      "Mitä olet jo kokeillut:",
+      "Mitä resursseja ratkaisussa on käytössä:",
+      "Mihin lopputulokseen haluat päästä:",
+    ],
+  };
+
+  const en: Record<string, string[]> = {
+    offer: ["What are you offering:", "Who is the offer for:", "What is the price or price range:", "What benefits should be highlighted:", "Is there a deadline or special condition:"],
+    funding: ["Country and city of the business:", "Industry and company size:", "What funding is needed for:", "How much funding is needed:", "Is the business new or already operating:"],
+    ad: ["What product or service is advertised:", "Who is the target audience:", "Main customer benefit:", "Where will the ad be used:", "Desired style:"],
+    sales: ["What do you sell:", "Who do you sell to:", "Current sales channel:", "Biggest sales obstacle:", "Next sales goal:"],
+    customers: ["What kind of customers do you want:", "Where are they likely found:", "What do you offer them:", "Why is your offer interesting:", "How do you want to contact them:"],
+    pricing: ["What is being priced:", "Current price:", "Competitor prices:", "Cost or margin:", "Do you want higher price, packages or better margin:"],
+    plan: ["What is the goal:", "Deadline:", "Available resources:", "Biggest obstacle:", "How detailed should the plan be:"],
+    problem: ["What is the problem:", "How does it affect the business:", "What have you already tried:", "Available resources:", "Desired outcome:"],
+  };
+
+  const es: Record<string, string[]> = {
+    offer: ["Qué producto o servicio ofreces:", "Para quién es la oferta:", "Precio o rango de precio:", "Beneficios principales:", "Fecha límite o condición especial:"],
+    funding: ["País y ciudad de la empresa:", "Sector y tamaño de la empresa:", "Para qué necesitas financiación:", "Cuánto dinero necesitas:", "La empresa es nueva o ya funciona:"],
+    ad: ["Qué producto o servicio se anuncia:", "Público objetivo:", "Beneficio principal para el cliente:", "Dónde se usará el anuncio:", "Estilo deseado:"],
+    sales: ["Qué vendes:", "A quién vendes:", "Canal de venta actual:", "Mayor obstáculo de ventas:", "Próximo objetivo:"],
+    customers: ["Qué tipo de clientes buscas:", "Dónde se encuentran:", "Qué les ofreces:", "Por qué tu oferta es interesante:", "Cómo quieres contactarlos:"],
+    pricing: ["Qué producto o servicio se va a valorar:", "Precio actual:", "Precios de competidores:", "Coste o margen:", "Quieres subir precio, crear paquetes o mejorar margen:"],
+    plan: ["Cuál es el objetivo:", "Fecha límite:", "Recursos disponibles:", "Mayor obstáculo:", "Nivel de detalle deseado:"],
+    problem: ["Cuál es el problema:", "Cómo afecta al negocio:", "Qué has intentado ya:", "Recursos disponibles:", "Resultado deseado:"],
+  };
+
+  const source = locale === "en" ? en : locale === "es" ? es : fi;
+  const list = source[actionId] || source.plan;
+
+  return list.map((q, i) => `${i + 1}. ${q}`).join("\n");
+}
+
 function quickActionLockedText(locale: Locale): string {
   if (locale === "es") {
     return "Los accesos rÃ¡pidos estÃ¡n disponibles en Plus. Con Plus, AJX AI te guÃ­a paso a paso para crear ofertas, anuncios, planes de ventas, financiaciÃ³n y soluciones de negocio.";
@@ -2821,7 +2909,20 @@ export default function ChatPage(): React.JSX.Element {
       return;
     }
 
-    await sendTextDirect(action.prompt, action.mode, quickActionQuestionInstruction(action, locale));
+    setToolsOpen(false);
+    dismissMobileComposer();
+
+    const userMsg: ChatMsg = { role: "user", content: action.prompt, ts: nowTs() };
+    const assistantMsg: ChatMsg = {
+      role: "assistant",
+      content: presetQuickActionQuestions(action.id, locale),
+      ts: nowTs() + 1,
+    };
+
+    const next = [...messages, userMsg, assistantMsg];
+    setMessages(next);
+    persistActive(next);
+    scrollToBottom(true);
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -6397,6 +6498,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
