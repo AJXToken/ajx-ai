@@ -5314,6 +5314,77 @@ export default function ChatPage(): React.JSX.Element {
 `}
 </style>
 
+
+      <style jsx global>{`
+        /* ===== AJX FINAL CHAT AREA + INNER BOX FIX ===== */
+
+        @media (max-width: 980px) {
+          :global([class*="topTitle"]) {
+            display: none !important;
+          }
+
+          :global([class*="topLeft"]) {
+            width: auto !important;
+            min-width: 0 !important;
+            flex: 0 0 auto !important;
+          }
+        }
+
+        :global([class*="chatCard"]),
+        :global([class*="main"]) {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+        }
+
+        :global([class*="msgList"]) {
+          padding-left: 24px !important;
+          padding-right: 24px !important;
+          background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%) !important;
+        }
+
+        :global([class*="bubbleText"]) {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          outline: 0 !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          width: 100% !important;
+        }
+
+        :global([class*="bubbleAi"]) {
+          padding: 18px 20px !important;
+          background: #ffffff !important;
+          border: 1px solid rgba(16,24,40,0.08) !important;
+          box-shadow: 0 8px 26px rgba(16,24,40,0.06) !important;
+        }
+
+        .ajxOutputBox,
+        .ajxCodeBlockWrap,
+        .ajxSummaryBox {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          margin-left: 0 !important;
+          margin-right: 0 !important;
+        }
+
+        @media (max-width: 980px) {
+          :global([class*="msgList"]) {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+
+          :global([class*="bubbleAi"]) {
+            padding: 16px 17px !important;
+          }
+        }
+      `}</style>
+
       <div
         className={styles.layout}
         style={
@@ -6110,6 +6181,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
