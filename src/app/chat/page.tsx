@@ -2773,6 +2773,134 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        /* ===== AJX MOBILE QUICK ACTION MODAL V1 ===== */
+
+        @media (max-width: 980px) {
+          .ajxMobileQuickModal {
+            position: fixed !important;
+            inset: 0 !important;
+            z-index: 99999 !important;
+            background: rgba(15, 23, 42, 0.26) !important;
+            backdrop-filter: blur(8px) !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            justify-content: center !important;
+            padding: 86px 14px 18px 14px !important;
+            box-sizing: border-box !important;
+          }
+
+          .ajxMobileQuickPanel {
+            width: 100% !important;
+            max-width: 560px !important;
+            max-height: calc(100dvh - 110px) !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            background: rgba(255, 255, 255, 0.96) !important;
+            border: 1px solid rgba(16, 24, 40, 0.10) !important;
+            border-radius: 28px !important;
+            box-shadow: 0 28px 90px rgba(16, 24, 40, 0.24) !important;
+            padding: 22px !important;
+          }
+
+          .ajxMobileQuickTop {
+            display: flex !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important;
+            gap: 14px !important;
+            margin-bottom: 18px !important;
+          }
+
+          .ajxMobileQuickKicker {
+            color: #16a34a !important;
+            font-size: 12px !important;
+            font-weight: 950 !important;
+            letter-spacing: 0.20em !important;
+          }
+
+          .ajxMobileQuickTitle {
+            margin-top: 6px !important;
+            color: #101318 !important;
+            font-size: 25px !important;
+            font-weight: 950 !important;
+            line-height: 1.1 !important;
+            letter-spacing: -0.04em !important;
+          }
+
+          .ajxMobileQuickClose {
+            flex: 0 0 auto !important;
+            width: 44px !important;
+            height: 44px !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(16, 24, 40, 0.10) !important;
+            background: #ffffff !important;
+            color: #101318 !important;
+            font-size: 28px !important;
+            line-height: 1 !important;
+            font-weight: 700 !important;
+            box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08) !important;
+          }
+
+          .ajxMobileQuickList {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+          }
+
+          .ajxMobileQuickBtn {
+            width: 100% !important;
+            min-height: 76px !important;
+            border-radius: 22px !important;
+            border: 1px solid rgba(16, 24, 40, 0.09) !important;
+            background: #ffffff !important;
+            color: #101318 !important;
+            box-shadow: 0 10px 28px rgba(16, 24, 40, 0.06) !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 14px !important;
+            padding: 15px 18px !important;
+            text-align: left !important;
+          }
+
+          .ajxMobileQuickBtn:first-child {
+            background: linear-gradient(90deg, #effdf4, #ffffff) !important;
+            border-color: rgba(22, 163, 74, 0.24) !important;
+          }
+
+          .ajxMobileQuickBtn strong {
+            display: block !important;
+            font-size: 20px !important;
+            font-weight: 950 !important;
+            line-height: 1.15 !important;
+            color: #101318 !important;
+          }
+
+          .ajxMobileQuickBtn span {
+            display: block !important;
+            margin-top: 5px !important;
+            font-size: 15px !important;
+            font-weight: 650 !important;
+            line-height: 1.25 !important;
+            color: rgba(16, 19, 24, 0.62) !important;
+          }
+
+          .ajxMobileQuickBtn em {
+            flex: 0 0 auto !important;
+            font-style: normal !important;
+            font-size: 30px !important;
+            font-weight: 950 !important;
+            line-height: 1 !important;
+            color: #16a34a !important;
+          }
+
+          .ajxCompactTools {
+            margin-top: 0 !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         /* ===== AJX MOBILE QUICKACTIONS TOP + HIDE CHAT TEXT ===== */
 
         .ajxSidebarToggleText {
@@ -5444,7 +5572,7 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
                   </div>
 
-                  {toolsOpen ? (
+                  {toolsOpen && !isMobile ? (
                     <div className="ajxToolsDrawer ajxToolsDrawerMoved">
                       {quickActions.map((action) => (
                         <button
@@ -5467,6 +5595,46 @@ export default function ChatPage(): React.JSX.Element {
                           <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
                         </button>
                       ))}
+                    </div>
+                  ) : null}
+                  {toolsOpen && isMobile ? (
+                    <div className="ajxMobileQuickModal" role="dialog" aria-modal="true">
+                      <div className="ajxMobileQuickPanel">
+                        <div className="ajxMobileQuickTop">
+                          <div>
+                            <div className="ajxMobileQuickKicker">AJX AI</div>
+                            <div className="ajxMobileQuickTitle">Valitse pikatoiminto</div>
+                          </div>
+                          <button
+                            type="button"
+                            className="ajxMobileQuickClose"
+                            onClick={() => setToolsOpen(false)}
+                            aria-label="Sulje"
+                          >
+                            ×
+                          </button>
+                        </div>
+
+                        <div className="ajxMobileQuickList">
+                          {quickActions.map((action) => (
+                            <button
+                              key={action.id}
+                              type="button"
+                              className={`ajxMobileQuickBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
+                              onClick={() => {
+                                setToolsOpen(false);
+                                runQuickAction(action).catch(() => {});
+                              }}
+                            >
+                              <div>
+                                <strong>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</strong>
+                                {action.subtitle ? <span>{action.subtitle}</span> : null}
+                              </div>
+                              <em>›</em>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   ) : null}
                   {hasPendingImage ? (
@@ -5661,6 +5829,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
