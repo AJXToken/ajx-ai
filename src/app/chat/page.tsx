@@ -988,7 +988,7 @@ function renderPlainRichText(text: string, locale: Locale) {
       while (j < rawLines.length) {
         const candidate = rawLines[j]?.trim() ?? "";
         if (!candidate || !isQuestionLine(candidate)) break;
-        items.push(candidate.replace(/^\d+[\.\)]\s+/, "").trim());
+        items.push(candidate.trim());
         j += 1;
       }
 
@@ -6292,6 +6292,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
