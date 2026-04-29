@@ -2769,8 +2769,48 @@ export default function ChatPage(): React.JSX.Element {
   });
 
   return (
-    <div className={styles.shell} style={mobileShellStyle}>
+    <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        @media (max-width: 980px) {
+          .ajxMobileToolsOpen .ajxCompactTools {
+            display: none !important;
+          }
+
+          .ajxMobileToolsOpen .ajxToolsDrawerMoved {
+            position: fixed !important;
+            left: 16px !important;
+            right: 16px !important;
+            top: 132px !important;
+            bottom: 118px !important;
+            z-index: 99999 !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            margin: 0 !important;
+            padding: 18px !important;
+            border-radius: 26px !important;
+            background: rgba(255,255,255,0.98) !important;
+            box-shadow: 0 30px 90px rgba(16,24,40,0.28) !important;
+          }
+
+          .ajxMobileToolsOpen .ajxActionArrow::before,
+          .ajxMobileToolsOpen .ajxActionArrow::after {
+            content: none !important;
+            display: none !important;
+          }
+
+          .ajxMobileToolsOpen .ajxActionArrow {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            color: #16a34a !important;
+            font-size: 28px !important;
+            line-height: 1 !important;
+          }
+        }
+      `}</style>
+
 
       <style jsx global>{`
         .ajxActionArrow::before,
@@ -5955,6 +5995,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
