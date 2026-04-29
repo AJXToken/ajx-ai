@@ -2773,6 +2773,94 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        /* ===== AJX UI FRAME CLEANUP FAST ===== */
+
+        .ajxTopControls,
+        .ajxControlGroup {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+          backdrop-filter: none !important;
+          padding: 0 !important;
+        }
+
+        .ajxSelect,
+        .ajxHelpLink,
+        .ajxSidebarToggleBtn {
+          background: #ffffff !important;
+          border: 1px solid rgba(16,24,40,0.10) !important;
+          box-shadow: 0 8px 20px rgba(16,24,40,0.06) !important;
+        }
+
+        .ajxSidebarToggleText {
+          display: none !important;
+        }
+
+        :global([class*="chatCard"]) {
+          background: transparent !important;
+          border: 0 !important;
+          box-shadow: none !important;
+        }
+
+        :global([class*="msgList"]) {
+          background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%) !important;
+          border-radius: 0 !important;
+          padding-left: 18px !important;
+          padding-right: 18px !important;
+        }
+
+        :global([class*="bubbleAi"]) {
+          border-radius: 22px !important;
+          border: 1px solid rgba(16,24,40,0.08) !important;
+          box-shadow: 0 8px 26px rgba(16,24,40,0.06) !important;
+        }
+
+        .ajxOutputBox,
+        .ajxCodeBlockWrap,
+        .ajxSummaryBox {
+          border: 0 !important;
+          box-shadow: none !important;
+          background: transparent !important;
+        }
+
+        .ajxOutputTop,
+        .ajxCodeToolbar {
+          display: none !important;
+        }
+
+        .ajxOutputBody,
+        .ajxCodePre {
+          white-space: pre-wrap !important;
+          min-width: 0 !important;
+          width: 100% !important;
+          overflow-x: hidden !important;
+          background: transparent !important;
+          padding: 0 !important;
+          font-family: inherit !important;
+        }
+
+        @media (max-width: 980px) {
+          .ajxTopControls {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxControlGroup {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+          }
+
+          :global([class*="msgList"]) {
+            padding-left: 14px !important;
+            padding-right: 14px !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         .ajxMobileQuickClose {
           display: flex !important;
           align-items: center !important;
@@ -6022,6 +6110,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
