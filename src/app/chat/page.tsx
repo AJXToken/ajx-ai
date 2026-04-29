@@ -959,7 +959,7 @@ function renderPlainRichText(text: string, locale: Locale) {
             maxWidth: "100%",
             minWidth: 0,
           }}
-        >
+        > style={{ listStyleType: "decimal", paddingLeft: 22 }}
           {items.map((item, idx) => (
             <li
               key={idx}
@@ -1008,25 +1008,27 @@ function renderPlainRichText(text: string, locale: Locale) {
           >
             {items.map((item, idx) => (
               <div
-                key={idx}
-                className="ajxQuestionRow"
-                style={{
-                  lineHeight: 1.68,
-                  fontWeight: 700,
-                  maxWidth: "100%",
-                  minWidth: 0,
-                  overflowWrap: "anywhere",
-                  wordBreak: "break-word",
-                  display: "flex",
-                  gap: 8,
-                  alignItems: "flex-start",
-                }}
-              >
-                <span style={{ flex: "0 0 auto", fontWeight: 950, color: "#15803d" }}>
-                  {idx + 1}.
-                </span>
-                <span style={{ minWidth: 0 }}>{renderInlineFormatting(item)}</span>
-              </div>
+  key={idx}
+  className="ajxQuestionRow"
+  style={{
+    display: "flex",
+    gap: 8,
+    alignItems: "flex-start",
+    lineHeight: 1.68,
+    fontWeight: 700,
+    maxWidth: "100%",
+    minWidth: 0,
+    overflowWrap: "anywhere",
+    wordBreak: "break-word",
+  }}
+>
+  <span style={{ flex: "0 0 auto", fontWeight: 950, color: "#15803d" }}>
+    {idx + 1}.
+  </span>
+  <span style={{ minWidth: 0 }}>
+    {renderInlineFormatting(item)}
+  </span>
+</div>
             ))}
           </div>
         );
@@ -2908,11 +2910,11 @@ export default function ChatPage(): React.JSX.Element {
           align-items: start !important;
         }
 
-        .ajxQuestionRow:nth-child(1)::before { content: "1."; }
-        .ajxQuestionRow:nth-child(2)::before { content: "2."; }
-        .ajxQuestionRow:nth-child(3)::before { content: "3."; }
-        .ajxQuestionRow:nth-child(4)::before { content: "4."; }
-        .ajxQuestionRow:nth-child(5)::before { content: "5."; }
+        .ajxQuestionRow:nth-child(1)
+        .ajxQuestionRow:nth-child(2)
+        .ajxQuestionRow:nth-child(3)
+        .ajxQuestionRow:nth-child(4)
+        .ajxQuestionRow:nth-child(5)
 
         .ajxQuestionRow::before {
           font-weight: 950 !important;
@@ -3636,9 +3638,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxCompactToolBtn b::before,
-        .ajxToolsDrawerBtn b::before {
-          content: none !important;
-        }
+        .ajxToolsDrawerBtn b
 
         .ajxCompactToolBtn b::after,
         .ajxToolsDrawerBtn b::after {
@@ -6321,6 +6321,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
