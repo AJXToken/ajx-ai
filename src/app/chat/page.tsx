@@ -1489,7 +1489,7 @@ function presetQuickActionQuestions(actionId: string, locale: Locale): string {
   const source = locale === "en" ? en : locale === "es" ? es : fi;
   const list = source[actionId] || source.plan;
 
-  return list.map((q, i) => `- ${i + 1}. ${q}`).join("\n");
+  return list.map((q, i) => `${i + 1}. ${q}`).join("||AJX_Q||");
 }
 
 function quickActionLockedText(locale: Locale): string {
@@ -2913,13 +2913,16 @@ export default function ChatPage(): React.JSX.Element {
     dismissMobileComposer();
 
     const userMsg: ChatMsg = { role: "user", content: action.prompt, ts: nowTs() };
-    const assistantMsg: ChatMsg = {
-      role: "assistant",
-      content: presetQuickActionQuestions(action.id, locale),
-      ts: nowTs() + 1,
-    };
+    const questionMessages: ChatMsg[] = presetQuickActionQuestions(action.id, locale)
+      .split("||AJX_Q||")
+      .filter(Boolean)
+      .map((q, i) => ({
+        role: "assistant" as const,
+        content: q,
+        ts: nowTs() + 1 + i,
+      }));
 
-    const next = [...messages, userMsg, assistantMsg];
+    const next = [...messages, userMsg, ...questionMessages];
     setMessages(next);
     persistActive(next);
     scrollToBottom(true);
@@ -6498,6 +6501,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
