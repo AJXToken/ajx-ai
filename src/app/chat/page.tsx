@@ -943,9 +943,33 @@ function renderPlainRichText(text: string, locale: Locale) {
       const items: string[] = [];
       let j = i;
 
-      while (j < rawLines.length && isOrderedLine(rawLines[j].trim())) {
-        items.push(cleanOrderedText(rawLines[j].trim()));
-        j += 1;
+      while (j < rawLines.length) {
+        const current = rawLines[j]?.trim() ?? "";
+
+        if (!current) {
+          j += 1;
+          continue;
+        }
+
+        if (isOrderedLine(current)) {
+          items.push(cleanOrderedText(current));
+          j += 1;
+          continue;
+        }
+
+        if (items.length > 0 && isBulletLine(current)) {
+          items[items.length - 1] = `${items[items.length - 1]}\n- ${cleanBulletText(current)}`;
+          j += 1;
+          continue;
+        }
+
+        if (items.length > 0 && !isStructuralLine(current) && !isQuestionLine(current)) {
+          items[items.length - 1] = `${items[items.length - 1]}\n${current}`;
+          j += 1;
+          continue;
+        }
+
+        break;
       }
 
       out.push(
@@ -975,7 +999,7 @@ function renderPlainRichText(text: string, locale: Locale) {
               }}
             >
               <span style={{ fontWeight: 950, color: "#15803d" }}>{idx + 1}.</span>
-              <span style={{ minWidth: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}>
+              <span style={{ minWidth: 0, overflowWrap: "anywhere", wordBreak: "break-word", whiteSpace: "pre-wrap" }}>
                 {renderInlineFormatting(item)}
               </span>
             </div>
@@ -6352,6 +6376,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
