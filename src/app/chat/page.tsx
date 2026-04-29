@@ -2773,6 +2773,33 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        .ajxMobileQuickCloseFloating {
+          position: absolute !important;
+          top: 12px !important;
+          right: 12px !important;
+          width: 34px !important;
+          height: 34px !important;
+          border-radius: 999px !important;
+          border: 1px solid rgba(16,24,40,0.10) !important;
+          background: rgba(255,255,255,0.96) !important;
+          color: #101318 !important;
+          font-size: 22px !important;
+          font-weight: 800 !important;
+          line-height: 1 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          box-shadow: 0 10px 24px rgba(16,24,40,0.12) !important;
+          z-index: 3 !important;
+        }
+
+        .ajxMobileQuickPanel {
+          position: relative !important;
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         @media (max-width: 980px) {
           .ajxToolsDrawerMoved {
             display: none !important;
@@ -5964,6 +5991,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
