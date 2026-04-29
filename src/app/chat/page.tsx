@@ -671,6 +671,19 @@ function normalizeQuestionRenderLines(lines: string[]) {
     const current = raw.trim();
 
     if (/^\d+[\.\)]$/.test(current)) {
+      let j = i + 1;
+      while (j < lines.length && !String(lines[j] || "").trim()) {
+        j += 1;
+      }
+
+      const next = String(lines[j] || "").trim();
+
+      if (next && !isLikelyQuestionStart(next)) {
+        out.push(`${current} ${next}`.trim());
+        i = j;
+        continue;
+      }
+
       continue;
     }
 
@@ -1004,9 +1017,15 @@ function renderPlainRichText(text: string, locale: Locale) {
                   minWidth: 0,
                   overflowWrap: "anywhere",
                   wordBreak: "break-word",
+                  display: "flex",
+                  gap: 8,
+                  alignItems: "flex-start",
                 }}
               >
-                {renderInlineFormatting(item)}
+                <span style={{ flex: "0 0 auto", fontWeight: 950, color: "#15803d" }}>
+                  {idx + 1}.
+                </span>
+                <span style={{ minWidth: 0 }}>{renderInlineFormatting(item)}</span>
               </div>
             ))}
           </div>
@@ -2872,29 +2891,7 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
-
-      <style jsx global>{`
-        .ajxQuestionList {
-          counter-reset: ajxQuestionCounter !important;
-        }
-
-        .ajxQuestionRow {
-          display: flex !important;
-          align-items: flex-start !important;
-          gap: 8px !important;
-        }
-
-        .ajxQuestionRow::before {
-          counter-increment: ajxQuestionCounter !important;
-          content: counter(ajxQuestionCounter) "." !important;
-          flex: 0 0 auto !important;
-          font-weight: 950 !important;
-          color: #15803d !important;
-        }
-      `}</style>
-
-
-      <style jsx global>{`
+<style jsx global>{`
         /* ===== AJX UI FRAME CLEANUP FAST ===== */
 
         .ajxTopControls,
@@ -6295,6 +6292,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
