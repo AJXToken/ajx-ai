@@ -2927,6 +2927,22 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        .ajxQuestionRow {
+          display: grid !important;
+          grid-template-columns: 28px minmax(0, 1fr) !important;
+          gap: 8px !important;
+          align-items: start !important;
+        }
+
+        .ajxQuestionRow::before,
+        .ajxQuestionRow::after {
+          content: none !important;
+          display: none !important;
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         .ajxQuestionRow::before,
         .ajxQuestionRow::after {
           content: none !important;
@@ -6376,6 +6392,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
