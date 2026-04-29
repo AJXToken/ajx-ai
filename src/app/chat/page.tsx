@@ -2772,6 +2772,26 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+        /* ===== AJX MOBILE QUICKACTIONS TOP + HIDE CHAT TEXT ===== */
+
+        .ajxSidebarToggleText {
+          display: none !important;
+        }
+
+        @media (max-width: 980px) {
+          .ajxCompactTools {
+            margin-top: 0 !important;
+            transform: translateY(-18px) !important;
+          }
+
+          [class*="msgList"] {
+            padding-top: 0 !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
         /* ===== AJX UI CLEANUP V1 ===== */
 
         /* Yläpalkin päällekkäiset kehykset pois */
@@ -5640,6 +5660,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
