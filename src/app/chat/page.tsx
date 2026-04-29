@@ -1489,7 +1489,7 @@ function presetQuickActionQuestions(actionId: string, locale: Locale): string {
   const source = locale === "en" ? en : locale === "es" ? es : fi;
   const list = source[actionId] || source.plan;
 
-  return list.map((q, i) => `${i + 1}. ${q}`).join("\n");
+  return list.map((q, i) => `- ${i + 1}. ${q}`).join("\n");
 }
 
 function quickActionLockedText(locale: Locale): string {
@@ -6498,6 +6498,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
