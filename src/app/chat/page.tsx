@@ -813,7 +813,7 @@ function renderPlainRichText(text: string, locale: Locale) {
                 wordBreak: "break-word",
               }}
             >
-              {renderInlineFormatting(item)}
+              {renderInlineFormatting(`${idx + 1}. ${item}`)}
             </li>
           ))}
         </ul>
@@ -855,7 +855,7 @@ function renderPlainRichText(text: string, locale: Locale) {
                 wordBreak: "break-word",
               }}
             >
-              {renderInlineFormatting(item)}
+              {renderInlineFormatting(`${idx + 1}. ${item}`)}
             </li>
           ))}
         </ol>
@@ -905,7 +905,7 @@ function renderPlainRichText(text: string, locale: Locale) {
                   wordBreak: "break-word",
                 }}
               >
-                {renderInlineFormatting(item)}
+                {renderInlineFormatting(`${idx + 1}. ${item}`)}
               </div>
             ))}
           </div>
@@ -5477,21 +5477,6 @@ export default function ChatPage(): React.JSX.Element {
               );
             })}
           </div>
-
-          <div className={styles.sidebarBottom}>
-            <div
-              className={styles.sidebarPills}
-              style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}
-            >
-              <span className={styles.pill}>{planLabel}</span>
-            </div>
-
-            {effectiveCanonical === "free" ? (
-              <div style={{ marginTop: 10, fontSize: 12, opacity: 0.75 }}>
-                {freeCounterLabel}: {Number(usage?.msgThisMonth || 0)}/{FREE_DISPLAY_LIMIT}
-              </div>
-            ) : null}
-          </div>
         </aside>
 
         <div
@@ -6188,6 +6173,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
