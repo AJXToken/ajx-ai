@@ -617,7 +617,18 @@ function renderPlainRichText(text: string, locale: Locale) {
     content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\nâ€” â€” â€”\n")
   );
 
-  const rawLines = normalizePlainTextBreaks(normalized.split("\n"));
+  let rawLines = normalizePlainTextBreaks(normalized.split("\n"));
+
+  rawLines = rawLines.filter((line, idx, arr) => {
+    const current = String(line || "").trim();
+    const next = String(arr[idx + 1] || "").trim();
+
+    if (/^\d+[\.\)]$/.test(current) && (isQuestionLine(next) || /^\d+[\.\)]\s+/.test(next))) {
+      return false;
+    }
+
+    return true;
+  });
   const out: React.ReactNode[] = [];
 
   let paragraphBuffer: string[] = [];
@@ -6173,6 +6184,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
