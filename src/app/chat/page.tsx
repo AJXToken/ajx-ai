@@ -959,7 +959,7 @@ function renderPlainRichText(text: string, locale: Locale) {
             maxWidth: "100%",
             minWidth: 0,
           }}
-        > style={{ listStyleType: "decimal", paddingLeft: 22 }}
+        >
           {items.map((item, idx) => (
             <li
               key={idx}
@@ -2893,6 +2893,20 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        .ajxRichListOrdered {
+          list-style-type: decimal !important;
+          list-style-position: outside !important;
+          padding-left: 24px !important;
+        }
+
+        .ajxRichListOrdered li {
+          display: list-item !important;
+          list-style-type: decimal !important;
+        }
+      `}</style>
+
 
       <style jsx global>{`
         /* ===== AJX QUESTION NUMBER FIX FINAL ===== */
@@ -6321,6 +6335,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
