@@ -5722,46 +5722,6 @@ export default function ChatPage(): React.JSX.Element {
                       ))}
                     </div>
                   ) : null}
-                  {toolsOpen && isMobile ? (
-                    <div className="ajxMobileQuickModal" role="dialog" aria-modal="true">
-                      <div className="ajxMobileQuickPanel">
-                        <div className="ajxMobileQuickTop">
-                          <div>
-                            <div className="ajxMobileQuickKicker">AJX AI</div>
-                            <div className="ajxMobileQuickTitle">Valitse pikatoiminto</div>
-                          </div>
-                          <button
-                            type="button"
-                            className="ajxMobileQuickClose"
-                            onClick={() => setToolsOpen(false)}
-                            aria-label="Sulje"
-                          >
-                            ×
-                          </button>
-                        </div>
-
-                        <div className="ajxMobileQuickList">
-                          {quickActions.map((action) => (
-                            <button
-                              key={action.id}
-                              type="button"
-                              className={`ajxMobileQuickBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
-                              onClick={() => {
-                                setToolsOpen(false);
-                                runQuickAction(action).catch(() => {});
-                              }}
-                            >
-                              <div>
-                                <strong>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</strong>
-                                {action.subtitle ? <span>{action.subtitle}</span> : null}
-                              </div>
-                              <em>›</em>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ) : null}
                   {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">{imageIntentHint}</div>
@@ -5896,6 +5856,56 @@ export default function ChatPage(): React.JSX.Element {
           </main>
         </div>
       </div>
+
+
+      {toolsOpen && isMobile ? (
+        <div
+          style={{
+            position: "fixed",
+            left: 16,
+            right: 16,
+            top: 110,
+            zIndex: 999999,
+            maxHeight: "calc(100dvh - 250px)",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: 14,
+            borderRadius: 28,
+            background: "rgba(255,255,255,0.98)",
+            border: "1px solid rgba(16,24,40,0.10)",
+            boxShadow: "0 28px 90px rgba(16,24,40,0.24)",
+          }}
+        >
+          {quickActions.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
+              onClick={() => {
+                setToolsOpen(false);
+                runQuickAction(action).catch(() => {});
+              }}
+              style={{
+                width: "100%",
+                marginBottom: 10,
+                minHeight: 70,
+                background: "rgba(255,255,255,0.96)",
+                color: "#101318",
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <span>{effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}</span>
+                {action.subtitle ? (
+                  <span style={{ fontSize: 12, fontWeight: 650, opacity: 0.64, lineHeight: 1.3 }}>
+                    {action.subtitle}
+                  </span>
+                ) : null}
+              </div>
+              <b className="ajxActionArrow">›</b>
+            </button>
+          ))}
+        </div>
+      ) : null}
 
       {plusOpen && plusMenuPos.open ? (
         <div
