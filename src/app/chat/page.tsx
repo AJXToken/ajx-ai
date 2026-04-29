@@ -2891,6 +2891,35 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        /* ===== AJX QUESTION NUMBER FIX FINAL ===== */
+
+        .ajxQuestionList {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 10px !important;
+        }
+
+        .ajxQuestionRow {
+          display: grid !important;
+          grid-template-columns: 24px minmax(0, 1fr) !important;
+          gap: 8px !important;
+          align-items: start !important;
+        }
+
+        .ajxQuestionRow:nth-child(1)::before { content: "1."; }
+        .ajxQuestionRow:nth-child(2)::before { content: "2."; }
+        .ajxQuestionRow:nth-child(3)::before { content: "3."; }
+        .ajxQuestionRow:nth-child(4)::before { content: "4."; }
+        .ajxQuestionRow:nth-child(5)::before { content: "5."; }
+
+        .ajxQuestionRow::before {
+          font-weight: 950 !important;
+          color: #15803d !important;
+        }
+      `}</style>
+
 <style jsx global>{`
         /* ===== AJX UI FRAME CLEANUP FAST ===== */
 
@@ -6292,6 +6321,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
