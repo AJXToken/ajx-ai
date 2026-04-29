@@ -1663,7 +1663,7 @@ export default function ChatPage(): React.JSX.Element {
 
   function focusInputSoon() {
     requestAnimationFrame(() => {
-      inputRef.current?.focus();
+      if (!isMobile) inputRef.current?.focus();
     });
   }
 
@@ -2014,7 +2014,7 @@ export default function ChatPage(): React.JSX.Element {
       if (inputRef.current) {
         inputRef.current.style.height = "auto";
       }
-      inputRef.current?.focus();
+      if (!isMobile) inputRef.current?.focus();
     });
   }
 
@@ -2039,7 +2039,7 @@ export default function ChatPage(): React.JSX.Element {
       if (inputRef.current) {
         inputRef.current.style.height = "auto";
       }
-      inputRef.current?.focus();
+      if (!isMobile) inputRef.current?.focus();
     });
   }
 
@@ -2770,6 +2770,96 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={styles.shell} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        /* ===== AJX UI CLEANUP V1 ===== */
+
+        /* Yläpalkin päällekkäiset kehykset pois */
+        .ajxTopControls,
+        .ajxControlGroup,
+        .ajxSelectWrap {
+          box-shadow: none !important;
+          background: transparent !important;
+          border: none !important;
+        }
+
+        .ajxSelect {
+          background: #ffffff !important;
+          border: 1px solid rgba(16,24,40,0.10) !important;
+          box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+        }
+
+        /* Chat-alueelle enemmän hengitystilaa */
+        @media (max-width: 980px) {
+          [class*="msgList"] {
+            padding-left: 22px !important;
+            padding-right: 22px !important;
+          }
+
+          [class*="bubble"] {
+            max-width: 100% !important;
+          }
+        }
+
+        /* Plaintext / output: sisempi neliökehys pois */
+        .ajxCodeBlockWrap,
+        .ajxCodePre,
+        .ajxOutputBox,
+        .ajxOutputBody {
+          border: none !important;
+          box-shadow: none !important;
+          background: transparent !important;
+        }
+
+        .ajxCodeToolbar,
+        .ajxOutputTop {
+          border: none !important;
+          background: transparent !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+
+        .ajxOutputBody,
+        .ajxCodePre {
+          white-space: pre-wrap !important;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          overflow-x: hidden !important;
+          font-family: inherit !important;
+          font-size: 15px !important;
+          line-height: 1.65 !important;
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          word-break: break-word !important;
+          overflow-wrap: anywhere !important;
+        }
+
+        /* Nuolista pelkät nuolet, ei palloja */
+        .ajxActionArrow,
+        .ajxCompactToolBtn b,
+        .ajxToolsDrawerBtn b {
+          all: unset !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 24px !important;
+          font-weight: 950 !important;
+          line-height: 1 !important;
+          color: #15803d !important;
+          margin-left: 10px !important;
+        }
+
+        .ajxActionArrow::before,
+        .ajxActionArrow::after,
+        .ajxCompactToolBtn b::before,
+        .ajxCompactToolBtn b::after,
+        .ajxToolsDrawerBtn b::before,
+        .ajxToolsDrawerBtn b::after {
+          content: none !important;
+          display: none !important;
+        }
+      `}</style>
+
 
       <style jsx global>{`
         /* ===== AJX REMOVE EXTRA INNER FRAMES ===== */
@@ -5550,6 +5640,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
