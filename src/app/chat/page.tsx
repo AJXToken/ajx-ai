@@ -1848,9 +1848,10 @@ export default function ChatPage(): React.JSX.Element {
   }, [locale, titleDefault]);
 
   useEffect(() => {
+    if (messages.length <= 1 && pending.length === 0 && !loading) return;
     scrollToBottom();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages]);
+  }, [messages, pending.length, loading]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -5062,7 +5063,7 @@ export default function ChatPage(): React.JSX.Element {
               </button>
 
               <div className={styles.topTitle}>
-                {!isMobile ? <div className={styles.title}>{activeTitle}</div> : null}
+                {false ? <div className={styles.title}>{activeTitle}</div> : null}
               </div>
             </div>
 
@@ -5660,6 +5661,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
