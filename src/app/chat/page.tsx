@@ -1040,27 +1040,19 @@ function renderPlainRichText(text: string, locale: Locale) {
           >
             {items.map((item, idx) => (
               <div
-  key={idx}
-  className="ajxQuestionRow"
-  style={{
-    display: "flex",
-    gap: 8,
-    alignItems: "flex-start",
-    lineHeight: 1.68,
-    fontWeight: 700,
-    maxWidth: "100%",
-    minWidth: 0,
-    overflowWrap: "anywhere",
-    wordBreak: "break-word",
-  }}
->
-  <span style={{ flex: "0 0 auto", fontWeight: 950, color: "#15803d" }}>
-    {idx + 1}.
-  </span>
-  <span style={{ minWidth: 0 }}>
-    {renderInlineFormatting(item)}
-  </span>
-</div>
+                key={idx}
+                className="ajxQuestionRow"
+                style={{
+                  lineHeight: 1.68,
+                  fontWeight: 700,
+                  maxWidth: "100%",
+                  minWidth: 0,
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
+                }}
+              >
+                {renderInlineFormatting(`${idx + 1}. ${item}`)}
+              </div>
             ))}
           </div>
         );
@@ -2925,6 +2917,19 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        .ajxQuestionRow::before,
+        .ajxQuestionRow::after {
+          content: none !important;
+          display: none !important;
+        }
+
+        .ajxQuestionRow {
+          display: block !important;
+        }
+      `}</style>
+
 
       <style jsx global>{`
         .ajxQuestionRow {
@@ -6392,6 +6397,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
