@@ -2774,6 +2774,15 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
+          .ajxToolsDrawerMoved {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+
+      <style jsx global>{`
+        @media (max-width: 980px) {
           .ajxMobileToolsOpen .ajxCompactTools {
             display: none !important;
           }
@@ -5995,6 +6004,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
