@@ -609,6 +609,105 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
   return null;
 }
 
+
+function isLikelyQuestionStart(line: string) {
+  const s = String(line || "")
+    .trim()
+    .replace(/^\d+[\.\)]\s+/, "")
+    .toLowerCase();
+
+  if (!s) return false;
+
+  if (/[?ï¼Ÿ]$/.test(s)) return true;
+
+  return (
+    s.startsWith("mikä ") ||
+    s.startsWith("mitä ") ||
+    s.startsWith("millainen ") ||
+    s.startsWith("millaisia ") ||
+    s.startsWith("mihin ") ||
+    s.startsWith("mitkä ") ||
+    s.startsWith("millä ") ||
+    s.startsWith("missä ") ||
+    s.startsWith("milloin ") ||
+    s.startsWith("onko ") ||
+    s.startsWith("oletko ") ||
+    s.startsWith("haluatko ") ||
+    s.startsWith("what ") ||
+    s.startsWith("which ") ||
+    s.startsWith("who ") ||
+    s.startsWith("where ") ||
+    s.startsWith("when ") ||
+    s.startsWith("why ") ||
+    s.startsWith("how ") ||
+    s.startsWith("do ") ||
+    s.startsWith("does ") ||
+    s.startsWith("are ") ||
+    s.startsWith("is ") ||
+    s.startsWith("have ") ||
+    s.startsWith("has ") ||
+    s.startsWith("qué ") ||
+    s.startsWith("que ") ||
+    s.startsWith("cuál ") ||
+    s.startsWith("cual ") ||
+    s.startsWith("cuáles ") ||
+    s.startsWith("cuales ") ||
+    s.startsWith("cómo ") ||
+    s.startsWith("como ") ||
+    s.startsWith("dónde ") ||
+    s.startsWith("donde ") ||
+    s.startsWith("cuándo ") ||
+    s.startsWith("cuando ") ||
+    s.startsWith("tienes ") ||
+    s.startsWith("hay ")
+  );
+}
+
+function normalizeQuestionRenderLines(lines: string[]) {
+  const out: string[] = [];
+
+  for (let i = 0; i < lines.length; i += 1) {
+    const raw = lines[i] ?? "";
+    const current = raw.trim();
+
+    if (/^\d+[\.\)]$/.test(current)) {
+      continue;
+    }
+
+    if (/^\d+[\.\)]\s+/.test(current) && isLikelyQuestionStart(current)) {
+      let combined = current.replace(/^\d+[\.\)]\s+/, "").trim();
+      let j = i + 1;
+
+      while (j < lines.length && !/[?ï¼Ÿ]$/.test(combined)) {
+        const nextRaw = lines[j] ?? "";
+        const next = nextRaw.trim();
+
+        if (!next) {
+          j += 1;
+          continue;
+        }
+
+        const nextClean = next.replace(/^\d+[\.\)]\s+/, "").trim();
+
+        if (isLikelyQuestionStart(nextClean) && combined.length > 40) {
+          break;
+        }
+
+        combined = `${combined} ${nextClean}`.replace(/\s+/g, " ").trim();
+        j += 1;
+      }
+
+      out.push(combined);
+      i = j - 1;
+      continue;
+    }
+
+    out.push(raw);
+  }
+
+  return out;
+}
+
 function renderPlainRichText(text: string, locale: Locale) {
   const content = stripMarkdownImages(text || "");
   if (!content) return null;
@@ -618,17 +717,8 @@ function renderPlainRichText(text: string, locale: Locale) {
   );
 
   let rawLines = normalizePlainTextBreaks(normalized.split("\n"));
+  rawLines = normalizeQuestionRenderLines(rawLines);
 
-  rawLines = rawLines.filter((line, idx, arr) => {
-    const current = String(line || "").trim();
-    const next = String(arr[idx + 1] || "").trim();
-
-    if (/^\d+[\.\)]$/.test(current) && (isQuestionLine(next) || /^\d+[\.\)]\s+/.test(next))) {
-      return false;
-    }
-
-    return true;
-  });
   const out: React.ReactNode[] = [];
 
   let paragraphBuffer: string[] = [];
@@ -824,7 +914,7 @@ function renderPlainRichText(text: string, locale: Locale) {
                 wordBreak: "break-word",
               }}
             >
-              {renderInlineFormatting(`${idx + 1}. ${item}`)}
+              {renderInlineFormatting(item)}
             </li>
           ))}
         </ul>
@@ -866,7 +956,7 @@ function renderPlainRichText(text: string, locale: Locale) {
                 wordBreak: "break-word",
               }}
             >
-              {renderInlineFormatting(`${idx + 1}. ${item}`)}
+              {renderInlineFormatting(item)}
             </li>
           ))}
         </ol>
@@ -916,7 +1006,7 @@ function renderPlainRichText(text: string, locale: Locale) {
                   wordBreak: "break-word",
                 }}
               >
-                {renderInlineFormatting(`${idx + 1}. ${item}`)}
+                {renderInlineFormatting(item)}
               </div>
             ))}
           </div>
@@ -1239,7 +1329,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
       `MODO_PIKATOIMINTO: ${action.id}`,
       "No des una respuesta larga ni un plan final todavÃ­a.",
       "Haz primero exactamente 3â€“5 preguntas cortas y concretas para recopilar la información necesaria.",
-      "Presenta solo esas preguntas numeradas del 1 al 5, cada una en su propia lÃ­nea.",
+      "Presenta solo esas preguntas, cada una en su propia lÃ­nea, sin numeraciÃ³n ni viÃ±etas.",
       "No expliques tu razonamiento.",
       "No aÃ±adas resumen, introducciÃ³n larga ni propuesta final todavÃ­a.",
       "Cuando el usuario responda, entonces crea la oferta, el plan o la soluciÃ³n basÃ¡ndote en sus respuestas.",
@@ -1251,7 +1341,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
       `QUICK_ACTION_MODE: ${action.id}`,
       "Do not give a long answer or a final plan yet.",
       "First ask exactly 3â€“5 short, concrete questions needed to complete the task.",
-      "Output only those questions numbered 1–5, each on its own line.",
+      "Output only those questions, each on its own line, without numbering or bullet points.",
       "Do not explain your reasoning.",
       "Do not add a summary, long intro, or final proposal yet.",
       "After the user answers, then create the offer, plan, or solution based on those answers.",
@@ -1262,7 +1352,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     `PIKATOIMINTO_TILA: ${action.id}`,
     "Ã„lÃ¤ anna vielÃ¤ pitkÃ¤Ã¤ vastausta tai valmista suunnitelmaa.",
     "Kysy ensin tÃ¤smÃ¤lleen 3â€“5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
-    "Tulosta vain nuo kysymykset numeroituna 1–5, jokainen omalle rivilleen.",
+    "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejä.",
     "Ã„lÃ¤ selitÃ¤ ajatteluasi.",
     "Ã„lÃ¤ lisÃ¤Ã¤ yhteenvetoa, pitkÃ¤Ã¤ johdantoa tai lopullista tarjousta vielÃ¤.",
     "Kun kÃ¤yttÃ¤jÃ¤ vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
@@ -2782,6 +2872,27 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        .ajxQuestionList {
+          counter-reset: ajxQuestionCounter !important;
+        }
+
+        .ajxQuestionRow {
+          display: flex !important;
+          align-items: flex-start !important;
+          gap: 8px !important;
+        }
+
+        .ajxQuestionRow::before {
+          counter-increment: ajxQuestionCounter !important;
+          content: counter(ajxQuestionCounter) "." !important;
+          flex: 0 0 auto !important;
+          font-weight: 950 !important;
+          color: #15803d !important;
+        }
+      `}</style>
+
 
       <style jsx global>{`
         /* ===== AJX UI FRAME CLEANUP FAST ===== */
@@ -6184,6 +6295,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
