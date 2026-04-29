@@ -1228,7 +1228,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
       `MODO_PIKATOIMINTO: ${action.id}`,
       "No des una respuesta larga ni un plan final todavÃ­a.",
       "Haz primero exactamente 3â€“5 preguntas cortas y concretas para recopilar la información necesaria.",
-      "Presenta solo esas preguntas, cada una en su propia lÃ­nea, sin numeraciÃ³n ni viÃ±etas.",
+      "Presenta solo esas preguntas numeradas del 1 al 5, cada una en su propia lÃ­nea.",
       "No expliques tu razonamiento.",
       "No aÃ±adas resumen, introducciÃ³n larga ni propuesta final todavÃ­a.",
       "Cuando el usuario responda, entonces crea la oferta, el plan o la soluciÃ³n basÃ¡ndote en sus respuestas.",
@@ -1240,7 +1240,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
       `QUICK_ACTION_MODE: ${action.id}`,
       "Do not give a long answer or a final plan yet.",
       "First ask exactly 3â€“5 short, concrete questions needed to complete the task.",
-      "Output only those questions, each on its own line, without numbering or bullet points.",
+      "Output only those questions numbered 1–5, each on its own line.",
       "Do not explain your reasoning.",
       "Do not add a summary, long intro, or final proposal yet.",
       "After the user answers, then create the offer, plan, or solution based on those answers.",
@@ -1251,7 +1251,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     `PIKATOIMINTO_TILA: ${action.id}`,
     "Ã„lÃ¤ anna vielÃ¤ pitkÃ¤Ã¤ vastausta tai valmista suunnitelmaa.",
     "Kysy ensin tÃ¤smÃ¤lleen 3â€“5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
-    "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejÃ¤.",
+    "Tulosta vain nuo kysymykset numeroituna 1–5, jokainen omalle rivilleen.",
     "Ã„lÃ¤ selitÃ¤ ajatteluasi.",
     "Ã„lÃ¤ lisÃ¤Ã¤ yhteenvetoa, pitkÃ¤Ã¤ johdantoa tai lopullista tarjousta vielÃ¤.",
     "Kun kÃ¤yttÃ¤jÃ¤ vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
@@ -5385,6 +5385,13 @@ export default function ChatPage(): React.JSX.Element {
         }
       `}</style>
 
+
+      <style jsx global>{`
+        :global([class*="sidebarBottom"]) {
+          display: none !important;
+        }
+      `}</style>
+
       <div
         className={styles.layout}
         style={
@@ -6181,6 +6188,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
