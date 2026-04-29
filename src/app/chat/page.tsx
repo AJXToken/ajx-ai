@@ -5606,7 +5606,27 @@ export default function ChatPage(): React.JSX.Element {
                   </div>
 
                   {toolsOpen && !isMobile ? (
-                    <div className="ajxToolsDrawer ajxToolsDrawerMoved">
+                    <div
+                      className="ajxToolsDrawer ajxToolsDrawerMoved"
+                      style={
+                        isMobile
+                          ? {
+                              position: "fixed",
+                              left: 18,
+                              right: 18,
+                              bottom: 170,
+                              zIndex: 99999,
+                              maxHeight: "55vh",
+                              overflowY: "auto",
+                              WebkitOverflowScrolling: "touch",
+                              padding: 14,
+                              borderRadius: 26,
+                              background: "rgba(255,255,255,0.98)",
+                              boxShadow: "0 24px 80px rgba(16,24,40,0.24)",
+                            }
+                          : undefined
+                      }
+                    >
                       {quickActions.map((action) => (
                         <button
                           key={action.id}
@@ -5862,6 +5882,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
