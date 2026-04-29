@@ -949,30 +949,38 @@ function renderPlainRichText(text: string, locale: Locale) {
       }
 
       out.push(
-        <ol
+        <div
           key={`ol-${i}`}
-          className="ajxRichListOrdered"
+          className="ajxManualOrderedList"
           style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
             margin: "0 0 16px 0",
-            paddingLeft: 20,
-            lineHeight: 1.68,
             maxWidth: "100%",
             minWidth: 0,
           }}
         >
           {items.map((item, idx) => (
-            <li
+            <div
               key={idx}
+              className="ajxManualOrderedRow"
               style={{
-                margin: "0 0 6px 0",
-                overflowWrap: "anywhere",
-                wordBreak: "break-word",
+                display: "grid",
+                gridTemplateColumns: "28px minmax(0, 1fr)",
+                gap: 8,
+                lineHeight: 1.68,
+                maxWidth: "100%",
+                minWidth: 0,
               }}
             >
-              {renderInlineFormatting(item)}
-            </li>
+              <span style={{ fontWeight: 950, color: "#15803d" }}>{idx + 1}.</span>
+              <span style={{ minWidth: 0, overflowWrap: "anywhere", wordBreak: "break-word" }}>
+                {renderInlineFormatting(item)}
+              </span>
+            </div>
           ))}
-        </ol>
+        </div>
       );
 
       i = j - 1;
@@ -2893,6 +2901,15 @@ export default function ChatPage(): React.JSX.Element {
   return (
     <div className={`${styles.shell} ${isMobile && toolsOpen ? "ajxMobileToolsOpen" : ""}`} style={mobileShellStyle}>
       <div className={styles.bg} aria-hidden="true" />
+
+      <style jsx global>{`
+        .ajxQuestionRow::before,
+        .ajxQuestionRow::after {
+          content: none !important;
+          display: none !important;
+        }
+      `}</style>
+
 
       <style jsx global>{`
         .ajxRichListOrdered {
@@ -6335,6 +6352,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
