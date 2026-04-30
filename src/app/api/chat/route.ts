@@ -1478,6 +1478,18 @@ Do not invent:
 - reports, inspections or recommendations unless the user gave them
 
 Avoid generic hype words:
+
+NO SALES FLUFF RULE:
+Do not write empty sales sentences.
+
+Examples to avoid:
+- "Tarjoamme kattavaa palvelua"
+- "Tarjoamme laadukasta palvelua"
+- "We offer high quality service"
+- "Ofrecemos un servicio profesional"
+
+Start directly with the actual offer content.
+No filler intro sentences.
 - high quality
 - professional
 - expert
@@ -3692,6 +3704,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
