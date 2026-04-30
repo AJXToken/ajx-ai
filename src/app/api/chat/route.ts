@@ -1487,6 +1487,26 @@ DO NOT:
 - use empty phrases like "we offer high quality service"
 
 STYLE:
+
+NO MARKETING HYPE RULE:
+Do not use:
+- improve quality of life
+- better health
+- energy savings
+- premium
+- professional service
+- high quality
+- best solution
+
+Avoid emotional exaggeration.
+
+Write ads like a real small business owner, not a marketing agency.
+
+Prefer:
+- questions
+- concrete situations
+- simple language
+- short sentences
 - simple
 - believable
 - local-business level
@@ -1734,6 +1754,26 @@ ALWAYS STRUCTURE LIKE THIS:
 6. 3 concrete next actions
 
 STYLE:
+
+NO MARKETING HYPE RULE:
+Do not use:
+- improve quality of life
+- better health
+- energy savings
+- premium
+- professional service
+- high quality
+- best solution
+
+Avoid emotional exaggeration.
+
+Write ads like a real small business owner, not a marketing agency.
+
+Prefer:
+- questions
+- concrete situations
+- simple language
+- short sentences
 - Be decisive
 
 TONE RULE (CRITICAL):
@@ -3768,6 +3808,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
