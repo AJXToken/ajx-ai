@@ -1561,6 +1561,21 @@ ALWAYS STRUCTURE LIKE THIS:
 
 STYLE:
 - Be decisive
+
+TONE RULE (CRITICAL):
+Write like a practical entrepreneur giving instructions to another entrepreneur.
+
+DO NOT:
+- explain like a guide
+- use formal explanation tone
+- use soft suggestions
+
+DO:
+- give direct instructions
+- use short lines
+- remove filler words
+- sound like real-world advice
+- prioritize action over explanation
 - Be practical
 - No fluff
 - No filler
@@ -3579,6 +3594,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
