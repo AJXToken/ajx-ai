@@ -2578,11 +2578,11 @@ function geminiModelForRequest(args: {
 
   if (p === ("pro" as any)) {
     return {
-      model: GEMINI_FLASH_MODEL,
+      model: GEMINI_PRO_MODEL,
       companyNeedsPro: false,
-      companyCanUsePro: false,
-      companyUsesPro: false,
-      reason: "pro-plan-flash",
+      companyCanUsePro: true,
+      companyUsesPro: true,
+      reason: "pro-plan-pro",
     };
   }
 
@@ -3550,6 +3550,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
