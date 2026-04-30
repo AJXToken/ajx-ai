@@ -1475,6 +1475,22 @@ Each version must be clearly different:
 - one benefit-focused
 - one simple/local
 
+REAL-WORLD AD RULE:
+
+Ads must sound like real small business ads.
+
+Do NOT sound like:
+- marketing agency
+- AI copywriting
+- corporate branding
+
+Prefer:
+- simple sentences
+- concrete situations
+- everyday language
+
+If the ad sounds like generic marketing, rewrite it simpler.
+
 Each ad must include:
 - short headline
 - main text (max 5–7 lines)
@@ -3808,6 +3824,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
