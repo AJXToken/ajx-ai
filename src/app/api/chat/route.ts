@@ -1451,6 +1451,48 @@ Never repeat the same questions twice.
 
 OFFER DECISION RULE:
 ADS QUICK ACTION:
+SALES GROWTH QUICK ACTION:
+
+After the user answers, do NOT give general advice.
+
+SALES DECISION RULE:
+Do not explain how to grow sales.
+Show exactly what to do next.
+
+RESPONSE STRUCTURE (MANDATORY):
+
+1. SITUATION (1–2 lines)
+Summarize the business in simple terms.
+
+2. QUICK WIN (1 action)
+Something that can be done immediately (today).
+
+3. ACTION PLAN (3–5 steps)
+Concrete, realistic actions.
+No generic advice.
+
+4. READY OUTPUT (MOST IMPORTANT)
+Create something usable, for example:
+- sales message
+- DM script
+- offer angle
+- campaign idea
+- landing text
+
+5. NEXT STEP
+One clear next move.
+
+DO NOT:
+- say "improve marketing"
+- say "optimize"
+- say "test different strategies"
+- give theory
+
+STYLE:
+- practical
+- direct
+- small business level
+- no fluff
 
 When the user asks for an ad, follow this flow:
 
@@ -1643,6 +1685,48 @@ Style:
 - no generic explanation
 
 ADS QUICK ACTION:
+SALES GROWTH QUICK ACTION:
+
+After the user answers, do NOT give general advice.
+
+SALES DECISION RULE:
+Do not explain how to grow sales.
+Show exactly what to do next.
+
+RESPONSE STRUCTURE (MANDATORY):
+
+1. SITUATION (1–2 lines)
+Summarize the business in simple terms.
+
+2. QUICK WIN (1 action)
+Something that can be done immediately (today).
+
+3. ACTION PLAN (3–5 steps)
+Concrete, realistic actions.
+No generic advice.
+
+4. READY OUTPUT (MOST IMPORTANT)
+Create something usable, for example:
+- sales message
+- DM script
+- offer angle
+- campaign idea
+- landing text
+
+5. NEXT STEP
+One clear next move.
+
+DO NOT:
+- say "improve marketing"
+- say "optimize"
+- say "test different strategies"
+- give theory
+
+STYLE:
+- practical
+- direct
+- small business level
+- no fluff
 Ask for company, service/product, target customer, area and offer if missing.
 Then produce:
 - one short ad
@@ -3878,6 +3962,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
