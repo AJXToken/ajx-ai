@@ -1439,6 +1439,16 @@ Ask 3-5 numbered questions if essential details are missing:
 
 Then produce a ready-to-send offer.
 
+FLOW RULE:
+If the user has already answered the questions (even partially),
+do NOT ask again.
+
+Proceed immediately to create the offer using:
+- provided answers
+- placeholders for missing data
+
+Never repeat the same questions twice.
+
 OFFER DECISION RULE:
 Do not explain how to make an offer.
 Make the offer.
@@ -3659,6 +3669,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
