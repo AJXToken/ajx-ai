@@ -1480,6 +1480,29 @@ Do not invent:
 Avoid generic hype words:
 
 NO SALES FLUFF RULE:
+
+Do not write empty sales sentences.
+
+Do not use "we" language:
+- "we offer"
+- "our team"
+- "meidän tiimi"
+- "tarjoamme"
+- "we ensure"
+- "varmistamme"
+
+Do not make performance claims:
+- system works better
+- improves performance
+- more efficient
+- safer
+- tehokkaammin
+- turvallisemmin
+
+Write like a real contractor:
+short, factual, direct.
+
+Start directly from the work.
 Do not write empty sales sentences.
 
 Examples to avoid:
@@ -3704,6 +3727,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
