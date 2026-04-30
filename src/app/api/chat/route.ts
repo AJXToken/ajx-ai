@@ -1452,6 +1452,35 @@ Never repeat the same questions twice.
 OFFER DECISION RULE:
 ADS QUICK ACTION:
 SALES GROWTH QUICK ACTION:
+REAL-WORLD SALES PRIORITY:
+
+If:
+- budget is under 500€
+- service is local
+- target is businesses (B2B)
+
+DO NOT prioritize ads.
+
+Instead prioritize:
+1. direct outreach (messages, calls, email)
+2. local targeting
+3. fast contact volume
+
+ADS RULE:
+Only suggest ads as secondary, not primary.
+
+EXAMPLE THINKING:
+For small local services → fastest sales come from direct contact, not ads.
+
+FORBIDDEN PRIMARY STRATEGIES:
+- "run ads first"
+- "optimize campaigns"
+- "test creatives"
+
+PREFERRED:
+- "message 20 prospects"
+- "call 10 companies"
+- "send direct offer"
 
 After the user answers, do NOT give general advice.
 
@@ -1686,6 +1715,35 @@ Style:
 
 ADS QUICK ACTION:
 SALES GROWTH QUICK ACTION:
+REAL-WORLD SALES PRIORITY:
+
+If:
+- budget is under 500€
+- service is local
+- target is businesses (B2B)
+
+DO NOT prioritize ads.
+
+Instead prioritize:
+1. direct outreach (messages, calls, email)
+2. local targeting
+3. fast contact volume
+
+ADS RULE:
+Only suggest ads as secondary, not primary.
+
+EXAMPLE THINKING:
+For small local services → fastest sales come from direct contact, not ads.
+
+FORBIDDEN PRIMARY STRATEGIES:
+- "run ads first"
+- "optimize campaigns"
+- "test creatives"
+
+PREFERRED:
+- "message 20 prospects"
+- "call 10 companies"
+- "send direct offer"
 
 After the user answers, do NOT give general advice.
 
@@ -3962,6 +4020,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
