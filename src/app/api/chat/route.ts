@@ -1553,6 +1553,21 @@ When giving funding options:
 - avoid generic ordering
 - always explain why the order fits this exact case
 
+FUNDING DECISION RULE:
+For funding answers, do not present options as equal.
+Always make a clear recommendation.
+
+For the Spain small-business digital/marketing case:
+- Kit Digital = first action
+- Cámara de Comercio = support channel, not main funding
+- ENISA = only second-phase option if the business is innovative/growth-oriented
+- bank/ICO loan = fallback if support is not enough or timing is urgent
+
+Use this wording style:
+"Do this first."
+"Keep this as backup."
+"Do not start here unless..."
+
 CRITICAL FUNDING RULE:
 When the topic is funding, grants or financing:
 
@@ -3605,6 +3620,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
