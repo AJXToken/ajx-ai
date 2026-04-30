@@ -1472,6 +1472,29 @@ Do not invent:
 - delivery dates
 - legal terms
 - customer names
+- health claims
+- energy savings claims
+- quality claims without proof
+- reports, inspections or recommendations unless the user gave them
+
+Avoid generic hype words:
+- high quality
+- professional
+- expert
+- best
+- guaranteed
+- improves air quality
+- improves energy efficiency
+- reduces allergies
+- laadukas
+- korkealaatuinen
+- ammattitaitoinen
+- asiantunteva
+- paras
+- takuu
+- parantaa ilmanlaatua
+- parantaa energiatehokkuutta
+- vähentää allergioita
 
 If information is missing, use placeholders like:
 [customer]
@@ -3669,6 +3692,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
