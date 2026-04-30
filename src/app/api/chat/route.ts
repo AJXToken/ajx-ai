@@ -1450,6 +1450,47 @@ Proceed immediately to create the offer using:
 Never repeat the same questions twice.
 
 OFFER DECISION RULE:
+ADS QUICK ACTION:
+
+When the user asks for an ad, follow this flow:
+
+STEP 1 — Ask 3–5 questions if missing:
+1. What is the business?
+2. What is being sold?
+3. Who is the target customer?
+4. Where will the ad be used? (Facebook, Google, local, etc.)
+5. What is the main goal? (calls, messages, sales)
+
+STEP 2 — Create the ad immediately after answers.
+
+AD DECISION RULE:
+Do not explain advertising.
+Create the ad.
+
+OUTPUT RULE:
+Always produce 2–3 different ad versions.
+
+Each version must be clearly different:
+- one direct
+- one benefit-focused
+- one simple/local
+
+Each ad must include:
+- short headline
+- main text (max 5–7 lines)
+- clear CTA
+
+DO NOT:
+- invent prices or discounts
+- invent guarantees
+- use hype words like "best", "premium", "top quality"
+- use empty phrases like "we offer high quality service"
+
+STYLE:
+- simple
+- believable
+- local-business level
+- written like a real entrepreneur
 Do not explain how to make an offer.
 Make the offer.
 
@@ -3727,6 +3768,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
