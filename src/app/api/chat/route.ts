@@ -1542,6 +1542,17 @@ IMPORTANT:
 - For funding, public support, tax, legal, finance and regulated topics, include a short reminder to verify current terms from official sources.
 - Concrete output first. No theory.
 
+REAL-WORLD PRIORITY RULE:
+When giving funding options:
+- prioritize small, realistic and currently relevant programs first
+- prioritize non-repayable support before loans
+- prioritize programs that match the exact use case
+- for digital needs in Spain, usually put Kit Digital first
+- ENISA is mainly for innovative growth companies, not the first choice for a very small 5000 euro short-term need
+- Cámara de Comercio is mainly guidance and support, not the primary funding source
+- avoid generic ordering
+- always explain why the order fits this exact case
+
 CRITICAL FUNDING RULE:
 When the topic is funding, grants or financing:
 
@@ -3594,6 +3605,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
