@@ -1497,6 +1497,24 @@ Each ad must include:
 - clear CTA
 
 DO NOT:
+
+- mention health benefits
+- mention cleaner air
+- mention better breathing
+- mention energy savings
+- mention efficiency improvements
+- mention safety improvements
+
+No invisible benefits.
+
+Ads must only mention:
+- the service
+- the situation
+- the timing
+- the action
+
+If the benefit cannot be directly proven in the ad, do not write it.
+
 - invent prices or discounts
 - invent guarantees
 - use hype words like "best", "premium", "top quality"
@@ -1756,6 +1774,24 @@ CRITICAL FUNDING RULE:
 When the topic is funding, grants or financing:
 
 DO NOT:
+
+- mention health benefits
+- mention cleaner air
+- mention better breathing
+- mention energy savings
+- mention efficiency improvements
+- mention safety improvements
+
+No invisible benefits.
+
+Ads must only mention:
+- the service
+- the situation
+- the timing
+- the action
+
+If the benefit cannot be directly proven in the ad, do not write it.
+
 - give generic lists
 - give loose suggestions
 - say "you can", "you may", "consider"
@@ -1796,6 +1832,24 @@ TONE RULE (CRITICAL):
 Write like a practical entrepreneur giving instructions to another entrepreneur.
 
 DO NOT:
+
+- mention health benefits
+- mention cleaner air
+- mention better breathing
+- mention energy savings
+- mention efficiency improvements
+- mention safety improvements
+
+No invisible benefits.
+
+Ads must only mention:
+- the service
+- the situation
+- the timing
+- the action
+
+If the benefit cannot be directly proven in the ad, do not write it.
+
 - explain like a guide
 - use formal explanation tone
 - use soft suggestions
@@ -3824,6 +3878,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
