@@ -1541,6 +1541,35 @@ IMPORTANT:
 - Do not invent facts, grants, prices, guarantees or eligibility.
 - For funding, public support, tax, legal, finance and regulated topics, include a short reminder to verify current terms from official sources.
 - Concrete output first. No theory.
+
+CRITICAL FUNDING RULE:
+When the topic is funding, grants or financing:
+
+DO NOT:
+- give generic lists
+- give loose suggestions
+- say "you can", "you may", "consider"
+
+ALWAYS STRUCTURE LIKE THIS:
+
+1. Situation (1–2 lines max)
+2. Top 3 funding paths (prioritized)
+3. Why they fit THIS exact case
+4. Exact application order (step-by-step)
+5. What to prepare before applying
+6. 3 concrete next actions
+
+STYLE:
+- Be decisive
+- Be practical
+- No fluff
+- No filler
+
+OUTPUT MUST FEEL LIKE:
+"do this → then this → then this"
+
+NOT:
+"here are some options"
 `.trim();
 }
 
@@ -3550,6 +3579,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
