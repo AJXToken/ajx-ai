@@ -1593,7 +1593,7 @@ function imageEditStartedText(locale: Locale): string {
 
 function imageQueuedText(locale: Locale): string {
   if (locale === "es") return "Imagen añadida. Pulsa Analizar imagen y envía tu pregunta.";
-  if (locale === "en") return "Image attached. Press Analyze image and send your question.";
+  if (locale === "en") return "Image added. Press Analyze image and send your question.";
   return "Kuva lisätty. Paina Analysoi kuva ja lähetä kysymys.";
 }
 function sanitizeUiStatusText(value: string, locale: Locale): string {
@@ -1631,14 +1631,14 @@ function safeAttachmentName(name: string, kind: "image" | "file"): string {
 }
 function plusImageCapabilityText(locale: Locale): string {
   if (locale === "es") {
-    return "Plus: puedes analizar imágenes y generar una nueva imagen. La edición de imágenes no está incluida en Plus.";
+    return "Puedes analizar la imagen. La edición de imágenes no está incluida en Plus.";
   }
 
   if (locale === "en") {
-    return "Plus: you can analyze images and generate a new image. Image editing is not included in Plus.";
+    return "You can analyze the image. Image editing is not included in Plus.";
   }
 
-  return "Plus: voit analysoida kuvia ja generoida uuden kuvan. Kuvan muokkaus ei kuulu Plus-versioon.";
+  return "Voit analysoida kuvan. Kuvan muokkaus ei kuulu Plus-versioon.";
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
@@ -2406,7 +2406,16 @@ export default function ChatPage(): React.JSX.Element {
   }
 
   function removeAttachmentChip(id: string) {
-    setPending((prev) => prev.filter((x) => x.id !== id));
+    setPending((prev) => {
+      const next = prev.filter((p) => p.id !== id);
+
+      if (next.length === 0) {
+        setImageStatus("");
+        setManualImageIntent(null);
+      }
+
+      return next;
+    });
   }
 
   function computePlusMenuPos() {
@@ -6312,7 +6321,7 @@ export default function ChatPage(): React.JSX.Element {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    style={{ display: "none" }}
+                    accept=".pdf,.txt,.csv,.json,.md,.doc,.docx,.xls,.xlsx,application/pdf,text/plain,text/csv,application/json" style={{ display: "none" }}
                     onChange={async (e) => {
                       const f = e.target.files?.[0];
                       e.target.value = "";
@@ -6481,6 +6490,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
