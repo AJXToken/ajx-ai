@@ -1811,6 +1811,24 @@ function stressButtonText(locale: Locale): string {
 
   return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n⠀\n\n**Ohje**\nVastaa numerolla tai kirjoita omin sanoin.";
 }
+function dontPressButtonText(locale: Locale): string {
+  const seed = Math.floor(Math.random() * 1000000);
+
+  return `Painoit sitten kuitenkin. Hyvä.
+
+Tämä nappi on olemassa siksi, että se rikkoo ajatusloopin. Se ei anna turvallisinta ideaa. Ei tylsintä ideaa. Vaan oudon, yllättävän ja mahdollisesti käyttökelpoisen idean.
+
+🔥 Aivan kreisi idea:
+
+Tee “yllätysdiagnoosi”-kampanja: tarjoa yhdelle mahdolliselle asiakkaalle nopea tarkistus, mutta yhdellä ehdolla: jos löydät jotain kiinnostavaa, saat tehdä siitä nimettömän minitarinan someen.
+
+Älä myy palvelua. Myy löydös.
+
+Kaaosnumero: ${seed}
+
+⚠️ Käyttö omalla vastuulla.
+Tämä on tarkoituksella outo idea. Älä rakenna koko liiketoimintaa tämän varaan. Testaa pienesti ensin.`;
+}
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
     return "Archivo añadido. Pulsa Analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
@@ -7848,6 +7866,20 @@ export default function ChatPage(): React.JSX.Element {
                       >
                         🤯
                       </button>
+                      <button
+                        className={`${styles.btnIcon} ajxDontPressBtn`}
+                        type="button"
+                        title="Älä paina"
+                        aria-label="Älä paina"
+                        onClick={() => {
+                          appendAssistantMessage(dontPressButtonText(locale));
+                          scrollToBottom(true);
+                        }}
+                        disabled={loading}
+                      >
+                        <span className="ajxDontPressIcon">💣</span>
+                        <span className="ajxDontPressText">älä paina</span>
+                      </button>
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
                           <ImageButton
@@ -8399,6 +8431,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
