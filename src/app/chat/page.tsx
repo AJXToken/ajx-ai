@@ -6059,7 +6059,33 @@ export default function ChatPage(): React.JSX.Element {
                           +
                         </button>
                       ) : null}
-{showImageButton ? (
+
+                      <button
+                        className={styles.btnIcon}
+                        type="button"
+                        title={
+                          locale === "fi"
+                            ? "Pura jumitus"
+                            : locale === "es"
+                              ? "Desbloquear"
+                              : "Unblock"
+                        }
+                        aria-label={
+                          locale === "fi"
+                            ? "Pura jumitus"
+                            : locale === "es"
+                              ? "Desbloquear"
+                              : "Unblock"
+                        }
+                        onClick={() => {
+                          appendAssistantMessage(stressButtonText(locale));
+                          scrollToBottom(true);
+                        }}
+                        disabled={loading}
+                      >
+                        🤯
+                      </button>
+                      {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
                           <ImageButton
                             disabled={loading}
@@ -6112,32 +6138,6 @@ export default function ChatPage(): React.JSX.Element {
                             }}
                           />
                         </div>
-
-                        <button
-                          className={styles.btnIcon}
-                          type="button"
-                          title={
-                            locale === "fi"
-                              ? "Pura jumitus"
-                              : locale === "es"
-                                ? "Desbloquear"
-                                : "Unblock"
-                          }
-                          aria-label={
-                            locale === "fi"
-                              ? "Pura jumitus"
-                              : locale === "es"
-                                ? "Desbloquear"
-                                : "Unblock"
-                          }
-                          onClick={() => {
-                            appendAssistantMessage(stressButtonText(locale));
-                            scrollToBottom(true);
-                          }}
-                          disabled={loading}
-                        >
-                          🤯
-                        </button>
                       ) : null}
                     </div>
 
@@ -6278,57 +6278,6 @@ export default function ChatPage(): React.JSX.Element {
                           <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
                         </button>
                       ))}
-                    </div>
-                  ) : null}
-                  {hasPendingFile ? (
-                    <div className="ajxImageIntentBar">
-                      <div className="ajxImageIntentHint">
-                        {locale === "fi"
-                          ? "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä."
-                          : locale === "es"
-                            ? "Archivo añadido. Pulsa Analizar archivo y enviar."
-                            : "File added. Press Analyze file and send."}
-                      </div>
-
-                      <div className="ajxImageIntentHint">
-                        {locale === "fi"
-                          ? "Suositeltu tiedoston enimmäiskoko 3.5 Mt."
-                          : locale === "es"
-                            ? "Tamaño máximo recomendado: 3.5 MB."
-                            : "Recommended max file size: 3.5 MB."}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="ajxIntentBtn ajxIntentBtnActive"
-                        onClick={() => {
-                          if (!input.trim()) {
-                            setInput(
-                              locale === "fi"
-                                ? "Analysoi tiedosto ja kerro tärkeimmät asiat."
-                                : locale === "es"
-                                  ? "Analiza el archivo y dime los puntos principales."
-                                  : "Analyze the file and tell me the main points."
-                            );
-                          }
-
-                          setImageStatus(
-                            locale === "fi"
-                              ? "Tulkinta: tiedoston analyysi"
-                              : locale === "es"
-                                ? "Interpretación: análisis de archivo"
-                                : "Interpretation: file analysis"
-                          );
-
-                          requestAnimationFrame(() => inputRef.current?.focus());
-                        }}
-                      >
-                        {locale === "fi"
-                          ? "Analysoi tiedosto"
-                          : locale === "es"
-                            ? "Analizar archivo"
-                            : "Analyze file"}
-                      </button>
                     </div>
                   ) : null}
                   {hasPendingImage ? (
@@ -6577,7 +6526,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 
