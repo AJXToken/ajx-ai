@@ -6614,6 +6614,23 @@ export default function ChatPage(): React.JSX.Element {
             maxWidth: "calc(100vw - 24px)",
           }}
         >
+          <button
+            type="button"
+            className={`${styles.btnGhost} ajxMenuItem`}
+            onClick={() => setPlusOpen(false)}
+            aria-label="Sulje"
+            title="Sulje"
+            style={{
+              justifyContent: "flex-end",
+              fontWeight: 900,
+              fontSize: 18,
+              paddingTop: 8,
+              paddingBottom: 8,
+            }}
+          >
+            ×
+          </button>
+
           {canAttachImagesForAnalysis ? (
           <button
             className={`${styles.btnGhost} ajxMenuItem`}
@@ -6658,6 +6675,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
