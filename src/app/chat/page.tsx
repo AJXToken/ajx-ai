@@ -7902,13 +7902,6 @@ export default function ChatPage(): React.JSX.Element {
                       >
                         ⚡
                       </button>
-                      <a
-                        href={`/help?lang=${locale}`}
-                        className="ajxHelpLink ajxComposerHelp"
-                        title={helpLabel}
-                      >
-                        {helpLabel}
-                      </a>
 
                       <button
                         className={`${styles.btnGhost} ajxActionBtn`}
@@ -8350,6 +8343,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
