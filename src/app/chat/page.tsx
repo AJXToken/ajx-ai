@@ -1642,14 +1642,14 @@ function plusImageCapabilityText(locale: Locale): string {
 }
 function stressButtonText(locale: Locale): string {
   if (locale === "es") {
-    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n\nResponde con el número o escríbelo con tus palabras.";
+    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n**Responde con el número o escríbelo con tus palabras.**";
   }
 
   if (locale === "en") {
-    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n\nReply with the number or write it in your own words.";
+    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n**Reply with the number or write it in your own words.**";
   }
 
-  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n\nVastaa numerolla tai kirjoita omin sanoin.";
+  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n**Vastaa numerolla tai kirjoita omin sanoin.**";
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
@@ -4923,6 +4923,28 @@ export default function ChatPage(): React.JSX.Element {
           box-shadow: 0 10px 22px rgba(11, 13, 18, 0.14);
         }
 
+        .ajxComposerTools button[aria-label="Pura jumitus"],
+        .ajxComposerTools button[aria-label="Desbloquear"],
+        .ajxComposerTools button[aria-label="Unblock"] {
+          order: 50 !important;
+          width: 42px !important;
+          height: 42px !important;
+          min-width: 42px !important;
+          min-height: 42px !important;
+          max-width: 42px !important;
+          max-height: 42px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 20px !important;
+          line-height: 1 !important;
+          padding: 0 !important;
+          border-radius: 999px !important;
+        }
+
+        .ajxImageButtonWrap {
+          order: 40 !important;
+        }
         .ajxImageButtonWrap {
           display: inline-flex;
           align-items: center;
@@ -6280,6 +6302,57 @@ export default function ChatPage(): React.JSX.Element {
                       ))}
                     </div>
                   ) : null}
+                  {pending.some((p) => p.kind === "file") ? (
+                    <div className="ajxImageIntentBar">
+                      <div className="ajxImageIntentHint">
+                        {locale === "fi"
+                          ? "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä."
+                          : locale === "es"
+                            ? "Archivo añadido. Pulsa Analizar archivo y enviar."
+                            : "File added. Press Analyze file and send."}
+                      </div>
+
+                      <div className="ajxImageIntentHint">
+                        {locale === "fi"
+                          ? "Suositeltu tiedoston enimmäiskoko 3.5 Mt."
+                          : locale === "es"
+                            ? "Tamaño máximo recomendado: 3.5 MB."
+                            : "Recommended max file size: 3.5 MB."}
+                      </div>
+
+                      <button
+                        type="button"
+                        className="ajxIntentBtn ajxIntentBtnActive"
+                        onClick={() => {
+                          if (!input.trim()) {
+                            setInput(
+                              locale === "fi"
+                                ? "Analysoi tiedosto ja kerro tärkeimmät asiat."
+                                : locale === "es"
+                                  ? "Analiza el archivo y dime los puntos principales."
+                                  : "Analyze the file and tell me the main points."
+                            );
+                          }
+
+                          setImageStatus(
+                            locale === "fi"
+                              ? "Tulkinta: tiedoston analyysi"
+                              : locale === "es"
+                                ? "Interpretación: análisis de archivo"
+                                : "Interpretation: file analysis"
+                          );
+
+                          requestAnimationFrame(() => inputRef.current?.focus());
+                        }}
+                      >
+                        {locale === "fi"
+                          ? "Analysoi tiedosto"
+                          : locale === "es"
+                            ? "Analizar archivo"
+                            : "Analyze file"}
+                      </button>
+                    </div>
+                  ) : null}
                   {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">{imageIntentHint}</div>
@@ -6526,6 +6599,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
