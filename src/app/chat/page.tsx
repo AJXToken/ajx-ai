@@ -1629,14 +1629,25 @@ function safeAttachmentName(name: string, kind: "image" | "file"): string {
   if (!cleaned) return kind === "image" ? `kuva${ext || ".jpg"}` : `tiedosto${ext}`;
   return `${cleaned}${ext}`;
 }
+function fileQueuedText(locale: Locale): string {
+  if (locale === "es") return "Archivo añadido. Pulsa Analizar archivo y envía tu pregunta.";
+  if (locale === "en") return "File attached. Press Analyze file and send your question.";
+  return "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä kysymys.";
+}
+
+function plusImageCapabilityText(locale: Locale): string {
+  if (locale === "es") return "Plus: puedes analizar imágenes y generar una nueva imagen. La edición de imágenes no está incluida en Plus.";
+  if (locale === "en") return "Plus: you can analyze images and generate a new image. Image editing is not included in Plus.";
+  return "Plus: voit analysoida kuvia ja generoida uuden kuvan. Kuvan muokkaus ei kuulu Plus-versioon.";
+}
 function attachmentHintText(locale: Locale): string {
   if (locale === "es") {
-    return "Adjuntos: puedes subir imÃ¡genes, PDF y otros archivos. TamaÃ±o mÃ¡ximo recomendado: 3,5 MB.";
+    return "Adjuntos: puedes subir imágenes, PDF y otros archivos. Tamaño máximo recomendado: 3,5 MB.";
   }
   if (locale === "en") {
     return "Attachments: you can upload images, PDFs, and other files. Recommended maximum size: 3.5 MB.";
   }
-  return "Liitteet: voit ladata kuvia, PDF:iÃ¤ ja muita tiedostoja. Suositeltu enimmÃ¤iskoko: 3.5 MB.";
+  return "Liitteet: voit ladata kuvia, PDF:iä ja muita tiedostoja. Suositeltu enimmäiskoko: 3.5 MB.";
 }
 
 function attachFileMenuLabel(locale: Locale): string {
@@ -1769,7 +1780,13 @@ export default function ChatPage(): React.JSX.Element {
     [pending]
   );
 
+  const firstPendingFile = useMemo(
+    () => pending.find((p) => p.kind === "file") || null,
+    [pending]
+  );
+
   const hasPendingImage = !!firstPendingImage;
+  const hasPendingFile = !!firstPendingFile;
   const suggestedImageIntent = useMemo(() => detectImageIntent(input), [input]);
   const effectiveImageIntent: ImageIntentChoice = manualImageIntent ?? suggestedImageIntent;
 
@@ -2373,6 +2390,7 @@ export default function ChatPage(): React.JSX.Element {
       },
     ]);
     setManualImageIntent(null);
+    setImageStatus(fileQueuedText(locale));
   }
 
   function removeAttachmentChip(id: string) {
@@ -2811,7 +2829,7 @@ export default function ChatPage(): React.JSX.Element {
               ? "Kuvan muokkaus on kÃ¤ytÃ¶ssÃ¤ vain Pro- ja Company-tasoilla."
               : locale === "es"
                 ? "La ediciÃ³n de imÃ¡genes estÃ¡ disponible solo en los planes Pro y Company."
-                : "Image editing is available only on Pro and Company plans."
+                : "In Plus, you can analyze an image or generate a new one. Image editing is not included in Plus."
           );
           return;
         }
@@ -6326,6 +6344,10 @@ export default function ChatPage(): React.JSX.Element {
                     </div>
                   ) : null}
 
+                  {hasPendingImage && !canEditImages && effectiveCanonical === "plus" ? (
+                    <div className="ajxStatusNote">{plusImageCapabilityText(locale)}</div>
+                  ) : null}
+
                   {imageStatus ? <div className="ajxStatusNote">{imageStatus}</div> : null}
                   
 
@@ -6447,6 +6469,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
