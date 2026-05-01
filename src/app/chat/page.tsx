@@ -1655,11 +1655,11 @@ function plusImageCapabilityText(locale: Locale): string {
 }
 function stressButtonText(locale: Locale): string {
   if (locale === "es") {
-    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n## Instrucción\nResponde con el número o escríbelo con tus palabras.";
+    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n⠀\n\n**Instrucción**\nResponde con el número o escríbelo con tus palabras.";
   }
 
   if (locale === "en") {
-    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n## Instruction\nReply with the number or write it in your own words.";
+    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n⠀\n\n**Instruction**\nReply with the number or write it in your own words.";
   }
 
   return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n⠀\n\n**Ohje**\nVastaa numerolla tai kirjoita omin sanoin.";
@@ -5118,6 +5118,28 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxCompactTop {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 10px !important;
+        }
+
+        .ajxTopHelpBtn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          height: 34px !important;
+          padding: 0 12px !important;
+          border-radius: 999px !important;
+          border: 1px solid rgba(11, 13, 18, 0.10) !important;
+          background: rgba(255,255,255,0.92) !important;
+          color: #0b0d12 !important;
+          font-size: 13px !important;
+          font-weight: 800 !important;
+          white-space: nowrap !important;
+          box-shadow: 0 8px 20px rgba(11, 13, 18, 0.07) !important;
+        }
+
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
@@ -6753,6 +6775,28 @@ export default function ChatPage(): React.JSX.Element {
           }
 
           .ajxCompactTop {
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          gap: 10px !important;
+        }
+
+        .ajxTopHelpBtn {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          height: 34px !important;
+          padding: 0 12px !important;
+          border-radius: 999px !important;
+          border: 1px solid rgba(11, 13, 18, 0.10) !important;
+          background: rgba(255,255,255,0.92) !important;
+          color: #0b0d12 !important;
+          font-size: 13px !important;
+          font-weight: 800 !important;
+          white-space: nowrap !important;
+          box-shadow: 0 8px 20px rgba(11, 13, 18, 0.07) !important;
+        }
+
             margin-bottom: 12px !important;
           }
 
@@ -7474,6 +7518,23 @@ export default function ChatPage(): React.JSX.Element {
                         </div>
                       </div>
                       <div className="ajxCompactPlan">{planLabel}</div>
+
+                      <button
+                        type="button"
+                        className="ajxTopHelpBtn"
+                        onClick={() => {
+                          appendAssistantMessage(
+                            locale === "fi"
+                              ? "Ohjeet\n\nAJX AI auttaa yrittäjää tekemään konkreettisia töitä: tarjouksia, mainoksia, myyntisuunnitelmia, hinnoittelua, rahoituksen hakua ja yritysongelmien ratkaisua.\n\nVoit kirjoittaa normaalisti tai käyttää pikatoimintoja."
+                              : locale === "es"
+                                ? "Ayuda\n\nAJX AI ayuda a emprendedores a hacer trabajo práctico: ofertas, anuncios, ventas, precios, financiación y resolución de problemas.\n\nPuedes escribir normalmente o usar acciones rápidas."
+                                : "Help\n\nAJX AI helps entrepreneurs do practical work: offers, ads, sales plans, pricing, funding and business problem solving.\n\nYou can write normally or use quick actions."
+                          );
+                          scrollToBottom(true);
+                        }}
+                      >
+                        {helpLabel}
+                      </button>
                     </div>
 
                     <div className="ajxCompactGrid">
@@ -8130,6 +8191,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
