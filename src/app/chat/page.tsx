@@ -194,6 +194,20 @@ function renderImagesFromContent(text: string) {
     }
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
+  .ajxComposerHelp {
+    display: none !important;
+  }
+
+  /* ===== FORCE TOP HELP VISIBLE ===== */
+  .ajxTopHelp {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+`}</style>
     </div>
   );
 }
@@ -1148,6 +1162,20 @@ function renderPlainRichText(text: string, locale: Locale) {
     }
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
+  .ajxComposerHelp {
+    display: none !important;
+  }
+
+  /* ===== FORCE TOP HELP VISIBLE ===== */
+  .ajxTopHelp {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+`}</style>
     </div>
   );
 }
@@ -1241,6 +1269,20 @@ function RichMessage({
       padding-top: 6px !important;
       padding-bottom: 6px !important;
     }
+  }
+`}</style>
+    
+<style jsx global>{`
+  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
+  .ajxComposerHelp {
+    display: none !important;
+  }
+
+  /* ===== FORCE TOP HELP VISIBLE ===== */
+  .ajxTopHelp {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 `}</style>
     </div>
@@ -8340,9 +8382,24 @@ export default function ChatPage(): React.JSX.Element {
     }
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
+  .ajxComposerHelp {
+    display: none !important;
+  }
+
+  /* ===== FORCE TOP HELP VISIBLE ===== */
+  .ajxTopHelp {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+`}</style>
     </div>
   );
 }
+
 
 
 
