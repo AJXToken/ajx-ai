@@ -1629,6 +1629,17 @@ function safeAttachmentName(name: string, kind: "image" | "file"): string {
   if (!cleaned) return kind === "image" ? `kuva${ext || ".jpg"}` : `tiedosto${ext}`;
   return `${cleaned}${ext}`;
 }
+function plusImageCapabilityText(locale: Locale): string {
+  if (locale === "es") {
+    return "Plus: puedes analizar imágenes y generar una nueva imagen. La edición de imágenes no está incluida en Plus.";
+  }
+
+  if (locale === "en") {
+    return "Plus: you can analyze images and generate a new image. Image editing is not included in Plus.";
+  }
+
+  return "Plus: voit analysoida kuvia ja generoida uuden kuvan. Kuvan muokkaus ei kuulu Plus-versioon.";
+}
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
     return "Archivo añadido. Pulsa Analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
@@ -6470,6 +6481,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
