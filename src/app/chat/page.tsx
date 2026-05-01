@@ -1601,6 +1601,19 @@ function sanitizeUiStatusText(value: string, locale: Locale): string {
   const low = s.toLowerCase();
 
   if (
+    low.includes("kirjoita kuvan pyyntö") ||
+    low.includes("kirjoita kuvan pyynto") ||
+    low.includes("muokkausohje") ||
+    low.includes("write an image prompt") ||
+    low.includes("write image prompt") ||
+    low.includes("editing instruction") ||
+    low.includes("escribe una petición de imagen") ||
+    low.includes("instrucción de edición")
+  ) {
+    return "";
+  }
+
+  if (
     low.includes("suurikokoinen kielimalli") ||
     low.includes("large language model") ||
     low.includes("google on kouluttanut") ||
@@ -1642,14 +1655,14 @@ function plusImageCapabilityText(locale: Locale): string {
 }
 function stressButtonText(locale: Locale): string {
   if (locale === "es") {
-    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n**Responde con el número o escríbelo con tus palabras.**";
+    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\nOhje:\nResponde con el número o escríbelo con tus palabras.";
   }
 
   if (locale === "en") {
-    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n**Reply with the number or write it in your own words.**";
+    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\nInstruction:\nReply with the number or write it in your own words.";
   }
 
-  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n**Vastaa numerolla tai kirjoita omin sanoin.**";
+  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\nOhje:\nVastaa numerolla tai kirjoita omin sanoin.";
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
@@ -4942,8 +4955,54 @@ export default function ChatPage(): React.JSX.Element {
           border-radius: 999px !important;
         }
 
+        button[aria-label="Pura jumitus"],
+        button[aria-label="Desbloquear"],
+        button[aria-label="Unblock"] {
+          order: 999 !important;
+          width: 42px !important;
+          height: 42px !important;
+          min-width: 42px !important;
+          min-height: 42px !important;
+          max-width: 42px !important;
+          max-height: 42px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 20px !important;
+          line-height: 1 !important;
+          padding: 0 !important;
+          border-radius: 999px !important;
+          flex: 0 0 42px !important;
+        }
+
+        .ajxImageButtonWrap {
+          order: 998 !important;
+        }
         .ajxImageButtonWrap {
           order: 40 !important;
+        }
+        button[aria-label="Pura jumitus"],
+        button[aria-label="Desbloquear"],
+        button[aria-label="Unblock"] {
+          order: 999 !important;
+          width: 42px !important;
+          height: 42px !important;
+          min-width: 42px !important;
+          min-height: 42px !important;
+          max-width: 42px !important;
+          max-height: 42px !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          font-size: 20px !important;
+          line-height: 1 !important;
+          padding: 0 !important;
+          border-radius: 999px !important;
+          flex: 0 0 42px !important;
+        }
+
+        .ajxImageButtonWrap {
+          order: 998 !important;
         }
         .ajxImageButtonWrap {
           display: inline-flex;
@@ -6599,6 +6658,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
