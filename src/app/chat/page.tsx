@@ -3179,6 +3179,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxTopControls {
             background: transparent !important;
             border: 0 !important;
@@ -3259,6 +3303,50 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxToolsDrawerMoved {
             display: none !important;
           }
@@ -3268,6 +3356,50 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxMobileToolsOpen .ajxCompactTools {
             display: none !important;
           }
@@ -3333,6 +3465,50 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX MOBILE TOOLS PANEL FIX ===== */
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxToolsDrawerMoved {
             position: fixed !important;
             left: 18px !important;
@@ -3366,6 +3542,50 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX MOBILE QUICK ACTION MODAL V1 ===== */
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxMobileQuickModal {
             position: fixed !important;
             inset: 0 !important;
@@ -3498,6 +3718,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxCompactTools {
             margin-top: 0 !important;
             transform: translateY(-18px) !important;
@@ -3530,6 +3794,50 @@ export default function ChatPage(): React.JSX.Element {
 
         /* Chat-alueelle enemmän hengitystilaa */
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           [class*="msgList"] {
             padding-left: 22px !important;
             padding-right: 22px !important;
@@ -3604,6 +3912,50 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX REMOVE EXTRA INNER FRAMES ===== */
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           :global([class*="topbar"]) {
             border: 0 !important;
             box-shadow: none !important;
@@ -3681,6 +4033,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           :global([class*="msgList"]) {
             padding-left: 14px !important;
             padding-right: 14px !important;
@@ -5128,6 +5524,50 @@ export default function ChatPage(): React.JSX.Element {
 
 
                 @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxTopBar {
             display: flex;
             align-items: center;
@@ -5394,6 +5834,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxCompactTools {
             margin: 8px 14px 18px 14px !important;
           }
@@ -5487,6 +5971,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxCompactTools {
             margin: 18px auto 18px auto !important;
             padding: 24px !important;
@@ -5704,6 +6232,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           .ajxCompactGrid,
           .ajxToolsDrawer {
             grid-template-columns: 1fr !important;
@@ -5724,6 +6296,50 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX FINAL CHAT AREA + INNER BOX FIX ===== */
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           :global([class*="topTitle"]) {
             display: none !important;
           }
@@ -5779,6 +6395,50 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[aria-label="Pura jumitus"],
+          .ajxComposerTools button[aria-label="Desbloquear"],
+          .ajxComposerTools button[aria-label="Unblock"] {
+            flex: 0 0 44px !important;
+            width: 44px !important;
+            min-width: 44px !important;
+            height: 44px !important;
+            order: 45 !important;
+          }
+
+          .ajxImageButtonWrap {
+            order: 40 !important;
+          }
+
           :global([class*="msgList"]) {
             padding-left: 16px !important;
             padding-right: 16px !important;
@@ -6675,6 +7335,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
