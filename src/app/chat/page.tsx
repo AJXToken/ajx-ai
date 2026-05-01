@@ -1596,6 +1596,39 @@ function imageQueuedText(locale: Locale): string {
   if (locale === "en") return "Image attached. Press Analyze image and send your question.";
   return "Kuva lisätty. Paina Analysoi kuva ja lähetä kysymys.";
 }
+function sanitizeUiStatusText(value: string, locale: Locale): string {
+  const s = String(value || "").trim();
+  const low = s.toLowerCase();
+
+  if (
+    low.includes("suurikokoinen kielimalli") ||
+    low.includes("large language model") ||
+    low.includes("google on kouluttanut") ||
+    low.includes("trained by google") ||
+    low.includes("gemini") ||
+    low.includes("openai") ||
+    low.includes("gpt")
+  ) {
+    return "";
+  }
+
+  return s;
+}
+
+function safeAttachmentName(name: string, kind: "image" | "file"): string {
+  const raw = String(name || "").trim();
+  const extMatch = raw.match(/\.[a-z0-9]{1,8}$/i);
+  const ext = extMatch ? extMatch[0].toLowerCase() : kind === "image" ? ".jpg" : "";
+  const base = raw.replace(/\.[a-z0-9]{1,8}$/i, "");
+
+  const cleaned = base
+    .replace(/[^\p{L}\p{N}\s._-]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!cleaned) return kind === "image" ? `kuva${ext || ".jpg"}` : `tiedosto${ext}`;
+  return `${cleaned}${ext}`;
+}
 function attachmentHintText(locale: Locale): string {
   if (locale === "es") {
     return "Adjuntos: puedes subir imÃ¡genes, PDF y otros archivos. TamaÃ±o mÃ¡ximo recomendado: 3,5 MB.";
@@ -2308,7 +2341,7 @@ export default function ChatPage(): React.JSX.Element {
         {
           id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
           kind,
-          name: compressed.name || file.name || "image.jpg",
+          name: safeAttachmentName(compressed.name || file.name || "kuva.jpg", "image"),
           type: compressed.type || "image/jpeg",
           dataUrl: compressed.dataUrl,
         },
@@ -2334,7 +2367,7 @@ export default function ChatPage(): React.JSX.Element {
       {
         id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
         kind,
-        name: file.name || "file",
+        name: safeAttachmentName(file.name || "tiedosto", "file"),
         type: file.type || "application/octet-stream",
         dataUrl,
       },
@@ -2803,10 +2836,10 @@ export default function ChatPage(): React.JSX.Element {
       if (effectiveImageIntent === null) {
         appendAssistantMessage(
           locale === "fi"
-            ? "Valitse ensin haluatko analysoida kuvan vai muokata sitÃ¤."
+            ? "Paina ensin Analysoi kuva ja lähetä kysymys."
             : locale === "es"
-              ? "Primero elige si quieres analizar o editar la imagen."
-              : "First choose whether you want to analyze or edit the image."
+              ? "Pulsa primero Analizar imagen y envía tu pregunta."
+              : "Press Analyze image first and send your question."
         );
         return;
       }
@@ -6013,7 +6046,7 @@ export default function ChatPage(): React.JSX.Element {
                                 return;
                               }
 
-                              setImageStatus(s);
+                              setImageStatus(sanitizeUiStatusText(s, locale));
 
                               if (
                                 low.includes("http") ||
@@ -6181,7 +6214,7 @@ export default function ChatPage(): React.JSX.Element {
                         className={`ajxIntentBtn ${
                           effectiveImageIntent === "analyze" ? "ajxIntentBtnActive" : ""
                         }`}
-                        onClick={() => setManualImageIntent("analyze")}
+                        onClick={() => { setManualImageIntent("analyze"); setImageStatus(""); }}
                       >
                         {locale === "fi"
                           ? "Analysoi kuva"
@@ -6277,7 +6310,7 @@ export default function ChatPage(): React.JSX.Element {
                     <div className="ajxChips">
                       {pending.map((p) => (
                         <div key={p.id} className="ajxChip" title={p.type}>
-                          <span>{p.kind === "image" ? "ðŸ–¼ï¸" : "ðŸ“Ž"}</span>
+                          <span>{p.kind === "image" ? "Kuva" : "Tiedosto"}</span>
                           <span className="ajxChipName">{p.name}</span>
                           <button
                             className={styles.btnTinyDanger}
@@ -6414,6 +6447,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
