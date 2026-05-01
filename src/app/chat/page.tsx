@@ -1630,6 +1630,14 @@ function safeAttachmentName(name: string, kind: "image" | "file"): string {
   return `${cleaned}${ext}`;
 }
 function fileQueuedText(locale: Locale): string {
+  if (locale === "es") {
+    return "Archivo añadido. Pulsa analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
+  }
+  if (locale === "en") {
+    return "File added. Press analyze file and send.\n\nRecommended max file size: 3.5 MB.";
+  }
+  return "Tiedosto lisätty. Paina analysoi tiedosto ja lähetä.\n\nSuositeltu tiedoston enimmäiskoko 3.5 Mt.";
+}
   if (locale === "es") return "Archivo añadido. Pulsa Analizar archivo y envía tu pregunta.";
   if (locale === "en") return "File attached. Press Analyze file and send your question.";
   return "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä kysymys.";
@@ -6469,6 +6477,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
