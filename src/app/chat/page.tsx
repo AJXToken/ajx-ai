@@ -191,7 +191,7 @@ function isOrderedLine(line: string) {
 }
 
 function isDividerLine(line: string) {
-  return /^(-{3,}|â€”\s*â€”\s*â€”)$/.test(line.trim());
+  return /^(-{3,}|×\s*×\s*×)$/.test(line.trim());
 }
 
 function isMarkdownHeadingLine(line: string) {
@@ -726,7 +726,7 @@ function renderPlainRichText(text: string, locale: Locale) {
   if (!content) return null;
 
   const normalized = normalizeInlineListSequences(
-    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\nâ€” â€” â€”\n")
+    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\n× × ×\n")
   );
 
   let rawLines = normalizePlainTextBreaks(normalized.split("\n"));
@@ -1373,7 +1373,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     return [
       `MODO_PIKATOIMINTO: ${action.id}`,
       "No des una respuesta larga ni un plan final todavÃ­a.",
-      "Haz primero exactamente 3â€“5 preguntas cortas y concretas para recopilar la información necesaria.",
+      "Haz primero exactamente 3×5 preguntas cortas y concretas para recopilar la información necesaria.",
       "Presenta solo esas preguntas, cada una en su propia lÃ­nea, sin numeraciÃ³n ni viÃ±etas.",
       "No expliques tu razonamiento.",
       "No aÃ±adas resumen, introducciÃ³n larga ni propuesta final todavÃ­a.",
@@ -1385,7 +1385,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     return [
       `QUICK_ACTION_MODE: ${action.id}`,
       "Do not give a long answer or a final plan yet.",
-      "First ask exactly 3â€“5 short, concrete questions needed to complete the task.",
+      "First ask exactly 3×5 short, concrete questions needed to complete the task.",
       "Output only those questions, each on its own line, without numbering or bullet points.",
       "Do not explain your reasoning.",
       "Do not add a summary, long intro, or final proposal yet.",
@@ -1396,7 +1396,7 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   return [
     `PIKATOIMINTO_TILA: ${action.id}`,
     "Ã„lÃ¤ anna vielÃ¤ pitkÃ¤Ã¤ vastausta tai valmista suunnitelmaa.",
-    "Kysy ensin tÃ¤smÃ¤lleen 3â€“5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
+    "Kysy ensin tÃ¤smÃ¤lleen 3×5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
     "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejä.",
     "Ã„lÃ¤ selitÃ¤ ajatteluasi.",
     "Ã„lÃ¤ lisÃ¤Ã¤ yhteenvetoa, pitkÃ¤Ã¤ johdantoa tai lopullista tarjousta vielÃ¤.",
@@ -6319,7 +6319,7 @@ export default function ChatPage(): React.JSX.Element {
                             style={{ padding: "4px 8px" }}
                             type="button"
                           >
-                            Ã—
+                            ×
                           </button>
                         </div>
                       ))}
@@ -6447,6 +6447,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
