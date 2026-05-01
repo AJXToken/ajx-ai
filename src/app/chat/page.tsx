@@ -1631,31 +1631,16 @@ function safeAttachmentName(name: string, kind: "image" | "file"): string {
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
-    return "Archivo añadido. Pulsa analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
+    return "Archivo añadido. Pulsa Analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
   }
+
   if (locale === "en") {
-    return "File added. Press analyze file and send.\n\nRecommended max file size: 3.5 MB.";
+    return "File added. Press Analyze file and send.\n\nRecommended max file size: 3.5 MB.";
   }
-  return "Tiedosto lisätty. Paina analysoi tiedosto ja lähetä.\n\nSuositeltu tiedoston enimmäiskoko 3.5 Mt.";
-}
-  if (locale === "es") {
-    return "Archivo añadido. Pulsa analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
-  }
-  if (locale === "en") {
-    return "File added. Press analyze file and send.\n\nRecommended max file size: 3.5 MB.";
-  }
-  return "Tiedosto lisätty. Paina analysoi tiedosto ja lähetä.\n\nSuositeltu tiedoston enimmäiskoko 3.5 Mt.";
-}
-  if (locale === "es") return "Archivo añadido. Pulsa Analizar archivo y envía tu pregunta.";
-  if (locale === "en") return "File attached. Press Analyze file and send your question.";
-  return "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä kysymys.";
+
+  return "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä.\n\nSuositeltu tiedoston enimmäiskoko 3.5 Mt.";
 }
 
-function plusImageCapabilityText(locale: Locale): string {
-  if (locale === "es") return "Plus: puedes analizar imágenes y generar una nueva imagen. La edición de imágenes no está incluida en Plus.";
-  if (locale === "en") return "Plus: you can analyze images and generate a new image. Image editing is not included in Plus.";
-  return "Plus: voit analysoida kuvia ja generoida uuden kuvan. Kuvan muokkaus ei kuulu Plus-versioon.";
-}
 function attachmentHintText(locale: Locale): string {
   if (locale === "es") {
     return "Adjuntos: puedes subir imágenes, PDF y otros archivos. Tamaño máximo recomendado: 3,5 MB.";
@@ -6485,6 +6470,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
