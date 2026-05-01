@@ -1642,14 +1642,14 @@ function plusImageCapabilityText(locale: Locale): string {
 }
 function stressButtonText(locale: Locale): string {
   if (locale === "es") {
-    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\nResponde con el número o escríbelo con tus palabras.";
+    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n\nResponde con el número o escríbelo con tus palabras.";
   }
 
   if (locale === "en") {
-    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\nReply with the number or write it in your own words.";
+    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n\nReply with the number or write it in your own words.";
   }
 
-  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\nVastaa numerolla tai kirjoita omin sanoin.";
+  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n\nVastaa numerolla tai kirjoita omin sanoin.";
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
@@ -6526,6 +6526,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
