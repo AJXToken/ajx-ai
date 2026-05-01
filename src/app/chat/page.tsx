@@ -1592,9 +1592,9 @@ function imageEditStartedText(locale: Locale): string {
 }
 
 function imageQueuedText(locale: Locale): string {
-  if (locale === "es") return "Kuva lisÃ¤tty. Valitse analysointi tai muokkaus ja lÃ¤hetÃ¤ pyyntÃ¶.";
-  if (locale === "en") return "Image attached. Choose analyze or edit, then send your request.";
-  return "Kuva lisÃ¤tty. Valitse analyysi tai muokkaus ja lÃ¤hetÃ¤ pyyntÃ¶.";
+  if (locale === "es") return "Imagen añadida. Pulsa Analizar imagen y envía tu pregunta.";
+  if (locale === "en") return "Image attached. Press Analyze image and send your question.";
+  return "Kuva lisätty. Paina Analysoi kuva ja lähetä kysymys.";
 }
 function attachmentHintText(locale: Locale): string {
   if (locale === "es") {
@@ -2856,6 +2856,22 @@ export default function ChatPage(): React.JSX.Element {
   const imageIntentHint = useMemo(() => {
     if (!hasPendingImage) return "";
 
+    if (!canEditImages) {
+      if (effectiveImageIntent === "analyze") {
+        return locale === "fi"
+          ? "Tulkinta: kuvan analyysi"
+          : locale === "es"
+            ? "Interpretación: análisis de imagen"
+            : "Interpretation: image analysis";
+      }
+
+      return locale === "fi"
+        ? "Paina Analysoi kuva ja lähetä kysymys."
+        : locale === "es"
+          ? "Pulsa Analizar imagen y envía tu pregunta."
+          : "Press Analyze image and send your question.";
+    }
+
     if (effectiveImageIntent === "edit") {
       return locale === "fi"
         ? "Tulkinta: kuvan muokkaus"
@@ -2877,7 +2893,7 @@ export default function ChatPage(): React.JSX.Element {
       : locale === "es"
         ? "Elige si quieres analizar o editar la imagen"
         : "Choose whether you want to analyze or edit the image";
-  }, [effectiveImageIntent, hasPendingImage, locale]);
+  }, [canEditImages, effectiveImageIntent, hasPendingImage, locale]);
 
   const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
   const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
@@ -6190,7 +6206,7 @@ export default function ChatPage(): React.JSX.Element {
                         </button>
                       ) : null}
 
-                      {manualImageIntent ? (
+                      {canEditImages && manualImageIntent ? (
                         <button
                           type="button"
                           className="ajxIntentBtn"
@@ -6398,6 +6414,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
