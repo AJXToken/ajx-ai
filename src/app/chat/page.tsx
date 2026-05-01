@@ -1655,14 +1655,14 @@ function plusImageCapabilityText(locale: Locale): string {
 }
 function stressButtonText(locale: Locale): string {
   if (locale === "es") {
-    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\nOhje:\nResponde con el número o escríbelo con tus palabras.";
+    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n## Instrucción\nResponde con el número o escríbelo con tus palabras.";
   }
 
   if (locale === "en") {
-    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\nInstruction:\nReply with the number or write it in your own words.";
+    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n## Instruction\nReply with the number or write it in your own words.";
   }
 
-  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\nOhje:\nVastaa numerolla tai kirjoita omin sanoin.";
+  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n## Ohje\nVastaa numerolla tai kirjoita omin sanoin.";
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
@@ -3179,6 +3179,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3303,6 +3356,59 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3356,6 +3462,59 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3465,6 +3624,59 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX MOBILE TOOLS PANEL FIX ===== */
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3542,6 +3754,59 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX MOBILE QUICK ACTION MODAL V1 ===== */
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3718,6 +3983,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3794,6 +4112,59 @@ export default function ChatPage(): React.JSX.Element {
 
         /* Chat-alueelle enemmän hengitystilaa */
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -3912,6 +4283,59 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX REMOVE EXTRA INNER FRAMES ===== */
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -4033,6 +4457,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -5524,6 +6001,59 @@ export default function ChatPage(): React.JSX.Element {
 
 
                 @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -5834,6 +6364,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -5971,6 +6554,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -6232,6 +6868,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -6296,6 +6985,59 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX FINAL CHAT AREA + INNER BOX FIX ===== */
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -6395,6 +7137,59 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
+          .ajxTopHelpBtn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: 42px !important;
+            padding: 0 14px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(11, 13, 18, 0.10) !important;
+            background: rgba(255,255,255,0.92) !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
+          }
+
+          .ajxComposerTools {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            align-items: center !important;
+            gap: 7px !important;
+            width: 100% !important;
+          }
+
+          .ajxComposerTools > button,
+          .ajxComposerTools .ajxImageButtonWrap {
+            flex: 0 0 42px !important;
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+          }
+
+          .ajxComposerTools > button {
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+
+          .ajxComposerTools .ajxImageButtonWrap button {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+          }
+
+          .ajxComposerTools button[title="Ohjeet"],
+          .ajxComposerTools button[aria-label="Ohjeet"],
+          .ajxComposerTools button[title="Help"],
+          .ajxComposerTools button[aria-label="Help"],
+          .ajxComposerTools button[title="Ayuda"],
+          .ajxComposerTools button[aria-label="Ayuda"] {
+            display: none !important;
+          }
+
           .ajxComposerTools {
             display: flex !important;
             flex-wrap: nowrap !important;
@@ -7335,6 +8130,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
