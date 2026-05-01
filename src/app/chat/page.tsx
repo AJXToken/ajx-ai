@@ -208,6 +208,39 @@ function renderImagesFromContent(text: string) {
     opacity: 1 !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  .ajxDontPressBtn {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
+    color: #ffffff !important;
+    border-color: rgba(220, 38, 38, 0.35) !important;
+    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
+  }
+
+  .ajxDontPressBtn:hover {
+    transform: translateY(-1px) scale(1.03) !important;
+  }
+
+  .ajxDontPressIcon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .ajxDontPressText {
+    display: none !important;
+  }
+`}</style>
     </div>
   );
 }
@@ -1176,6 +1209,39 @@ function renderPlainRichText(text: string, locale: Locale) {
     opacity: 1 !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  .ajxDontPressBtn {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
+    color: #ffffff !important;
+    border-color: rgba(220, 38, 38, 0.35) !important;
+    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
+  }
+
+  .ajxDontPressBtn:hover {
+    transform: translateY(-1px) scale(1.03) !important;
+  }
+
+  .ajxDontPressIcon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .ajxDontPressText {
+    display: none !important;
+  }
+`}</style>
     </div>
   );
 }
@@ -1283,6 +1349,39 @@ function RichMessage({
     display: inline-flex !important;
     visibility: visible !important;
     opacity: 1 !important;
+  }
+`}</style>
+    
+<style jsx global>{`
+  .ajxDontPressBtn {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
+    color: #ffffff !important;
+    border-color: rgba(220, 38, 38, 0.35) !important;
+    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
+  }
+
+  .ajxDontPressBtn:hover {
+    transform: translateY(-1px) scale(1.03) !important;
+  }
+
+  .ajxDontPressIcon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .ajxDontPressText {
+    display: none !important;
   }
 `}</style>
     </div>
@@ -1814,20 +1913,47 @@ function stressButtonText(locale: Locale): string {
 function dontPressButtonText(locale: Locale): string {
   const seed = Math.floor(Math.random() * 1000000);
 
-  return `Painoit sitten kuitenkin. Hyvä.
-
-Tämä nappi on olemassa siksi, että se rikkoo ajatusloopin. Se ei anna turvallisinta ideaa. Ei tylsintä ideaa. Vaan oudon, yllättävän ja mahdollisesti käyttökelpoisen idean.
-
-🔥 Aivan kreisi idea:
-
-Tee “yllätysdiagnoosi”-kampanja: tarjoa yhdelle mahdolliselle asiakkaalle nopea tarkistus, mutta yhdellä ehdolla: jos löydät jotain kiinnostavaa, saat tehdä siitä nimettömän minitarinan someen.
-
-Älä myy palvelua. Myy löydös.
-
-Kaaosnumero: ${seed}
-
-⚠️ Käyttö omalla vastuulla.
-Tämä on tarkoituksella outo idea. Älä rakenna koko liiketoimintaa tämän varaan. Testaa pienesti ensin.`;
+  return [
+    "Painoit sitten kuitenkin. Hyvä.",
+    "",
+    "Tämä nappi rikkoo ajatusloopin.",
+    "",
+    "Se ei anna turvallisinta ideaa.",
+    "Se ei anna tylsintä ideaa.",
+    "Se antaa oudon, yllättävän ja mahdollisesti käyttökelpoisen idean.",
+    "",
+    "## 🔥 Aivan kreisi idea",
+    "",
+    "Tee **yllätysdiagnoosi-kampanja**.",
+    "",
+    "Tarjoa yhdelle mahdolliselle asiakkaalle nopea tarkistus, mutta yhdellä ehdolla:",
+    "",
+    "jos löydät jotain kiinnostavaa, saat tehdä siitä nimettömän minitarinan someen.",
+    "",
+    "**Älä myy palvelua. Myy löydös.**",
+    "",
+    "Esimerkki:",
+    "",
+    "Kävimme tarkistamassa täysin normaalilta näyttävän kohteen. Tätä emme odottaneet.",
+    "",
+    "## Miksi tämä voi toimia",
+    "",
+    "Ihmiset ohittavat tavalliset mainokset, mutta pysähtyvät tarinoihin, uteliaisuuteen ja pieniin mysteereihin.",
+    "",
+    "## Testaa pienesti",
+    "",
+    "1. Valitse yksi palvelu.",
+    "2. Valitse yksi asiakas tai oikea tapaus.",
+    "3. Tee tuloksesta lyhyt tarina.",
+    "4. Julkaise kevyt versio.",
+    "5. Katso tuleeko viestejä.",
+    "",
+    `Kaaosnumero: ${seed}`,
+    "",
+    "⚠️ **Käyttö omalla vastuulla.**",
+    "",
+    "Tämä on tarkoituksella outo idea. Älä rakenna koko liiketoimintaa tämän varaan. Testaa pienesti ensin."
+  ].join("\n");
 }
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
@@ -7878,7 +8004,6 @@ export default function ChatPage(): React.JSX.Element {
                         disabled={loading}
                       >
                         <span className="ajxDontPressIcon">💣</span>
-                        <span className="ajxDontPressText">älä paina</span>
                       </button>
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
@@ -8428,9 +8553,43 @@ export default function ChatPage(): React.JSX.Element {
     opacity: 1 !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  .ajxDontPressBtn {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
+    color: #ffffff !important;
+    border-color: rgba(220, 38, 38, 0.35) !important;
+    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
+  }
+
+  .ajxDontPressBtn:hover {
+    transform: translateY(-1px) scale(1.03) !important;
+  }
+
+  .ajxDontPressIcon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .ajxDontPressText {
+    display: none !important;
+  }
+`}</style>
     </div>
   );
 }
+
 
 
 
