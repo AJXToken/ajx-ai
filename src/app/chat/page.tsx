@@ -159,6 +159,41 @@ function renderImagesFromContent(text: string) {
           <img src={u} alt="AJX Image" className={styles.inlineImage} />
         </a>
       ))}
+    
+<style jsx global>{`
+  @media (max-width: 980px) {
+    .ajxTopControls {
+      overflow: visible !important;
+      gap: 5px !important;
+    }
+
+    .ajxTopHelp {
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      flex: 0 0 auto !important;
+      order: 3 !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 92px !important;
+      max-width: 132px !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:last-of-type {
+      flex: 0 0 auto !important;
+      max-width: 62px !important;
+    }
+
+    .ajxTopControls .ajxSelect {
+      height: 34px !important;
+      font-size: 12px !important;
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+    }
+  }
+`}</style>
     </div>
   );
 }
@@ -1078,6 +1113,41 @@ function renderPlainRichText(text: string, locale: Locale) {
       }}
     >
       {out}
+    
+<style jsx global>{`
+  @media (max-width: 980px) {
+    .ajxTopControls {
+      overflow: visible !important;
+      gap: 5px !important;
+    }
+
+    .ajxTopHelp {
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      flex: 0 0 auto !important;
+      order: 3 !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 92px !important;
+      max-width: 132px !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:last-of-type {
+      flex: 0 0 auto !important;
+      max-width: 62px !important;
+    }
+
+    .ajxTopControls .ajxSelect {
+      height: 34px !important;
+      font-size: 12px !important;
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+    }
+  }
+`}</style>
     </div>
   );
 }
@@ -1138,6 +1208,41 @@ function RichMessage({
           </div>
         );
       })}
+    
+<style jsx global>{`
+  @media (max-width: 980px) {
+    .ajxTopControls {
+      overflow: visible !important;
+      gap: 5px !important;
+    }
+
+    .ajxTopHelp {
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      flex: 0 0 auto !important;
+      order: 3 !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 92px !important;
+      max-width: 132px !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:last-of-type {
+      flex: 0 0 auto !important;
+      max-width: 62px !important;
+    }
+
+    .ajxTopControls .ajxSelect {
+      height: 34px !important;
+      font-size: 12px !important;
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+    }
+  }
+`}</style>
     </div>
   );
 }
@@ -7413,11 +7518,30 @@ export default function ChatPage(): React.JSX.Element {
               </div>
             </div>
 
-            <div className="ajxTopControls" style={isMobile ? { minWidth: 0, width: "100%", justifyContent: "flex-end", flexWrap: "nowrap", overflow: "hidden", gap: "6px", alignItems: "center" } : undefined}>
+            <div className="ajxTopControls" style={isMobile ? { minWidth: 0, width: "100%", justifyContent: "flex-end", flexWrap: "nowrap", overflow: "visible", gap: "6px", alignItems: "center" } : undefined}>
               <a
                 href={`/help?lang=${locale}`}
                 className="ajxHelpLink ajxTopHelp"
                 title={helpLabel}
+                aria-label={helpLabel}
+                style={
+                  isMobile
+                    ? {
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flex: "0 0 auto",
+                        height: 34,
+                        minWidth: 0,
+                        padding: "0 10px",
+                        borderRadius: 14,
+                        fontSize: 12,
+                        fontWeight: 900,
+                        whiteSpace: "nowrap",
+                        textDecoration: "none",
+                      }
+                    : undefined
+                }
               >
                 {helpLabel}
               </a>
@@ -8188,9 +8312,45 @@ export default function ChatPage(): React.JSX.Element {
           ) : null}
         </div>
       ) : null}
+    
+<style jsx global>{`
+  @media (max-width: 980px) {
+    .ajxTopControls {
+      overflow: visible !important;
+      gap: 5px !important;
+    }
+
+    .ajxTopHelp {
+      display: inline-flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      flex: 0 0 auto !important;
+      order: 3 !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:first-of-type {
+      flex: 1 1 auto !important;
+      min-width: 92px !important;
+      max-width: 132px !important;
+    }
+
+    .ajxTopControls .ajxControlGroup:last-of-type {
+      flex: 0 0 auto !important;
+      max-width: 62px !important;
+    }
+
+    .ajxTopControls .ajxSelect {
+      height: 34px !important;
+      font-size: 12px !important;
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+    }
+  }
+`}</style>
     </div>
   );
 }
+
 
 
 
