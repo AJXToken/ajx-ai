@@ -2860,17 +2860,15 @@ export default function ChatPage(): React.JSX.Element {
       return locale === "fi"
         ? "Tulkinta: kuvan muokkaus"
         : locale === "es"
-          ? "InterpretaciÃ³n: ediciÃ³n de imagen"
+          ? "Interpretación: edición de imagen"
           : "Interpretation: image editing";
     }
-  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
-  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
 
     if (effectiveImageIntent === "analyze") {
       return locale === "fi"
         ? "Tulkinta: kuvan analyysi"
         : locale === "es"
-          ? "InterpretaciÃ³n: anÃ¡lisis de imagen"
+          ? "Interpretación: análisis de imagen"
           : "Interpretation: image analysis";
     }
 
@@ -2880,6 +2878,9 @@ export default function ChatPage(): React.JSX.Element {
         ? "Elige si quieres analizar o editar la imagen"
         : "Choose whether you want to analyze or edit the image";
   }, [effectiveImageIntent, hasPendingImage, locale]);
+
+  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
+  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
 
   const sendDisabled =
     loading ||
@@ -6397,6 +6398,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
