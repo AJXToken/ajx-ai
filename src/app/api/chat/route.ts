@@ -2741,7 +2741,7 @@ async function callGeminiGenerateContent(opts: {
 
   const j: any = await res.json();
   const text =
-    j?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "").join("") ??
+    j?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "") ??
     j?.candidates?.[0]?.content?.parts?.[0]?.text ??
     "";
 
@@ -2821,7 +2821,7 @@ async function* callGeminiStreamGenerateContent(opts: {
         }
 
         const text =
-          evt?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "").join("") ??
+          evt?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "") ??
           evt?.candidates?.[0]?.content?.parts?.[0]?.text ??
           "";
 
@@ -4065,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
