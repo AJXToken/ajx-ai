@@ -3691,7 +3691,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  const primaryProvider = "openai"; throw new Error("force fallback");
+  const primaryProvider = chooseProviderForPlan(plan, plusSavingsStateBeforeCall.activeForThisRequest);
 
   const geminiSelection = geminiModelForRequest({
     plan,
@@ -4065,7 +4065,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
-
 
 
 
