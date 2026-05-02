@@ -4016,7 +4016,7 @@ async function callTextNonStream(): Promise<string> {
   outText = freeLitePrefix(locale) + outText;
 }
 
-outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage); outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4065,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
