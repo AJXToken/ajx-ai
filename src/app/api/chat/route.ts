@@ -2028,14 +2028,10 @@ function chooseProvider(): Provider {
 }
 
 function chooseProviderForPlan(plan: PlanId, plusSavingsActive: boolean): Provider {
-  if (plan === ("plus" as any) && !plusSavingsActive && hasOpenAIKey()) {
-    return "openai";
-  }
-
   if (hasOpenAIKey()) return "openai";
+  if (hasGeminiKey()) return "gemini";
   return "openai";
 }
-
 // ====== CANONICAL LIMITS ======
 type CanonicalLimits = {
   reqPerMonth: number;
@@ -3523,6 +3519,34 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     usageAfter: usage,
   });
 
+  if (
+    plan === ("plus" as any) &&
+    /liiketoimintasuunnitelm|business plan|plan de negocio/i.test(lastTextOriginal) &&
+    String(lastTextOriginal || "").trim().length < 220
+  ) {
+    const text = l(
+      locale,
+      "Teen liiketoimintasuunnitelman, mutta tarvitsen ensin 5 tietoa:\n\n1. Mikä yritys tai idea on kyseessä?\n2. Mitä myyt?\n3. Kenelle myyt?\n4. Missä maassa tai alueella yritys toimii?\n5. Tarvitsetko suunnitelman rahoitusta, omaa käyttöä vai esitystä varten?",
+      "I can create the business plan, but first I need 5 details:\n\n1. What is the business or idea?\n2. What do you sell?\n3. Who do you sell to?\n4. What country or area does the business operate in?\n5. Is the plan for funding, internal use, or presentation?",
+      "Puedo crear el plan de negocio, pero primero necesito 5 datos:\n\n1. ¿Cuál es la empresa o idea?\n2. ¿Qué vendes?\n3. ¿A quién vendes?\n4. ¿En qué país o zona opera?\n5. ¿Es para financiación, uso interno o presentación?"
+    );
+
+    return NextResponse.json(
+      {
+        ok: true,
+        plan,
+        limits: {
+          ...limits,
+          reqPerMonth: effectiveReqLimit,
+          imgAnalysesPerMonth: effectiveImgLimit,
+          webPerMonth: effectiveWebLimit,
+        },
+        usage,
+        text: devScope ? `[DEV DEBUG: provider=local-rule, model=no-model, fallback=none]\n\n${text}` : text,
+      },
+      { status: 200, headers: resHeaders }
+    );
+  }
   if (lastTextOriginal && isModelQuestion(lastTextOriginal)) {
     let text = l(
       locale,
@@ -3948,6 +3972,10 @@ async function callTextNonStream(): Promise<string> {
 
             finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
 
+            if (devScope) {
+              finalText = `[DEV DEBUG: provider=${primaryProvider}, model=${actualModelName}, fallback=${fallbackUsed || "none"}]` + "\n\n" + finalText;
+            }
+
             if (!isUsableModelText(finalText)) {
               throw new Error("Vastaus jÃ¤i tyhjÃ¤ksi jÃ¤lkikÃ¤sittelyn jÃ¤lkeen.");
             }
@@ -4016,7 +4044,11 @@ async function callTextNonStream(): Promise<string> {
   outText = freeLitePrefix(locale) + outText;
 }
 
-outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage); outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
+outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+
+if (devScope) {
+  outText = `[DEV DEBUG: provider=${primaryProvider}, model=${actualModelName}, fallback=${fallbackUsed || "none"}]` + "\n\n" + outText;
+} outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4065,6 +4097,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
