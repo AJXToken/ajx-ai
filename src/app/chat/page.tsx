@@ -241,6 +241,40 @@ function renderImagesFromContent(text: string) {
     display: none !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== AJX FINAL TEXT WRAP FIX ===== */
+  .ajxParagraph,
+  .ajxQuestionList,
+  .ajxQuestionRow,
+  .ajxManualOrderedList,
+  .ajxManualOrderedRow,
+  .ajxHeadingBlock,
+  .ajxSummaryText,
+  .ajxOutputBox,
+  .ajxOutputBody,
+  .ajxRichList,
+  .ajxRichList li,
+  .ajxCodeBlockWrap,
+  .ajxMessage,
+  .ajxMessage *,
+  [class*="bubbleText"],
+  [class*="bubbleText"] * {
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ajxCodePre,
+  .ajxCodePre code {
+    white-space: pre-wrap !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+`}</style>
+
     </div>
   );
 }
@@ -841,8 +875,8 @@ function renderPlainRichText(text: string, locale: Locale) {
           lineHeight: 1.72,
           maxWidth: "100%",
           minWidth: 0,
-          overflowWrap: "anywhere",
-          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          wordBreak: "normal",
         }}
       >
         {renderInlineFormatting(paragraphText)}
@@ -912,8 +946,8 @@ function renderPlainRichText(text: string, locale: Locale) {
               fontWeight: 700,
               maxWidth: "100%",
               minWidth: 0,
-              overflowWrap: "anywhere",
-              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "normal",
             }}
           >
             {renderInlineFormatting(line.replace(/^[^:]+:\s*/, ""))}
@@ -966,8 +1000,8 @@ function renderPlainRichText(text: string, locale: Locale) {
               lineHeight: 1.35,
               maxWidth: "100%",
               minWidth: 0,
-              overflowWrap: "anywhere",
-              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              wordBreak: "normal",
             }}
           >
             {renderInlineFormatting(cleanHeadingText(line))}
@@ -1005,8 +1039,8 @@ function renderPlainRichText(text: string, locale: Locale) {
               key={idx}
               style={{
                 margin: "0 0 6px 0",
-                overflowWrap: "anywhere",
-                wordBreak: "break-word",
+                overflowWrap: "break-word",
+                wordBreak: "normal",
               }}
             >
               {renderInlineFormatting(item)}
@@ -1081,7 +1115,7 @@ function renderPlainRichText(text: string, locale: Locale) {
               }}
             >
               <span style={{ fontWeight: 950, color: "#15803d" }}>{idx + 1}.</span>
-              <span style={{ minWidth: 0, overflowWrap: "anywhere", wordBreak: "break-word", whiteSpace: "pre-wrap" }}>
+              <span style={{ minWidth: 0, overflowWrap: "break-word", wordBreak: "normal", whiteSpace: "pre-wrap" }}>
                 {renderInlineFormatting(item)}
               </span>
             </div>
@@ -1129,8 +1163,8 @@ function renderPlainRichText(text: string, locale: Locale) {
                   fontWeight: 700,
                   maxWidth: "100%",
                   minWidth: 0,
-                  overflowWrap: "anywhere",
-                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  wordBreak: "normal",
                 }}
               >
                 {renderInlineFormatting(`${idx + 1}. ${item}`)}
@@ -1155,8 +1189,8 @@ function renderPlainRichText(text: string, locale: Locale) {
       style={{
         minWidth: 0,
         maxWidth: "100%",
-        overflowWrap: "anywhere",
-        wordBreak: "break-word",
+        overflowWrap: "break-word",
+        wordBreak: "normal",
       }}
     >
       {out}
@@ -1242,6 +1276,40 @@ function renderPlainRichText(text: string, locale: Locale) {
     display: none !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== AJX FINAL TEXT WRAP FIX ===== */
+  .ajxParagraph,
+  .ajxQuestionList,
+  .ajxQuestionRow,
+  .ajxManualOrderedList,
+  .ajxManualOrderedRow,
+  .ajxHeadingBlock,
+  .ajxSummaryText,
+  .ajxOutputBox,
+  .ajxOutputBody,
+  .ajxRichList,
+  .ajxRichList li,
+  .ajxCodeBlockWrap,
+  .ajxMessage,
+  .ajxMessage *,
+  [class*="bubbleText"],
+  [class*="bubbleText"] * {
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ajxCodePre,
+  .ajxCodePre code {
+    white-space: pre-wrap !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1264,8 +1332,8 @@ function RichMessage({
       style={{
         minWidth: 0,
         maxWidth: "100%",
-        overflowWrap: "anywhere",
-        wordBreak: "break-word",
+        overflowWrap: "break-word",
+        wordBreak: "normal",
       }}
     >
       {segments.map((segment, idx) => {
@@ -1384,6 +1452,40 @@ function RichMessage({
     display: none !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== AJX FINAL TEXT WRAP FIX ===== */
+  .ajxParagraph,
+  .ajxQuestionList,
+  .ajxQuestionRow,
+  .ajxManualOrderedList,
+  .ajxManualOrderedRow,
+  .ajxHeadingBlock,
+  .ajxSummaryText,
+  .ajxOutputBox,
+  .ajxOutputBody,
+  .ajxRichList,
+  .ajxRichList li,
+  .ajxCodeBlockWrap,
+  .ajxMessage,
+  .ajxMessage *,
+  [class*="bubbleText"],
+  [class*="bubbleText"] * {
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ajxCodePre,
+  .ajxCodePre code {
+    white-space: pre-wrap !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+`}</style>
+
     </div>
   );
 }
@@ -2631,8 +2733,8 @@ export default function ChatPage(): React.JSX.Element {
             whiteSpace: "pre-wrap",
             maxWidth: "100%",
             minWidth: 0,
-            overflowWrap: "anywhere",
-            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            wordBreak: "normal",
           }}
         >
           {stripped || ""}
@@ -8586,9 +8688,44 @@ export default function ChatPage(): React.JSX.Element {
     display: none !important;
   }
 `}</style>
+    
+<style jsx global>{`
+  /* ===== AJX FINAL TEXT WRAP FIX ===== */
+  .ajxParagraph,
+  .ajxQuestionList,
+  .ajxQuestionRow,
+  .ajxManualOrderedList,
+  .ajxManualOrderedRow,
+  .ajxHeadingBlock,
+  .ajxSummaryText,
+  .ajxOutputBox,
+  .ajxOutputBody,
+  .ajxRichList,
+  .ajxRichList li,
+  .ajxCodeBlockWrap,
+  .ajxMessage,
+  .ajxMessage *,
+  [class*="bubbleText"],
+  [class*="bubbleText"] * {
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .ajxCodePre,
+  .ajxCodePre code {
+    white-space: pre-wrap !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+`}</style>
+
     </div>
   );
 }
+
 
 
 
