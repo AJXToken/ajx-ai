@@ -1181,6 +1181,7 @@ function buildFormattingInstruction(opts: {
     "- Never flatten the whole answer into one dense paragraph.",
     "- Keep each bullet on its own line.",
     "- Keep each numbered item on its own line.",
+    "- When asking questions, do NOT use numbered lists. Use simple bullet lines instead.",
     "- If you use a heading, keep the whole heading on one line.",
     "- Do not insert random line breaks inside one sentence or inside a heading.",
     "- When writing code, always use fenced code blocks with the correct language tag.",
@@ -4097,6 +4098,7 @@ if (devScope) {
     );
   }
 }
+
 
 
 
