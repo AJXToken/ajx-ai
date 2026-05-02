@@ -3814,7 +3814,42 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     });
   }
 
-  async function callTextNonStream(): Promise<string> {
+  
+async function callViaGeminiLiteNonStream(): Promise<string> {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY puuttuu (.env.local).");
+  }
+
+  actualModelName = GEMINI_FLASH_LITE_MODEL;
+  resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
+
+  return await callGeminiGenerateContent({
+    apiKey: process.env.GEMINI_API_KEY,
+    model: GEMINI_FLASH_LITE_MODEL,
+    promptText: ${instructions} + "\n\n---\n\n" + ${inputText},
+    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
+    maxOutputTokens,
+  });
+}
+
+async function* callViaGeminiLiteStream(): AsyncGenerator<string> {
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error("GEMINI_API_KEY puuttuu (.env.local).");
+  }
+
+  actualModelName = GEMINI_FLASH_LITE_MODEL;
+  resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
+
+  yield* callGeminiStreamGenerateContent({
+    apiKey: process.env.GEMINI_API_KEY,
+    model: GEMINI_FLASH_LITE_MODEL,
+    promptText: ${instructions} + "\n\n---\n\n" + ${inputText},
+    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
+    maxOutputTokens,
+  });
+}
+
+async function callTextNonStream(): Promise<string> {
     if (primaryProvider === "gemini") {
       try {
         return await callViaGeminiNonStream();
@@ -4030,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
