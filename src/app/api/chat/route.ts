@@ -3726,7 +3726,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     );
   }
 
-  resHeaders.set("x-ajx-debug-primary-provider", safeHeaderValue(primaryProvider));
+  resHeaders.set("x-ajx-debug-primary-provider", primaryProvider); console.log("PROVIDER:", primaryProvider);
   resHeaders.set("x-ajx-debug-requested-model", safeHeaderValue(requestedModelName));
   resHeaders.set("x-ajx-debug-company-pro-needed", String(geminiSelection.companyNeedsPro));
   resHeaders.set("x-ajx-debug-company-pro-available", String(geminiSelection.companyCanUsePro));
@@ -4065,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
