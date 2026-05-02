@@ -3543,7 +3543,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
           webPerMonth: effectiveWebLimit,
         },
         usage,
-        text: devScope ? `[DEV DEBUG: provider=local-rule, model=no-model, fallback=none]\n\n${text}` : text,
+        text,
       },
       { status: 200, headers: resHeaders }
     );
@@ -3973,10 +3973,6 @@ async function callTextNonStream(): Promise<string> {
 
             finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
 
-            if (devScope) {
-              finalText = `[DEV DEBUG: provider=${primaryProvider}, model=${actualModelName}, fallback=${fallbackUsed || "none"}]` + "\n\n" + finalText;
-            }
-
             if (!isUsableModelText(finalText)) {
               throw new Error("Vastaus jÃ¤i tyhjÃ¤ksi jÃ¤lkikÃ¤sittelyn jÃ¤lkeen.");
             }
@@ -4045,11 +4041,7 @@ async function callTextNonStream(): Promise<string> {
   outText = freeLitePrefix(locale) + outText;
 }
 
-outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
-
-if (devScope) {
-  outText = `[DEV DEBUG: provider=${primaryProvider}, model=${actualModelName}, fallback=${fallbackUsed || "none"}]` + "\n\n" + outText;
-} outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
+outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage); outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4098,6 +4090,7 @@ if (devScope) {
     );
   }
 }
+
 
 
 
