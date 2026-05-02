@@ -2027,6 +2027,15 @@ function chooseProvider(): Provider {
   return "openai";
 }
 
+function chooseProviderForPlan(plan: PlanId, plusSavingsActive: boolean): Provider {
+  if (plan === ("plus" as any) && !plusSavingsActive && hasOpenAIKey()) {
+    return "openai";
+  }
+
+  if (hasGeminiKey()) return "gemini";
+  return "openai";
+}
+
 // ====== CANONICAL LIMITS ======
 type CanonicalLimits = {
   reqPerMonth: number;
@@ -3682,7 +3691,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  const primaryProvider = chooseProvider();
+  const primaryProvider = chooseProviderForPlan(plan, plusSavingsStateBeforeCall.activeForThisRequest);
 
   const geminiSelection = geminiModelForRequest({
     plan,
@@ -3717,6 +3726,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     );
   }
 
+  resHeaders.set("x-ajx-debug-primary-provider", safeHeaderValue(primaryProvider));
   resHeaders.set("x-ajx-debug-requested-model", safeHeaderValue(requestedModelName));
   resHeaders.set("x-ajx-debug-company-pro-needed", String(geminiSelection.companyNeedsPro));
   resHeaders.set("x-ajx-debug-company-pro-available", String(geminiSelection.companyCanUsePro));
@@ -4020,6 +4030,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
