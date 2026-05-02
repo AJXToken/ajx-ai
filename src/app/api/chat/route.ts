@@ -2028,9 +2028,10 @@ function chooseProvider(): Provider {
 }
 
 function chooseProviderForPlan(plan: PlanId, plusSavingsActive: boolean): Provider {
-  if (plan === ("plus" as any) && !plusSavingsActive && hasOpenAIKey()) {
-    return "openai";
-  }
+  if (hasOpenAIKey()) return "openai";
+  if (hasGeminiKey()) return "gemini";
+  return "openai";
+}
 
   if (hasGeminiKey()) return "gemini";
   return "openai";
@@ -4065,6 +4066,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
