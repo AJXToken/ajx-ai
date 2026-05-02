@@ -2023,7 +2023,7 @@ function hasOpenAIKey() {
   return !!process.env.OPENAI_API_KEY;
 }
 function chooseProvider(): Provider {
-  if (hasGeminiKey()) return "gemini";
+  if (hasOpenAIKey()) return "openai";
   return "openai";
 }
 
@@ -2032,7 +2032,7 @@ function chooseProviderForPlan(plan: PlanId, plusSavingsActive: boolean): Provid
     return "openai";
   }
 
-  if (hasGeminiKey()) return "gemini";
+  if (hasOpenAIKey()) return "openai";
   return "openai";
 }
 
@@ -4065,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
