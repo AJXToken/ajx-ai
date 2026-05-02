@@ -4037,7 +4037,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
           webPerMonth: effectiveWebLimit,
         },
         usage,
-        text: String(outText || ""),
+        text: "[PROVIDER: " + primaryProvider + "]\n\n" + String(outText || ""),
         web: {
           requested: shouldTryWeb,
           didWeb,
@@ -4065,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
