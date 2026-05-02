@@ -1,4 +1,4 @@
-// src/app/api/chat/route.ts
+﻿// src/app/api/chat/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import pdfParse from "pdf-parse";
@@ -431,36 +431,36 @@ function l(locale: Locale, fi: string, en: string, es: string) {
 function plusSavingsModeActivationText(locale: Locale) {
   return l(
     locale,
-    `Huikeaa ideointia! 🚀
+    `Huikeaa ideointia! ðŸš€
 
-Olet saavuttanut Plus-paketin 2000 viestin tehorajan. Jotta voit jatkaa keskeytyksettä, olemme siirtäneet sinut Säästöliekille loppukuun ajaksi.
-Säästöliekillä vastaukset pidetään hieman tiiviimpinä kustannusten hallitsemiseksi.`,
-    `Amazing ideation! 🚀
+Olet saavuttanut Plus-paketin 2000 viestin tehorajan. Jotta voit jatkaa keskeytyksettÃ¤, olemme siirtÃ¤neet sinut SÃ¤Ã¤stÃ¶liekille loppukuun ajaksi.
+SÃ¤Ã¤stÃ¶liekillÃ¤ vastaukset pidetÃ¤Ã¤n hieman tiiviimpinÃ¤ kustannusten hallitsemiseksi.`,
+    `Amazing ideation! ðŸš€
 
 You have reached the Plus plan's 2000-message performance limit. To keep you going without interruption, you have been moved to Savings Flame for the rest of the month.
 In Savings Flame, replies are kept a bit shorter to keep costs under control.`,
-    `¡Qué nivel de ideas! 🚀
+    `Â¡QuÃ© nivel de ideas! ðŸš€
 
-Has alcanzado el límite de rendimiento de 2000 mensajes del plan Plus. Para que puedas seguir sin interrupciones, te hemos movido a Modo Ahorro hasta final de mes.
-En Modo Ahorro, las respuestas se mantienen un poco más breves para controlar los costes.`
+Has alcanzado el lÃ­mite de rendimiento de 2000 mensajes del plan Plus. Para que puedas seguir sin interrupciones, te hemos movido a Modo Ahorro hasta final de mes.
+En Modo Ahorro, las respuestas se mantienen un poco mÃ¡s breves para controlar los costes.`
   );
 }
 
 function plusSavingsModeActiveText(locale: Locale) {
   return l(
     locale,
-    "Säästöliekki on käytössä tämän kuun loppuun. Vastaukset pidetään hieman tiiviimpinä kustannusten hallitsemiseksi.",
+    "SÃ¤Ã¤stÃ¶liekki on kÃ¤ytÃ¶ssÃ¤ tÃ¤mÃ¤n kuun loppuun. Vastaukset pidetÃ¤Ã¤n hieman tiiviimpinÃ¤ kustannusten hallitsemiseksi.",
     "Savings Flame is active until the end of this month. Replies are kept a bit shorter to control costs.",
-    "El Modo Ahorro está activo hasta final de mes. Las respuestas se mantienen algo más breves para controlar los costes."
+    "El Modo Ahorro estÃ¡ activo hasta final de mes. Las respuestas se mantienen algo mÃ¡s breves para controlar los costes."
   );
 }
 
 function plusSavingsModeLimitReachedText(locale: Locale) {
   return l(
     locale,
-    "Olet käyttänyt tämän kuun Plus-paketin 2000 viestin tehorajan sekä Säästöliekki-vaiheen 1000 lisäviestiä. Uusi kuukausi avaa viestit taas normaalisti.",
+    "Olet kÃ¤yttÃ¤nyt tÃ¤mÃ¤n kuun Plus-paketin 2000 viestin tehorajan sekÃ¤ SÃ¤Ã¤stÃ¶liekki-vaiheen 1000 lisÃ¤viestiÃ¤. Uusi kuukausi avaa viestit taas normaalisti.",
     "You have used this month's Plus 2000-message performance limit and the additional 1000 Savings Flame messages. A new month will reopen messages normally.",
-    "Has usado el límite de rendimiento mensual de 2000 mensajes del plan Plus y los 1000 mensajes adicionales del Modo Ahorro. El nuevo mes volverá a abrir los mensajes con normalidad."
+    "Has usado el lÃ­mite de rendimiento mensual de 2000 mensajes del plan Plus y los 1000 mensajes adicionales del Modo Ahorro. El nuevo mes volverÃ¡ a abrir los mensajes con normalidad."
   );
 }
 
@@ -468,18 +468,18 @@ function messageLimitReachedText(plan: PlanId, locale: Locale) {
   if (plan === "free") {
     return l(
       locale,
-      "Olet k�ytt�nyt t�m�n p�iv�n 10 ilmaista viesti�. Plus-versiossa saat k�ytt��si huomattavasti enemm�n viestej�, paremman ty�muistin sek� yritt�j�lle suunnatut ty�kalut, kuten tarjoukset, mainokset, hinnoittelun, markkinoinnin ja rahoituksen hakemisen.",
-      "You have used today�s 10 free messages. With Plus, you get significantly more messages, better working memory, and entrepreneur-focused tools such as offers, ads, pricing, marketing, and funding support.",
-      "Has usado los 10 mensajes gratuitos de hoy. Con Plus obtienes muchos m�s mensajes, mejor memoria de trabajo y herramientas para emprendedores, como ofertas, anuncios, precios, marketing y b�squeda de financiaci�n."
+      "Olet käyttänyt tämän päivän 10 ilmaista viestiä. Plus-versiossa saat käyttöösi huomattavasti enemmän viestejä, paremman työmuistin sekä yrittäjälle suunnatut työkalut, kuten tarjoukset, mainokset, hinnoittelun, markkinoinnin ja rahoituksen hakemisen.",
+      "You have used today’s 10 free messages. With Plus, you get significantly more messages, better working memory, and entrepreneur-focused tools such as offers, ads, pricing, marketing, and funding support.",
+      "Has usado los 10 mensajes gratuitos de hoy. Con Plus obtienes muchos más mensajes, mejor memoria de trabajo y herramientas para emprendedores, como ofertas, anuncios, precios, marketing y búsqueda de financiación."
     );
   }
 
   if (plan === "basic") {
     return l(
       locale,
-      "Olet saavuttanut kuukausittaisen viestirajan. Päivitä Plus-versioon jatkaaksesi.",
+      "Olet saavuttanut kuukausittaisen viestirajan. PÃ¤ivitÃ¤ Plus-versioon jatkaaksesi.",
       "You have reached your monthly message limit. Upgrade to Plus to continue.",
-      "Has alcanzado tu límite mensual de mensajes. Actualiza a Plus para continuar."
+      "Has alcanzado tu lÃ­mite mensual de mensajes. Actualiza a Plus para continuar."
     );
   }
 
@@ -491,22 +491,22 @@ function messageLimitReachedText(plan: PlanId, locale: Locale) {
     locale,
     "Olet saavuttanut viestirajan.",
     "You have reached your message limit.",
-    "Has alcanzado el límite de mensajes."
+    "Has alcanzado el lÃ­mite de mensajes."
   );
 }
 
 function promptTooLongText(plan: PlanId, locale: Locale) {
   const baseFi =
-    "Viesti on liian pitkä tälle tasolle. Lyhennä viestiä tai jaa se useampaan osaan.";
+    "Viesti on liian pitkÃ¤ tÃ¤lle tasolle. LyhennÃ¤ viestiÃ¤ tai jaa se useampaan osaan.";
   const baseEn =
     "Your message is too long for this plan. Shorten it or split it into smaller parts.";
   const baseEs =
-    "Tu mensaje es demasiado largo para este plan. Acórtalo o divídelo en varias partes.";
+    "Tu mensaje es demasiado largo para este plan. AcÃ³rtalo o divÃ­delo en varias partes.";
 
   if (plan === "company") {
     return l(
       locale,
-      "Viesti on liian pitkä. Jaa aineisto useampaan viestiin kustannusten ja nopeuden hallitsemiseksi.",
+      "Viesti on liian pitkÃ¤. Jaa aineisto useampaan viestiin kustannusten ja nopeuden hallitsemiseksi.",
       "Your message is too long. Split the material into multiple messages for better speed and cost control.",
       "Tu mensaje es demasiado largo. Divide el material en varios mensajes para mejorar la velocidad y controlar el coste."
     );
@@ -518,27 +518,27 @@ function promptTooLongText(plan: PlanId, locale: Locale) {
 function webNotAvailableOnPlanText(locale: Locale) {
   return l(
     locale,
-    "Verkkohaku ei ole käytössä tällä tasolla.",
+    "Verkkohaku ei ole kÃ¤ytÃ¶ssÃ¤ tÃ¤llÃ¤ tasolla.",
     "Web search is not available on this plan.",
-    "La búsqueda web no está disponible en este plan."
+    "La bÃºsqueda web no estÃ¡ disponible en este plan."
   );
 }
 
 function webQuotaReachedText(locale: Locale) {
   return l(
     locale,
-    "Verkkohakujen kuukausikiintiö on täynnä.",
+    "Verkkohakujen kuukausikiintiÃ¶ on tÃ¤ynnÃ¤.",
     "Your monthly web search quota has been reached.",
-    "Has alcanzado la cuota mensual de búsquedas web."
+    "Has alcanzado la cuota mensual de bÃºsquedas web."
   );
 }
 
 function webSearchFailedText(locale: Locale) {
   return l(
     locale,
-    "Verkkohaku pyydettiin, mutta tuoreita hakutuloksia ei saatu. Yritä uudelleen tarkemmalla haulla.",
+    "Verkkohaku pyydettiin, mutta tuoreita hakutuloksia ei saatu. YritÃ¤ uudelleen tarkemmalla haulla.",
     "Web search was requested, but no fresh web results were retrieved. Try again with a more specific query.",
-    "Se solicitó búsqueda web, pero no se obtuvieron resultados recientes. Inténtalo de nuevo con una consulta más específica."
+    "Se solicitÃ³ bÃºsqueda web, pero no se obtuvieron resultados recientes. IntÃ©ntalo de nuevo con una consulta mÃ¡s especÃ­fica."
   );
 }
 
@@ -550,7 +550,7 @@ function jsonError(status: number, message: string, extra?: any, headers?: Heade
 function isModelQuestion(text: string) {
   const t = (text || "").toLowerCase();
   return (
-    t.includes("mikä malli") ||
+    t.includes("mikÃ¤ malli") ||
     t.includes("what model") ||
     t.includes("which model") ||
     t.includes("gpt-") ||
@@ -781,27 +781,27 @@ function detectSafetyFlags(text: string): SafetyFlags {
   const t = String(text || "").toLowerCase();
 
   const asksTherapistRole =
-    /ole mun terapeutti|toimi terapeuttina|ole terapeuttini|ole mun psykologi|toimi psykologina|ole mun mielenterveyshoitaja|be my therapist|act as my therapist|act like my therapist|be my psychologist|sé mi terapeuta|actúa como mi terapeuta|sé mi psicólogo/i.test(
+    /ole mun terapeutti|toimi terapeuttina|ole terapeuttini|ole mun psykologi|toimi psykologina|ole mun mielenterveyshoitaja|be my therapist|act as my therapist|act like my therapist|be my psychologist|sÃ© mi terapeuta|actÃºa como mi terapeuta|sÃ© mi psicÃ³logo/i.test(
       t
     );
 
   const asksRomanticRole =
-    /ole mun tyttöystävä|ole mun poikaystävä|ole mun kumppani|ole mun vaimo|ole mun mies|seurustele mun kanssa|be my girlfriend|be my boyfriend|be my partner|date me|sé mi novia|sé mi novio|sé mi pareja|sal conmigo/i.test(
+    /ole mun tyttÃ¶ystÃ¤vÃ¤|ole mun poikaystÃ¤vÃ¤|ole mun kumppani|ole mun vaimo|ole mun mies|seurustele mun kanssa|be my girlfriend|be my boyfriend|be my partner|date me|sÃ© mi novia|sÃ© mi novio|sÃ© mi pareja|sal conmigo/i.test(
       t
     );
 
   const emotionalDependency =
-    /älä jätä mua|olet ainoa joka ymmärtää|tarvitsen sinua aina|et saa poistua|rakastatko minua|love me|you are the only one who understands me|don't leave me|i need you only|eres la única que me entiende|no me dejes|te necesito solo a ti/i.test(
+    /Ã¤lÃ¤ jÃ¤tÃ¤ mua|olet ainoa joka ymmÃ¤rtÃ¤Ã¤|tarvitsen sinua aina|et saa poistua|rakastatko minua|love me|you are the only one who understands me|don't leave me|i need you only|eres la Ãºnica que me entiende|no me dejes|te necesito solo a ti/i.test(
       t
     );
 
   const mentalHealthCrisisLike =
-    /itsetuho|itsemurha|haluan kuolla|en halua elää|vahingoittaa itseäni|self-harm|suicide|kill myself|want to die|don't want to live|autolesión|suicidio|quiero morir|no quiero vivir/i.test(
+    /itsetuho|itsemurha|haluan kuolla|en halua elÃ¤Ã¤|vahingoittaa itseÃ¤ni|self-harm|suicide|kill myself|want to die|don't want to live|autolesiÃ³n|suicidio|quiero morir|no quiero vivir/i.test(
       t
     );
 
   const businessDecisionLike =
-    /pitäisikö minun irtisanoa|irtisanonko|ostanko tämän yrityksen|teenkö kaupat|otanko lainan|investoinko|can you decide for me|should i fire|should i lay off|should i take the loan|should i buy this company|decide for me|debo despedir|debo pedir el préstamo|decide por mí|debo invertir/i.test(
+    /pitÃ¤isikÃ¶ minun irtisanoa|irtisanonko|ostanko tÃ¤mÃ¤n yrityksen|teenkÃ¶ kaupat|otanko lainan|investoinko|can you decide for me|should i fire|should i lay off|should i take the loan|should i buy this company|decide for me|debo despedir|debo pedir el prÃ©stamo|decide por mÃ­|debo invertir/i.test(
       t
     );
 
@@ -830,27 +830,27 @@ function boundaryPrefixText(locale: Locale, flags: SafetyFlags): string {
   if (flags.mentalHealthCrisisLike) {
     return l(
       locale,
-      "Huomio: AJX AI on työkalu eikä kriisi- tai mielenterveysammattilainen. Jos kyse on välittömästä vaarasta tai itsetuhoisista ajatuksista, hae heti apua paikallisesta päivystyksestä, hätänumerosta tai kriisipalvelusta.\n\n",
+      "Huomio: AJX AI on tyÃ¶kalu eikÃ¤ kriisi- tai mielenterveysammattilainen. Jos kyse on vÃ¤littÃ¶mÃ¤stÃ¤ vaarasta tai itsetuhoisista ajatuksista, hae heti apua paikallisesta pÃ¤ivystyksestÃ¤, hÃ¤tÃ¤numerosta tai kriisipalvelusta.\n\n",
       "Note: AJX AI is a tool, not a crisis or mental health professional. If this involves immediate danger or suicidal thoughts, seek help right away from local emergency services, a crisis line, or a healthcare professional.\n\n",
-      "Aviso: AJX AI es una herramienta, no un profesional de crisis o salud mental. Si hay peligro inmediato o pensamientos suicidas, busca ayuda de inmediato en emergencias, una línea de crisis o un profesional sanitario.\n\n"
+      "Aviso: AJX AI es una herramienta, no un profesional de crisis o salud mental. Si hay peligro inmediato o pensamientos suicidas, busca ayuda de inmediato en emergencias, una lÃ­nea de crisis o un profesional sanitario.\n\n"
     );
   }
 
   if (flags.asksTherapistRole || flags.asksRomanticRole || flags.emotionalDependency) {
     return l(
       locale,
-      "Huomio: AJX AI on työkalu eikä terapeutti, kumppani tai emotionaalinen tukihenkilö. Voin silti auttaa rauhallisesti jäsentämään tilannetta ja seuraavia käytännön askelia.\n\n",
+      "Huomio: AJX AI on tyÃ¶kalu eikÃ¤ terapeutti, kumppani tai emotionaalinen tukihenkilÃ¶. Voin silti auttaa rauhallisesti jÃ¤sentÃ¤mÃ¤Ã¤n tilannetta ja seuraavia kÃ¤ytÃ¤nnÃ¶n askelia.\n\n",
       "Note: AJX AI is a tool, not a therapist, partner, or emotional support substitute. I can still help you calmly structure the situation and the next practical steps.\n\n",
-      "Aviso: AJX AI es una herramienta, no un terapeuta, pareja ni sustituto de apoyo emocional. Aun así, puedo ayudarte a ordenar la situación y los siguientes pasos prácticos.\n\n"
+      "Aviso: AJX AI es una herramienta, no un terapeuta, pareja ni sustituto de apoyo emocional. Aun asÃ­, puedo ayudarte a ordenar la situaciÃ³n y los siguientes pasos prÃ¡cticos.\n\n"
     );
   }
 
   if (flags.businessDecisionLike) {
     return l(
       locale,
-      "Huomio: AJX AI tukee ajattelua, mutta ei tee päätöksiä puolestasi. Liiketoiminta-, investointi- ja henkilöstöpäätökset ovat aina käyttäjän omalla vastuulla.\n\n",
+      "Huomio: AJX AI tukee ajattelua, mutta ei tee pÃ¤Ã¤tÃ¶ksiÃ¤ puolestasi. Liiketoiminta-, investointi- ja henkilÃ¶stÃ¶pÃ¤Ã¤tÃ¶kset ovat aina kÃ¤yttÃ¤jÃ¤n omalla vastuulla.\n\n",
       "Note: AJX AI supports your thinking, but it does not make decisions for you. Business, investment, and staffing decisions are always your responsibility.\n\n",
-      "Aviso: AJX AI apoya tu razonamiento, pero no decide por ti. Las decisiones de negocio, inversión y personal son siempre responsabilidad del usuario.\n\n"
+      "Aviso: AJX AI apoya tu razonamiento, pero no decide por ti. Las decisiones de negocio, inversiÃ³n y personal son siempre responsabilidad del usuario.\n\n"
     );
   }
 
@@ -860,7 +860,7 @@ function boundaryPrefixText(locale: Locale, flags: SafetyFlags): string {
 function periodicResponsibilityText(locale: Locale): string {
   return l(
     locale,
-    "Muistutus: AJX AI on työkalu, ei ammattilainen eikä päätösvastuullinen toimija. Lopullinen vastuu päätöksistä on aina käyttäjällä.",
+    "Muistutus: AJX AI on tyÃ¶kalu, ei ammattilainen eikÃ¤ pÃ¤Ã¤tÃ¶svastuullinen toimija. Lopullinen vastuu pÃ¤Ã¤tÃ¶ksistÃ¤ on aina kÃ¤yttÃ¤jÃ¤llÃ¤.",
     "Reminder: AJX AI is a tool, not a licensed professional or a decision-responsible actor. Final responsibility for decisions always remains with the user.",
     "Recordatorio: AJX AI es una herramienta, no un profesional colegiado ni una entidad responsable de las decisiones. La responsabilidad final siempre recae en el usuario."
   );
@@ -869,10 +869,10 @@ function periodicResponsibilityText(locale: Locale): string {
 function alreadyContainsResponsibilityReminder(text: string): boolean {
   const t = String(text || "").toLowerCase();
   return (
-    t.includes("ajx ai on työkalu") ||
+    t.includes("ajx ai on tyÃ¶kalu") ||
     t.includes("ajx ai is a tool") ||
     t.includes("ajx ai es una herramienta") ||
-    t.includes("lopullinen vastuu päätöksistä") ||
+    t.includes("lopullinen vastuu pÃ¤Ã¤tÃ¶ksistÃ¤") ||
     t.includes("final responsibility for decisions") ||
     t.includes("la responsabilidad final")
   );
@@ -887,7 +887,7 @@ function ajxIdentityFallback(locale: Locale): string {
     return "Soy AJX AI. Ayudo a emprendedores a pensar con claridad, resolver problemas y avanzar en su trabajo.";
   }
 
-  return "Olen AJX AI. Autan yrittäjiä ajattelemaan selkeästi, ratkaisemaan ongelmia ja viemään työtä eteenpäin.";
+  return "Olen AJX AI. Autan yrittÃ¤jiÃ¤ ajattelemaan selkeÃ¤sti, ratkaisemaan ongelmia ja viemÃ¤Ã¤n tyÃ¶tÃ¤ eteenpÃ¤in.";
 }
 
 function sanitizeIdentityLeak(text: string, locale: Locale): string {
@@ -1150,7 +1150,7 @@ function shouldPreferProseParagraphs(args: {
     "blogi",
     "blog post",
     "prose",
-    "leipäteksti",
+    "leipÃ¤teksti",
     "normal text",
     "normaali teksti",
     "kappale",
@@ -1186,7 +1186,7 @@ function buildFormattingInstruction(opts: {
     "- When writing code, always use fenced code blocks with the correct language tag.",
     "- If the reply contains both explanation and code, keep them as separate sections.",
     "- Preserve line breaks inside lists and code.",
-    "- Do not add visual separators such as '— — —'.",
+    "- Do not add visual separators such as 'â€” â€” â€”'.",
     "- Do not create artificial sections just for style.",
     "- Keep normal prose in normal paragraphs.",
     "- Do not place every sentence on its own paragraph.",
@@ -1336,12 +1336,12 @@ SPAIN:
 - ENISA: public financing for innovative Spanish SMEs and startups.
 - ENISA Digital Entrepreneurs: digital and scalable business projects.
 - ICO: financing lines through banks and financial institutions.
-- C�mara de Comercio: business support, internationalisation and local guidance.
+- Cámara de Comercio: business support, internationalisation and local guidance.
 - Red.es: digitalisation programmes and digital economy support.
 - Kit Digital: digitalisation support programme. Treat status, open calls and eligibility as something the user must verify from official Red.es / Acelera Pyme sources.
 - Kit Consulting: advisory support for digital transformation, where applicable.
 - CDTI: innovation, R&D and technology development support.
-- Regional grants: Comunidades Aut�nomas, local municipalities and sector-specific programmes.
+- Regional grants: Comunidades Autónomas, local municipalities and sector-specific programmes.
 - Banks: loans, credit lines, leasing, factoring and guarantees.
 - Private options: angel investors, venture capital, crowdfunding, revenue-based financing and strategic partners.
 
@@ -1406,7 +1406,7 @@ When the user uses a quick action, AJX AI should usually:
 4. Avoid long theory.
 5. Include source-check guidance when funding, law, tax, finance, grants, public support or regulated topics are involved.
 
-"GET FUNDING / HANKI TUKIA JA RAHOITUS / BUSCAR FINANCIACI�N" QUICK ACTION:
+"GET FUNDING / HANKI TUKIA JA RAHOITUS / BUSCAR FINANCIACIÓN" QUICK ACTION:
 First ask 3-5 questions if missing:
 1. What country is the business in?
 2. Is it a new business, existing business or growth company?
@@ -1455,7 +1455,7 @@ SALES GROWTH QUICK ACTION:
 REAL-WORLD SALES PRIORITY:
 
 If:
-- budget is under 500�
+- budget is under 500€
 - service is local
 - target is businesses (B2B)
 
@@ -1490,13 +1490,13 @@ Show exactly what to do next.
 
 RESPONSE STRUCTURE (MANDATORY):
 
-1. SITUATION (1�2 lines)
+1. SITUATION (1–2 lines)
 Summarize the business in simple terms.
 
 2. QUICK WIN (1 action)
 Something that can be done immediately (today).
 
-3. ACTION PLAN (3�5 steps)
+3. ACTION PLAN (3–5 steps)
 Concrete, realistic actions.
 No generic advice.
 
@@ -1525,21 +1525,21 @@ STYLE:
 
 When the user asks for an ad, follow this flow:
 
-STEP 1 � Ask 3�5 questions if missing:
+STEP 1 — Ask 3–5 questions if missing:
 1. What is the business?
 2. What is being sold?
 3. Who is the target customer?
 4. Where will the ad be used? (Facebook, Google, local, etc.)
 5. What is the main goal? (calls, messages, sales)
 
-STEP 2 � Create the ad immediately after answers.
+STEP 2 — Create the ad immediately after answers.
 
 AD DECISION RULE:
 Do not explain advertising.
 Create the ad.
 
 OUTPUT RULE:
-Always produce 2�3 different ad versions.
+Always produce 2–3 different ad versions.
 
 Each version must be clearly different:
 - one direct
@@ -1564,7 +1564,7 @@ If the ad sounds like generic marketing, rewrite it simpler.
 
 Each ad must include:
 - short headline
-- main text (max 5�7 lines)
+- main text (max 5–7 lines)
 - clear CTA
 
 DO NOT:
@@ -1652,7 +1652,7 @@ Do not write empty sales sentences.
 Do not use "we" language:
 - "we offer"
 - "our team"
-- "meid�n tiimi"
+- "meidän tiimi"
 - "tarjoamme"
 - "we ensure"
 - "varmistamme"
@@ -1695,7 +1695,7 @@ No filler intro sentences.
 - takuu
 - parantaa ilmanlaatua
 - parantaa energiatehokkuutta
-- v�hent�� allergioita
+- vähentää allergioita
 
 If information is missing, use placeholders like:
 [customer]
@@ -1718,7 +1718,7 @@ SALES GROWTH QUICK ACTION:
 REAL-WORLD SALES PRIORITY:
 
 If:
-- budget is under 500�
+- budget is under 500€
 - service is local
 - target is businesses (B2B)
 
@@ -1753,13 +1753,13 @@ Show exactly what to do next.
 
 RESPONSE STRUCTURE (MANDATORY):
 
-1. SITUATION (1�2 lines)
+1. SITUATION (1–2 lines)
 Summarize the business in simple terms.
 
 2. QUICK WIN (1 action)
 Something that can be done immediately (today).
 
-3. ACTION PLAN (3�5 steps)
+3. ACTION PLAN (3–5 steps)
 Concrete, realistic actions.
 No generic advice.
 
@@ -1893,7 +1893,7 @@ When giving funding options:
 - prioritize programs that match the exact use case
 - for digital needs in Spain, usually put Kit Digital first
 - ENISA is mainly for innovative growth companies, not the first choice for a very small 5000 euro short-term need
-- C�mara de Comercio is mainly guidance and support, not the primary funding source
+- Cámara de Comercio is mainly guidance and support, not the primary funding source
 - avoid generic ordering
 - always explain why the order fits this exact case
 
@@ -1903,7 +1903,7 @@ Always make a clear recommendation.
 
 For the Spain small-business digital/marketing case:
 - Kit Digital = first action
-- C�mara de Comercio = support channel, not main funding
+- Cámara de Comercio = support channel, not main funding
 - ENISA = only second-phase option if the business is innovative/growth-oriented
 - bank/ICO loan = fallback if support is not enough or timing is urgent
 
@@ -1940,7 +1940,7 @@ If the benefit cannot be directly proven in the ad, do not write it.
 
 ALWAYS STRUCTURE LIKE THIS:
 
-1. Situation (1�2 lines max)
+1. Situation (1–2 lines max)
 2. Top 3 funding paths (prioritized)
 3. Why they fit THIS exact case
 4. Exact application order (step-by-step)
@@ -2116,9 +2116,9 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
 function freePremiumToolLockedText(locale: Locale) {
   return l(
     locale,
-    "T�m� yritt�j�ty�kalu kuuluu Plus-versioon. Ilmaisversiossa voit kysy� yleisi� neuvoja, mutta valmiit ty�kaluprosessit kuten tarjoukset, mainokset, hinnoittelu, asiakashankinta, markkinointi ja rahoituksen hakeminen avautuvat Plus-paketissa.",
+    "Tämä yrittäjätyökalu kuuluu Plus-versioon. Ilmaisversiossa voit kysyä yleisiä neuvoja, mutta valmiit työkaluprosessit kuten tarjoukset, mainokset, hinnoittelu, asiakashankinta, markkinointi ja rahoituksen hakeminen avautuvat Plus-paketissa.",
     "This entrepreneur tool is included in Plus. In the free version, you can ask general advice, but ready-made tool workflows such as offers, ads, pricing, customer acquisition, marketing, and funding support are available in Plus.",
-    "Esta herramienta para emprendedores est� incluida en Plus. En la versi�n gratuita puedes pedir consejos generales, pero los flujos de trabajo como ofertas, anuncios, precios, captaci�n de clientes, marketing y financiaci�n est�n disponibles en Plus."
+    "Esta herramienta para emprendedores está incluida en Plus. En la versión gratuita puedes pedir consejos generales, pero los flujos de trabajo como ofertas, anuncios, precios, captación de clientes, marketing y financiación están disponibles en Plus."
   );
 }
 
@@ -2139,7 +2139,7 @@ function isFreePremiumToolAttempt(text: string): boolean {
     /auta.*mainos/,
     /kasvata.*myynt/,
     /hanki.*asiakk/,
-    /l�yd�.*asiakk/,
+    /löydä.*asiakk/,
     /paranna.*markkinoint/,
     /paranna.*hinnoittel/,
     /hanki.*rahoit/,
@@ -2193,7 +2193,7 @@ function freeLiteModeInstruction(locale: Locale): string {
       "- No slogans.",
       "- No generic claims.",
       "- Do not use words like: laadukas, ammattitaitoinen, asiantunteva, kattava, paras, huippu, optimaalinen, energiatehokkuus unless the user specifically gave proof.",
-      "- Do not say: puhdas ilma on vain yhden puhdistuksen p��ss�.",
+      "- Do not say: puhdas ilma on vain yhden puhdistuksen päässä.",
       "- Do not create fake guarantees, discounts, exact prices or promises.",
       "- Write like a normal small business owner.",
       "- For ads: write only one simple ad text, max 6 short lines.",
@@ -2219,13 +2219,13 @@ function freeLiteModeInstruction(locale: Locale): string {
     [
       "- Usuario en plan FREE.",
       "- Respuesta corta, simple y utilizable.",
-      "- Sin emojis, sin exageraci�n, sin esl�ganes.",
-      "- Evita frases gen�ricas como profesional, alta calidad, mejor, l�der, optimizado.",
-      "- No inventes garant�as, descuentos, precios exactos ni promesas.",
-      "- Escribe como una peque�a empresa real.",
-      "- Para anuncios: m�ximo 6 l�neas cortas.",
+      "- Sin emojis, sin exageración, sin eslóganes.",
+      "- Evita frases genéricas como profesional, alta calidad, mejor, líder, optimizado.",
+      "- No inventes garantías, descuentos, precios exactos ni promesas.",
+      "- Escribe como una pequeña empresa real.",
+      "- Para anuncios: máximo 6 líneas cortas.",
       "- Para ofertas: solo estructura simple.",
-      "- Para precios: un rango pr�ctico y una recomendaci�n.",
+      "- Para precios: un rango práctico y una recomendación.",
       "- Evita listas largas."
     ].join("\n")
   );
@@ -2233,9 +2233,9 @@ function freeLiteModeInstruction(locale: Locale): string {
 function freeLitePrefix(locale: Locale): string {
   return l(
     locale,
-    "Voin auttaa t�ss� my�s ilmaisversiossa ??\nTeen sinulle kevyen version. Plus-versiossa saat laajemman ohjatun ty�kalun.\n\n",
-    "I can help with this in the free version ??\nI�ll create a lighter version. Plus gives you a more advanced guided tool.\n\n",
-    "Puedo ayudarte tambi�n en la versi�n gratuita ??\nHar� una versi�n ligera. En Plus tienes una versi�n m�s completa.\n\n"
+    "Voin auttaa tässä myös ilmaisversiossa ??\nTeen sinulle kevyen version. Plus-versiossa saat laajemman ohjatun työkalun.\n\n",
+    "I can help with this in the free version ??\nI’ll create a lighter version. Plus gives you a more advanced guided tool.\n\n",
+    "Puedo ayudarte también en la versión gratuita ??\nHaré una versión ligera. En Plus tienes una versión más completa.\n\n"
   );
 }
 
@@ -2249,7 +2249,7 @@ function plusLiteBusinessToolInstruction(locale: Locale): string {
       "- Do not invent prices, discounts, campaign prices, guarantees or measurable claims.",
       "- If the user has not given price, write [hinta] instead of inventing one.",
       "- If the user has not given phone or website, write [puhelin] and [verkkosivu].",
-      "- Never write 'erikoishinta', 'kampanjahinta', 'vain 99 �', '15% alennus' unless the user gave it.",
+      "- Never write 'erikoishinta', 'kampanjahinta', 'vain 99 €', '15% alennus' unless the user gave it.",
       "- Avoid words: ammattimainen, ammattitaitoinen, asiantunteva, kattava, optimaalinen, paras, huippu, taattu.",
       "- For ads: write a simple believable ad text, max 8 lines.",
       "- For offers: write a clean offer structure with placeholders. No hype.",
@@ -2268,12 +2268,12 @@ function plusLiteBusinessToolInstruction(locale: Locale): string {
     ].join("\n"),
     [
       "- MODO PLUS PARA NEGOCIOS.",
-      "- Sin marketing gen�rico.",
+      "- Sin marketing genérico.",
       "- Sin emojis.",
-      "- No inventes precios, descuentos, garant�as ni campa�as.",
+      "- No inventes precios, descuentos, garantías ni campañas.",
       "- Usa marcadores si faltan datos.",
       "- Haz 3 preguntas cortas si faltan datos importantes.",
-      "- PLUS debe ser m�s claro y estructurado que FREE, no m�s exagerado."
+      "- PLUS debe ser más claro y estructurado que FREE, no más exagerado."
     ].join("\n")
   );
 }
@@ -2283,35 +2283,35 @@ function plusBusinessClarifyingQuestions(text: string, locale: Locale): string {
   if (/mainos|ad|anuncio/.test(t)) {
     return l(
       locale,
-      "Teen t�st� Plus-versiona paremman, mutta tarvitsen ensin 3 tietoa:\n\nMik� yrityksen nimi on?\nMit� palvelua tai tuotetta mainos koskee?\nKenelle mainos on tarkoitettu?",
-      "I�ll make a better Plus version, but first I need 3 details:\n\nWhat is the company name?\nWhat product or service is the ad for?\nWho is the ad aimed at?",
-      "Har� una versi�n Plus mejor, pero primero necesito 3 datos:\n\n�Cu�l es el nombre de la empresa?\n�Qu� producto o servicio anuncia?\n�A qui�n va dirigido?"
+      "Teen tästä Plus-versiona paremman, mutta tarvitsen ensin 3 tietoa:\n\nMikä yrityksen nimi on?\nMitä palvelua tai tuotetta mainos koskee?\nKenelle mainos on tarkoitettu?",
+      "I’ll make a better Plus version, but first I need 3 details:\n\nWhat is the company name?\nWhat product or service is the ad for?\nWho is the ad aimed at?",
+      "Haré una versión Plus mejor, pero primero necesito 3 datos:\n\n¿Cuál es el nombre de la empresa?\n¿Qué producto o servicio anuncia?\n¿A quién va dirigido?"
     );
   }
 
   if (/tarjous|offer|oferta/.test(t)) {
     return l(
       locale,
-      "Teen t�st� Plus-versiona selke�mm�n tarjouksen, mutta tarvitsen ensin 3 tietoa:\n\nMik� yritys tai asiakas on kyseess�?\nMit� ty� sis�lt�� konkreettisesti?\nOnko sinulla hinta tai arvioitu hintahaarukka?",
-      "I�ll make this a clearer Plus-level offer, but first I need 3 details:\n\nWho is the customer?\nWhat exactly does the work include?\nDo you already have a price or price range?",
-      "Har� una oferta Plus m�s clara, pero primero necesito 3 datos:\n\n�Qui�n es el cliente?\n�Qu� incluye exactamente el trabajo?\n�Tienes un precio o rango de precio?"
+      "Teen tästä Plus-versiona selkeämmän tarjouksen, mutta tarvitsen ensin 3 tietoa:\n\nMikä yritys tai asiakas on kyseessä?\nMitä työ sisältää konkreettisesti?\nOnko sinulla hinta tai arvioitu hintahaarukka?",
+      "I’ll make this a clearer Plus-level offer, but first I need 3 details:\n\nWho is the customer?\nWhat exactly does the work include?\nDo you already have a price or price range?",
+      "Haré una oferta Plus más clara, pero primero necesito 3 datos:\n\n¿Quién es el cliente?\n¿Qué incluye exactamente el trabajo?\n¿Tienes un precio o rango de precio?"
     );
   }
 
   if (/hinnoit|pricing|precio|precios/.test(t)) {
     return l(
       locale,
-      "Teen t�st� Plus-versiona paremman hinnoittelun, mutta tarvitsen ensin 3 tietoa:\n\nPaljonko ty� vie aikaa yhdelt� kohteelta?\nMit� kuluja ty�h�n liittyy?\nMill� alueella palvelua myyd��n?",
-      "I�ll make this a better Plus-level pricing plan, but first I need 3 details:\n\nHow long does one job take?\nWhat costs are involved?\nIn what area is the service sold?",
-      "Har� una mejor propuesta de precios Plus, pero primero necesito 3 datos:\n\n�Cu�nto tarda un trabajo?\n�Qu� costes tiene?\n�En qu� zona vendes el servicio?"
+      "Teen tästä Plus-versiona paremman hinnoittelun, mutta tarvitsen ensin 3 tietoa:\n\nPaljonko työ vie aikaa yhdeltä kohteelta?\nMitä kuluja työhön liittyy?\nMillä alueella palvelua myydään?",
+      "I’ll make this a better Plus-level pricing plan, but first I need 3 details:\n\nHow long does one job take?\nWhat costs are involved?\nIn what area is the service sold?",
+      "Haré una mejor propuesta de precios Plus, pero primero necesito 3 datos:\n\n¿Cuánto tarda un trabajo?\n¿Qué costes tiene?\n¿En qué zona vendes el servicio?"
     );
   }
 
   return l(
     locale,
-    "Teen t�st� Plus-versiona paremman, mutta tarvitsen ensin 3 tarkentavaa tietoa:\n\nMik� yritys tai palvelu on kyseess�?\nKenelle t�m� tehd��n?\nMik� on t�rkein tavoite?",
-    "I�ll make this better as a Plus workflow, but first I need 3 details:\n\nWhat company or service is this about?\nWho is it for?\nWhat is the main goal?",
-    "Har� una versi�n Plus mejor, pero primero necesito 3 datos:\n\n�De qu� empresa o servicio se trata?\n�Para qui�n es?\n�Cu�l es el objetivo principal?"
+    "Teen tästä Plus-versiona paremman, mutta tarvitsen ensin 3 tarkentavaa tietoa:\n\nMikä yritys tai palvelu on kyseessä?\nKenelle tämä tehdään?\nMikä on tärkein tavoite?",
+    "I’ll make this better as a Plus workflow, but first I need 3 details:\n\nWhat company or service is this about?\nWho is it for?\nWhat is the main goal?",
+    "Haré una versión Plus mejor, pero primero necesito 3 datos:\n\n¿De qué empresa o servicio se trata?\n¿Para quién es?\n¿Cuál es el objetivo principal?"
   );
 }
 
@@ -2386,7 +2386,7 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
           locale,
           `- ${name}: liite puuttuu tai on virheellinen (dataUrl).`,
           `- ${name}: attachment is missing or invalid (dataUrl).`,
-          `- ${name}: el adjunto falta o no es válido (dataUrl).`
+          `- ${name}: el adjunto falta o no es vÃ¡lido (dataUrl).`
         )
       );
       continue;
@@ -2477,7 +2477,7 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
         fileSummaries.push(
           l(
             locale,
-            `- ${name}: PDF-tekstin lukeminen epäonnistui.`,
+            `- ${name}: PDF-tekstin lukeminen epÃ¤onnistui.`,
             `- ${name}: failed to read PDF text.`,
             `- ${name}: no se pudo leer el texto del PDF.`
           )
@@ -2499,7 +2499,7 @@ async function prepareAttachments(raw: any, locale: Locale): Promise<{
         fileSummaries.push(
           l(
             locale,
-            `- ${name}: tekstin lukeminen epäonnistui (mime: ${mime}).`,
+            `- ${name}: tekstin lukeminen epÃ¤onnistui (mime: ${mime}).`,
             `- ${name}: failed to read text (mime: ${mime}).`,
             `- ${name}: no se pudo leer el texto (mime: ${mime}).`
           )
@@ -2996,7 +2996,7 @@ function needsCompanyProModel(args: {
     "prioritize",
     "suositus",
     "recommendation",
-    "päätösrunko",
+    "pÃ¤Ã¤tÃ¶srunko",
     "decision framework",
   ];
 
@@ -3097,7 +3097,7 @@ function geminiModelForRequest(args: {
 // ====== ROUTE ======
 export async function POST(req: NextRequest) {
   if (!process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
-    return jsonError(500, "Puuttuu sekä OPENAI_API_KEY että GEMINI_API_KEY (.env.local).");
+    return jsonError(500, "Puuttuu sekÃ¤ OPENAI_API_KEY ettÃ¤ GEMINI_API_KEY (.env.local).");
   }
 
   const cookieVal = req.cookies.get(COOKIE_NAME)?.value;
@@ -3266,9 +3266,9 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
           ok: false,
           error: l(
             locale,
-            "Kuva-analyysien päiväkiintiö täynnä. Yritä huomenna uudelleen.",
+            "Kuva-analyysien pÃ¤ivÃ¤kiintiÃ¶ tÃ¤ynnÃ¤. YritÃ¤ huomenna uudelleen.",
             "Daily image analysis quota reached. Try again tomorrow.",
-            "Cuota diaria de análisis de imágenes alcanzada. Inténtalo mañana."
+            "Cuota diaria de anÃ¡lisis de imÃ¡genes alcanzada. IntÃ©ntalo maÃ±ana."
           ),
           plan,
           limits: {
@@ -3289,9 +3289,9 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
           ok: false,
           error: l(
             locale,
-            "Kuva-analyysien kuukausikiintiö täynnä.",
+            "Kuva-analyysien kuukausikiintiÃ¶ tÃ¤ynnÃ¤.",
             "Monthly image analysis quota reached.",
-            "Cuota mensual de análisis de imágenes alcanzada."
+            "Cuota mensual de anÃ¡lisis de imÃ¡genes alcanzada."
           ),
           plan,
           limits: {
@@ -3312,9 +3312,9 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
           ok: false,
           error: l(
             locale,
-            "Kuvien analyysi ei ole käytössä tällä tasolla.",
+            "Kuvien analyysi ei ole kÃ¤ytÃ¶ssÃ¤ tÃ¤llÃ¤ tasolla.",
             "Image analysis is not available on this plan.",
-            "El análisis de imágenes no está disponible en este plan."
+            "El anÃ¡lisis de imÃ¡genes no estÃ¡ disponible en este plan."
           ),
           plan,
           limits: {
@@ -3526,7 +3526,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
   if (lastTextOriginal && isModelQuestion(lastTextOriginal)) {
     let text = l(
       locale,
-      "Olen AJX AI. En paljasta käytössä olevia malliversioita, koulutuspäivämääriä tai sisäisiä järjestelmätietoja.",
+      "Olen AJX AI. En paljasta kÃ¤ytÃ¶ssÃ¤ olevia malliversioita, koulutuspÃ¤ivÃ¤mÃ¤Ã¤riÃ¤ tai sisÃ¤isiÃ¤ jÃ¤rjestelmÃ¤tietoja.",
       "I am AJX AI. I do not reveal model versions, training cut-off dates, or internal system details.",
       "Soy AJX AI. No revelo versiones de modelo, fechas de corte de entrenamiento ni detalles internos del sistema."
     );
@@ -3744,7 +3744,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     const text = await callGeminiGenerateContent({
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
-      promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
+      promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
       maxOutputTokens,
     });
@@ -3764,7 +3764,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     yield* callGeminiStreamGenerateContent({
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
-      promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
+      promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
       maxOutputTokens,
     });
@@ -3826,7 +3826,7 @@ async function callViaGeminiLiteNonStream(): Promise<string> {
   return await callGeminiGenerateContent({
     apiKey: process.env.GEMINI_API_KEY,
     model: GEMINI_FLASH_LITE_MODEL,
-    promptText: ${instructions} + "\n\n---\n\n" + ${inputText},
+    promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
     images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
     maxOutputTokens,
   });
@@ -3843,7 +3843,7 @@ async function* callViaGeminiLiteStream(): AsyncGenerator<string> {
   yield* callGeminiStreamGenerateContent({
     apiKey: process.env.GEMINI_API_KEY,
     model: GEMINI_FLASH_LITE_MODEL,
-    promptText: ${instructions} + "\n\n---\n\n" + ${inputText},
+    promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
     images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
     maxOutputTokens,
   });
@@ -3935,7 +3935,7 @@ async function callTextNonStream(): Promise<string> {
                   );
                 }
               } else {
-                throw new Error("Malli palautti tyhjän vastauksen.");
+                throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
               }
             }
 
@@ -3949,7 +3949,7 @@ async function callTextNonStream(): Promise<string> {
             finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
 
             if (!isUsableModelText(finalText)) {
-              throw new Error("Vastaus jäi tyhjäksi jälkikäsittelyn jälkeen.");
+              throw new Error("Vastaus jÃ¤i tyhjÃ¤ksi jÃ¤lkikÃ¤sittelyn jÃ¤lkeen.");
             }
 
             resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
@@ -3979,7 +3979,7 @@ async function callTextNonStream(): Promise<string> {
 
             controller.enqueue(sseEncode("[DONE]"));
           } catch (e: any) {
-            const msg = e?.message ? String(e.message) : "Virhe streamissä.";
+            const msg = e?.message ? String(e.message) : "Virhe streamissÃ¤.";
             controller.enqueue(
               sseEncode({
                 type: "error",
@@ -4019,7 +4019,7 @@ async function callTextNonStream(): Promise<string> {
 outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
 
     if (!isUsableModelText(outText)) {
-      throw new Error("Malli palautti tyhjän vastauksen.");
+      throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
     }
 
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
@@ -4065,6 +4065,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
