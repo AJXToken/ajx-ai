@@ -301,6 +301,50 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
+
+  @media (min-width: 981px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    [class*="quickActions"] > *,
+    [class*="QuickActions"] > *,
+    [class*="quickActionGrid"] > *,
+    [class*="QuickActionGrid"] > *,
+    [class*="quickActionList"] > *,
+    [class*="QuickActionList"] > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1362,6 +1406,50 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
+
+  @media (min-width: 981px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    [class*="quickActions"] > *,
+    [class*="QuickActions"] > *,
+    [class*="quickActionGrid"] > *,
+    [class*="QuickActionGrid"] > *,
+    [class*="quickActionList"] > *,
+    [class*="QuickActionList"] > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1557,6 +1645,50 @@ function RichMessage({
     .ajxQuickActionsGrid,
     .ajxQuickActions,
     .ajxQuickActionList {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
+    
+<style jsx global>{`
+  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
+
+  @media (min-width: 981px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    [class*="quickActions"] > *,
+    [class*="QuickActions"] > *,
+    [class*="quickActionGrid"] > *,
+    [class*="QuickActionGrid"] > *,
+    [class*="quickActionList"] > *,
+    [class*="QuickActionList"] > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
       display: flex !important;
       flex-direction: column !important;
       gap: 10px !important;
@@ -8770,9 +8902,54 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
+
+  @media (min-width: 981px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    [class*="quickActions"] > *,
+    [class*="QuickActions"] > *,
+    [class*="quickActionGrid"] > *,
+    [class*="QuickActionGrid"] > *,
+    [class*="quickActionList"] > *,
+    [class*="QuickActionList"] > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    [class*="quickActions"],
+    [class*="QuickActions"],
+    [class*="quickActionGrid"],
+    [class*="QuickActionGrid"],
+    [class*="quickActionList"],
+    [class*="QuickActionList"] {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
+
 
 
 
