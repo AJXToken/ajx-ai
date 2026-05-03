@@ -209,38 +209,7 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
     
-<style jsx global>{`
-  .ajxDontPressBtn {
-    width: 46px !important;
-    height: 46px !important;
-    min-width: 46px !important;
-    padding: 0 !important;
-    border-radius: 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
-    color: #ffffff !important;
-    border-color: rgba(220, 38, 38, 0.35) !important;
-    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
-  }
-
-  .ajxDontPressBtn:hover {
-    transform: translateY(-1px) scale(1.03) !important;
-  }
-
-  .ajxDontPressIcon {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 20px !important;
-    line-height: 1 !important;
-  }
-
-  .ajxDontPressText {
-    display: none !important;
-  }
-`}</style>
+<style jsx global>{``}</style>
     
 <style jsx global>{`
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
@@ -1244,38 +1213,7 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
     
-<style jsx global>{`
-  .ajxDontPressBtn {
-    width: 46px !important;
-    height: 46px !important;
-    min-width: 46px !important;
-    padding: 0 !important;
-    border-radius: 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
-    color: #ffffff !important;
-    border-color: rgba(220, 38, 38, 0.35) !important;
-    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
-  }
-
-  .ajxDontPressBtn:hover {
-    transform: translateY(-1px) scale(1.03) !important;
-  }
-
-  .ajxDontPressIcon {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 20px !important;
-    line-height: 1 !important;
-  }
-
-  .ajxDontPressText {
-    display: none !important;
-  }
-`}</style>
+<style jsx global>{``}</style>
     
 <style jsx global>{`
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
@@ -1420,38 +1358,7 @@ function RichMessage({
   }
 `}</style>
     
-<style jsx global>{`
-  .ajxDontPressBtn {
-    width: 46px !important;
-    height: 46px !important;
-    min-width: 46px !important;
-    padding: 0 !important;
-    border-radius: 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
-    color: #ffffff !important;
-    border-color: rgba(220, 38, 38, 0.35) !important;
-    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
-  }
-
-  .ajxDontPressBtn:hover {
-    transform: translateY(-1px) scale(1.03) !important;
-  }
-
-  .ajxDontPressIcon {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 20px !important;
-    line-height: 1 !important;
-  }
-
-  .ajxDontPressText {
-    display: none !important;
-  }
-`}</style>
+<style jsx global>{``}</style>
     
 <style jsx global>{`
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
@@ -2012,51 +1919,7 @@ function stressButtonText(locale: Locale): string {
 
   return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n⠀\n\n**Ohje**\nVastaa numerolla tai kirjoita omin sanoin.";
 }
-function dontPressButtonText(locale: Locale): string {
-  const seed = Math.floor(Math.random() * 1000000);
 
-  return [
-    "Painoit sitten kuitenkin. Hyvä.",
-    "",
-    "Tämä nappi rikkoo ajatusloopin.",
-    "",
-    "Se ei anna turvallisinta ideaa.",
-    "Se ei anna tylsintä ideaa.",
-    "Se antaa oudon, yllättävän ja mahdollisesti käyttökelpoisen idean.",
-    "",
-    "## 🔥 Aivan kreisi idea",
-    "",
-    "Tee **yllätysdiagnoosi-kampanja**.",
-    "",
-    "Tarjoa yhdelle mahdolliselle asiakkaalle nopea tarkistus, mutta yhdellä ehdolla:",
-    "",
-    "jos löydät jotain kiinnostavaa, saat tehdä siitä nimettömän minitarinan someen.",
-    "",
-    "**Älä myy palvelua. Myy löydös.**",
-    "",
-    "Esimerkki:",
-    "",
-    "Kävimme tarkistamassa täysin normaalilta näyttävän kohteen. Tätä emme odottaneet.",
-    "",
-    "## Miksi tämä voi toimia",
-    "",
-    "Ihmiset ohittavat tavalliset mainokset, mutta pysähtyvät tarinoihin, uteliaisuuteen ja pieniin mysteereihin.",
-    "",
-    "## Testaa pienesti",
-    "",
-    "1. Valitse yksi palvelu.",
-    "2. Valitse yksi asiakas tai oikea tapaus.",
-    "3. Tee tuloksesta lyhyt tarina.",
-    "4. Julkaise kevyt versio.",
-    "5. Katso tuleeko viestejä.",
-    "",
-    `Kaaosnumero: ${seed}`,
-    "",
-    "⚠️ **Käyttö omalla vastuulla.**",
-    "",
-    "Tämä on tarkoituksella outo idea. Älä rakenna koko liiketoimintaa tämän varaan. Testaa pienesti ensin."
-  ].join("\n");
-}
 function fileQueuedText(locale: Locale): string {
   if (locale === "es") {
     return "Archivo añadido. Pulsa Analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
@@ -8094,19 +7957,7 @@ export default function ChatPage(): React.JSX.Element {
                       >
                         🤯
                       </button>
-                      <button
-                        className={`${styles.btnIcon} ajxDontPressBtn`}
-                        type="button"
-                        title="Älä paina"
-                        aria-label="Älä paina"
-                        onClick={() => {
-                          appendAssistantMessage(dontPressButtonText(locale));
-                          scrollToBottom(true);
-                        }}
-                        disabled={loading}
-                      >
-                        <span className="ajxDontPressIcon">💣</span>
-                      </button>
+                      
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
                           <ImageButton
@@ -8656,38 +8507,7 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
     
-<style jsx global>{`
-  .ajxDontPressBtn {
-    width: 46px !important;
-    height: 46px !important;
-    min-width: 46px !important;
-    padding: 0 !important;
-    border-radius: 16px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: linear-gradient(135deg, #111827, #7f1d1d) !important;
-    color: #ffffff !important;
-    border-color: rgba(220, 38, 38, 0.35) !important;
-    box-shadow: 0 12px 28px rgba(127, 29, 29, 0.24) !important;
-  }
-
-  .ajxDontPressBtn:hover {
-    transform: translateY(-1px) scale(1.03) !important;
-  }
-
-  .ajxDontPressIcon {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 20px !important;
-    line-height: 1 !important;
-  }
-
-  .ajxDontPressText {
-    display: none !important;
-  }
-`}</style>
+<style jsx global>{``}</style>
     
 <style jsx global>{`
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
@@ -8725,6 +8545,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
