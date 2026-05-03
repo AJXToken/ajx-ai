@@ -1,4 +1,67 @@
-﻿// src/app/api/chat/route.ts
+﻿
+/* ===== AJX QUICK ACTION QUALITY BOOST ===== */
+
+function getQuickActionSystemBoost(actionId: string): string {
+  switch (actionId) {
+
+    case "customers":
+      return `
+TAVOITE: Löydä asiakkaat käytännössä.
+
+Rakenne:
+1. Missä asiakkaat ovat (konkreettiset paikat)
+2. Miten lähestyt (täsmä viesti)
+3. Mitä sanot (valmis teksti)
+4. Nopea testisuunnitelma (3 askelta)
+
+Älä anna teoriaa. Anna konkreettiset toimet.
+`;
+
+    case "pricing":
+      return `
+TAVOITE: Paranna hintaa ilman että myynti romahtaa.
+
+Rakenne:
+1. Nykyisen hinnan ongelma
+2. Uusi hinnoittelumalli (selkeä)
+3. Esimerkki hinnasta (€)
+4. Miten testaat käytännössä
+
+Ei teoriaa. Vain käytännön toteutus.
+`;
+
+    case "plan":
+      return `
+TAVOITE: Selkeä toimintasuunnitelma.
+
+Rakenne:
+1. Tavoite (1 lause)
+2. 5–7 konkreettista askelta
+3. Aikajärjestys
+4. Ensimmäinen askel heti
+
+Ei selittelyä. Tee suoraan toteutettava suunnitelma.
+`;
+
+    case "problem":
+      return `
+TAVOITE: Ratkaise ongelma.
+
+Rakenne:
+1. Mikä oikeasti on ongelma
+2. 2–3 realistista ratkaisua
+3. Paras vaihtoehto
+4. Mitä teet heti
+
+Ei ympäripyöreää. Suora ratkaisu.
+`;
+
+    default:
+      return "";
+  }
+}
+
+// src/app/api/chat/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import pdfParse from "pdf-parse";
@@ -4090,6 +4153,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 

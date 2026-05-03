@@ -244,6 +244,24 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX QUICK ACTION GRID FIX ===== */
+
+  .ajxQuickActionsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 900px) {
+    .ajxQuickActionsGrid {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1248,6 +1266,24 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX QUICK ACTION GRID FIX ===== */
+
+  .ajxQuickActionsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 900px) {
+    .ajxQuickActionsGrid {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1390,6 +1426,24 @@ function RichMessage({
     white-space: pre-wrap !important;
     word-break: normal !important;
     overflow-wrap: break-word !important;
+  }
+`}</style>
+
+    
+<style jsx global>{`
+  /* ===== AJX QUICK ACTION GRID FIX ===== */
+
+  .ajxQuickActionsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 900px) {
+    .ajxQuickActionsGrid {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
   }
 `}</style>
 
@@ -8542,9 +8596,28 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX QUICK ACTION GRID FIX ===== */
+
+  .ajxQuickActionsGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 900px) {
+    .ajxQuickActionsGrid {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
+
 
 
 
