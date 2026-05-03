@@ -3472,7 +3472,13 @@ export default function ChatPage(): React.JSX.Element {
 
   async function runQuickAction(action: QuickAction) {
     if (effectiveCanonical === "free") {
-      appendAssistantMessage(quickActionLockedText(locale));
+      appendAssistantMessage(
+  locale === "fi"
+    ? "Pura jumitus kuuluu Plus-versioon. Plus auttaa purkamaan tilanteen vaiheittain ja löytämään seuraavan järkevän askeleen."
+    : locale === "es"
+      ? "Desbloquear está incluido en Plus. Plus te ayuda a ordenar la situación paso a paso y encontrar el siguiente movimiento correcto."
+      : "Unblock is included in Plus. Plus helps you break down the situation step by step and find the next sensible move."
+);
       return;
     }
 
@@ -8254,7 +8260,13 @@ export default function ChatPage(): React.JSX.Element {
                         }
                         onClick={() => {
                           if (effectiveCanonical === "free") {
-                            appendAssistantMessage(quickActionLockedText(locale));
+                            appendAssistantMessage(
+  locale === "fi"
+    ? "Pura jumitus kuuluu Plus-versioon. Plus auttaa purkamaan tilanteen vaiheittain ja löytämään seuraavan järkevän askeleen."
+    : locale === "es"
+      ? "Desbloquear está incluido en Plus. Plus te ayuda a ordenar la situación paso a paso y encontrar el siguiente movimiento correcto."
+      : "Unblock is included in Plus. Plus helps you break down the situation step by step and find the next sensible move."
+);
                             scrollToBottom(true);
                             return;
                           }
@@ -8967,6 +8979,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
