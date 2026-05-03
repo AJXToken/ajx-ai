@@ -8405,44 +8405,62 @@ export default function ChatPage(): React.JSX.Element {
                   </div>
 
                   {toolsOpen && !isMobile ? (
-                    <div
-                      className="ajxToolsDrawer ajxToolsDrawerMoved"
-                      style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                        gap: 10,
-                        maxWidth: 980,
-                        margin: "12px auto 10px auto",
-                        padding: 14,
-                        borderRadius: 24,
-                        background: "rgba(255,255,255,0.94)",
-                        border: "1px solid rgba(16,24,40,0.08)",
-                        boxShadow: "0 18px 48px rgba(16,24,40,0.10)",
-                      }}
-                    >
-                      {quickActions.map((action) => (
-                        <button
-                          key={action.id}
-                          type="button"
-                          className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
-                          onClick={() => {
-                            setToolsOpen(false);
-                            runQuickAction(action).catch(() => {});
-                          }}
-                        >
-                          <div className="ajxActionText">
-                            <span className="ajxActionLabel">
-                              {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
-                            </span>
-                            {action.subtitle ? (
-                              <span className="ajxActionSubtitle">{action.subtitle}</span>
-                            ) : null}
-                          </div>
-                          <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
+  <div
+    className="ajxDesktopToolsGrid"
+    style={{
+      width: "100%",
+      display: "grid",
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+      gap: 10,
+      margin: "12px 0 10px 0",
+      padding: 14,
+      borderRadius: 24,
+      background: "rgba(255,255,255,0.94)",
+      border: "1px solid rgba(16,24,40,0.08)",
+      boxShadow: "0 18px 48px rgba(16,24,40,0.10)",
+      boxSizing: "border-box",
+    }}
+  >
+    {quickActions.map((action) => (
+      <button
+        key={action.id}
+        type="button"
+        className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
+        onClick={() => {
+          setToolsOpen(false);
+          runQuickAction(action).catch(() => {});
+        }}
+        style={{
+          width: "100%",
+          minWidth: 0,
+          minHeight: 62,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          padding: "13px 14px",
+          borderRadius: 18,
+          background: action.id === "offer" ? "linear-gradient(90deg, #effdf4, #ffffff)" : "rgba(255,255,255,0.96)",
+          color: "#101318",
+          border: action.id === "offer" ? "1px solid rgba(22,163,74,0.24)" : "1px solid rgba(16,24,40,0.08)",
+          boxShadow: "0 10px 24px rgba(16,24,40,0.045)",
+          textAlign: "left",
+          cursor: "pointer",
+        }}
+      >
+        <div className="ajxActionText">
+          <span className="ajxActionLabel">
+            {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+          </span>
+          {action.subtitle ? (
+            <span className="ajxActionSubtitle">{action.subtitle}</span>
+          ) : null}
+        </div>
+        <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
+      </button>
+    ))}
+  </div>
+) : null}
                   {pending.some((p) => p.kind === "file") ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">
@@ -8943,6 +8961,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
