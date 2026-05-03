@@ -262,6 +262,45 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
+
+  @media (min-width: 981px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+
+    .ajxToolsDrawer > *,
+    .ajxMobileToolsPanel > *,
+    .ajxQuickActionsGrid > *,
+    .ajxQuickActions > *,
+    .ajxQuickActionList > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1284,6 +1323,45 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
+
+  @media (min-width: 981px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+
+    .ajxToolsDrawer > *,
+    .ajxMobileToolsPanel > *,
+    .ajxQuickActionsGrid > *,
+    .ajxQuickActions > *,
+    .ajxQuickActionList > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
@@ -1443,6 +1521,45 @@ function RichMessage({
     .ajxQuickActionsGrid {
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+    }
+  }
+`}</style>
+
+    
+<style jsx global>{`
+  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
+
+  @media (min-width: 981px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+
+    .ajxToolsDrawer > *,
+    .ajxMobileToolsPanel > *,
+    .ajxQuickActionsGrid > *,
+    .ajxQuickActions > *,
+    .ajxQuickActionList > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
     }
   }
 `}</style>
@@ -8614,9 +8731,49 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
 
+    
+<style jsx global>{`
+  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
+
+  @media (min-width: 981px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+
+    .ajxToolsDrawer > *,
+    .ajxMobileToolsPanel > *,
+    .ajxQuickActionsGrid > *,
+    .ajxQuickActions > *,
+    .ajxQuickActionList > * {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .ajxToolsDrawer,
+    .ajxMobileToolsPanel,
+    .ajxQuickActionsGrid,
+    .ajxQuickActions,
+    .ajxQuickActionList {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 10px !important;
+    }
+  }
+`}</style>
+
     </div>
   );
 }
+
 
 
 
