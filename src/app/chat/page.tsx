@@ -8253,6 +8253,12 @@ export default function ChatPage(): React.JSX.Element {
                               : "Unblock"
                         }
                         onClick={() => {
+                          if (effectiveCanonical === "free") {
+                            appendAssistantMessage(quickActionLockedText(locale));
+                            scrollToBottom(true);
+                            return;
+                          }
+
                           appendAssistantMessage(stressButtonText(locale));
                           scrollToBottom(true);
                         }}
@@ -8961,6 +8967,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
