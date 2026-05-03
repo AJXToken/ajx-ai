@@ -8407,24 +8407,18 @@ export default function ChatPage(): React.JSX.Element {
                   {toolsOpen && !isMobile ? (
                     <div
                       className="ajxToolsDrawer ajxToolsDrawerMoved"
-                      style={
-                        isMobile
-                          ? {
-                              position: "fixed",
-                              left: 18,
-                              right: 18,
-                              bottom: 170,
-                              zIndex: 99999,
-                              maxHeight: "55vh",
-                              overflowY: "auto",
-                              WebkitOverflowScrolling: "touch",
-                              padding: 14,
-                              borderRadius: 26,
-                              background: "rgba(255,255,255,0.98)",
-                              boxShadow: "0 24px 80px rgba(16,24,40,0.24)",
-                            }
-                          : undefined
-                      }
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                        gap: 10,
+                        maxWidth: 980,
+                        margin: "12px auto 10px auto",
+                        padding: 14,
+                        borderRadius: 24,
+                        background: "rgba(255,255,255,0.94)",
+                        border: "1px solid rgba(16,24,40,0.08)",
+                        boxShadow: "0 18px 48px rgba(16,24,40,0.10)",
+                      }}
                     >
                       {quickActions.map((action) => (
                         <button
@@ -8949,6 +8943,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
