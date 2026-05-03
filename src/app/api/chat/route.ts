@@ -71,6 +71,51 @@ import { type PlanId } from "../../../lib/plans";
 
 export const runtime = "nodejs";
 
+
+function detectQuickActionBoostFromText(text: string): string {
+  const t = String(text || "").toLowerCase();
+
+  if (
+    t.includes("hanki asiakkaita") ||
+    t.includes("löytämään uusia asiakkaita") ||
+    t.includes("löydä asiakkaita") ||
+    t.includes("get customers") ||
+    t.includes("find new customers") ||
+    t.includes("conseguir clientes")
+  ) {
+    return getQuickActionSystemBoost("customers");
+  }
+
+  if (
+    t.includes("paranna hinnoittelua") ||
+    t.includes("hinnoitteluni") ||
+    t.includes("improve pricing") ||
+    t.includes("pricing") ||
+    t.includes("mejorar precios")
+  ) {
+    return getQuickActionSystemBoost("pricing");
+  }
+
+  if (
+    t.includes("tee toimintasuunnitelma") ||
+    t.includes("toimintasuunnitelma") ||
+    t.includes("action plan") ||
+    t.includes("plan de acción")
+  ) {
+    return getQuickActionSystemBoost("plan");
+  }
+
+  if (
+    t.includes("ratkaise yritysongelma") ||
+    t.includes("yritysongelma") ||
+    t.includes("business problem") ||
+    t.includes("resolver problema")
+  ) {
+    return getQuickActionSystemBoost("problem");
+  }
+
+  return "";
+}
 // ====== CONFIG ======
 const OPENAI_MODEL = "gpt-4o-mini";
 
@@ -4153,6 +4198,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
