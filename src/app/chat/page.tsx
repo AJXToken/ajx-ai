@@ -1962,6 +1962,17 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   ].join("\n");
 }
 
+function plusUpsellMessage(locale: Locale): string {
+  if (locale === "es") {
+    return "Esta función pertenece a la versión Plus.\nPlus te ayuda a terminar el trabajo, no solo a planearlo.\n\n[ Actualizar a Plus → ]";
+  }
+
+  if (locale === "en") {
+    return "This feature is part of the Plus plan.\nPlus helps you get the work done, not just plan it.\n\n[ Upgrade to Plus → ]";
+  }
+
+  return "Tämä ominaisuus kuuluu Plus-versioon.\nPlus auttaa sinua tekemään työn valmiiksi — ei pelkästään suunnittelemaan.\n\n[ Päivitä Plus → ]";
+}
 function quickActionLockedText(locale: Locale): string {
   if (locale === "es") {
     return "Los accesos rÃ¡pidos estÃ¡n disponibles en Plus. Con Plus, AJX AI te guÃ­a paso a paso para crear ofertas, anuncios, planes de ventas, financiaciÃ³n y soluciones de negocio.";
@@ -3472,13 +3483,7 @@ export default function ChatPage(): React.JSX.Element {
 
   async function runQuickAction(action: QuickAction) {
     if (effectiveCanonical === "free") {
-      appendAssistantMessage(
-  locale === "fi"
-    ? "Pura jumitus kuuluu Plus-versioon. Plus auttaa purkamaan tilanteen vaiheittain ja löytämään seuraavan järkevän askeleen."
-    : locale === "es"
-      ? "Desbloquear está incluido en Plus. Plus te ayuda a ordenar la situación paso a paso y encontrar el siguiente movimiento correcto."
-      : "Unblock is included in Plus. Plus helps you break down the situation step by step and find the next sensible move."
-);
+      appendAssistantMessage(plusUpsellMessage(locale));
       return;
     }
 
@@ -8260,13 +8265,7 @@ export default function ChatPage(): React.JSX.Element {
                         }
                         onClick={() => {
                           if (effectiveCanonical === "free") {
-                            appendAssistantMessage(
-  locale === "fi"
-    ? "Pura jumitus kuuluu Plus-versioon. Plus auttaa purkamaan tilanteen vaiheittain ja löytämään seuraavan järkevän askeleen."
-    : locale === "es"
-      ? "Desbloquear está incluido en Plus. Plus te ayuda a ordenar la situación paso a paso y encontrar el siguiente movimiento correcto."
-      : "Unblock is included in Plus. Plus helps you break down the situation step by step and find the next sensible move."
-);
+                            appendAssistantMessage(plusUpsellMessage(locale));
                             scrollToBottom(true);
                             return;
                           }
@@ -8979,6 +8978,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
