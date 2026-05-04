@@ -2237,11 +2237,18 @@ function shouldUsePlusBoostModel(args: {
     return { useBoost: true, reason: "text-file-analysis" };
   }
 
-  const previousAssistantText = args.messages
+  const previousAssistantMessages = args.messages
     .filter((m) => m.role === "assistant")
-    .slice(-2)
+    .slice(-3);
+
+  const previousAssistantText = previousAssistantMessages
     .map((m) => String(m.content || "").toLowerCase())
     .join("\n");
+
+  const previousHadBoost =
+    previousAssistantMessages.some((m) =>
+      String(m.content || "").includes("DEBUG | MODEL=gpt-4.1")
+    );
 
   const looksLikeImageFlow =
     previousAssistantText.includes("kuvassa") ||
@@ -2270,6 +2277,10 @@ function shouldUsePlusBoostModel(args: {
 
   if (looksLikeBusinessFlow && continuationText && text.length >= 15) {
     return { useBoost: true, reason: "business-flow-continuation" };
+  }
+
+  if (previousHadBoost && text.length >= 10) {
+    return { useBoost: true, reason: "sticky-boost-continuation" };
   }
 
   return { useBoost: false, reason: goodAnswer ? "good-answer-no-flow" : "insufficient-user-data" };
@@ -4388,6 +4399,7 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
 
 
 
