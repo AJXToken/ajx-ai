@@ -345,6 +345,43 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
 
+
+      <style jsx global>{`
+        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow,
+        .ajxManualOrderedRow,
+        .ajxManualOrderedRow span,
+        .ajxRichList,
+        .ajxRichList li,
+        .ajxOutputBody,
+        .ajxCodePre,
+        .ajxCodePre code,
+        [class*="bubbleText"],
+        [class*="bubbleText"] *,
+        [class*="bubbleAi"],
+        [class*="bubbleAi"] * {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          width: auto !important;
+          overflow-wrap: break-word !important;
+          word-break: normal !important;
+          white-space: normal !important;
+        }
+
+        .ajxCodePre,
+        .ajxCodePre code,
+        .ajxOutputBody {
+          white-space: pre-wrap !important;
+        }
+
+        [class*="bubbleAi"] {
+          overflow: visible !important;
+        }
+      `}</style>
     </div>
   );
 }
@@ -1450,6 +1487,43 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
 
+
+      <style jsx global>{`
+        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow,
+        .ajxManualOrderedRow,
+        .ajxManualOrderedRow span,
+        .ajxRichList,
+        .ajxRichList li,
+        .ajxOutputBody,
+        .ajxCodePre,
+        .ajxCodePre code,
+        [class*="bubbleText"],
+        [class*="bubbleText"] *,
+        [class*="bubbleAi"],
+        [class*="bubbleAi"] * {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          width: auto !important;
+          overflow-wrap: break-word !important;
+          word-break: normal !important;
+          white-space: normal !important;
+        }
+
+        .ajxCodePre,
+        .ajxCodePre code,
+        .ajxOutputBody {
+          white-space: pre-wrap !important;
+        }
+
+        [class*="bubbleAi"] {
+          overflow: visible !important;
+        }
+      `}</style>
     </div>
   );
 }
@@ -1696,6 +1770,43 @@ function RichMessage({
   }
 `}</style>
 
+
+      <style jsx global>{`
+        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow,
+        .ajxManualOrderedRow,
+        .ajxManualOrderedRow span,
+        .ajxRichList,
+        .ajxRichList li,
+        .ajxOutputBody,
+        .ajxCodePre,
+        .ajxCodePre code,
+        [class*="bubbleText"],
+        [class*="bubbleText"] *,
+        [class*="bubbleAi"],
+        [class*="bubbleAi"] * {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          width: auto !important;
+          overflow-wrap: break-word !important;
+          word-break: normal !important;
+          white-space: normal !important;
+        }
+
+        .ajxCodePre,
+        .ajxCodePre code,
+        .ajxOutputBody {
+          white-space: pre-wrap !important;
+        }
+
+        [class*="bubbleAi"] {
+          overflow: visible !important;
+        }
+      `}</style>
     </div>
   );
 }
@@ -6319,7 +6430,7 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: max-content;
+          min-width: 0 !important;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -6337,7 +6448,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           overflow-y: hidden;
           max-width: 100%;
-          min-width: max-content;
+          min-width: 0 !important;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -6357,7 +6468,10 @@ export default function ChatPage(): React.JSX.Element {
         .ajxHeadingBlock,
         .ajxSummaryText,
         .ajxQuestionRow {
-          min-width: max-content;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          overflow-wrap: break-word !important;
+          word-break: normal !important;
         }
 
         .ajxImageIntentBar {
@@ -6598,7 +6712,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxBubbleScrollInner {
-          min-width: max-content;
+          min-width: 0 !important;
         }
 
 
@@ -6770,7 +6884,7 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: max-content;
+          min-width: 0 !important;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -6788,7 +6902,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           overflow-y: hidden;
           max-width: 100%;
-          min-width: max-content;
+          min-width: 0 !important;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -6821,7 +6935,10 @@ export default function ChatPage(): React.JSX.Element {
         .ajxHeadingBlock,
         .ajxSummaryText,
         .ajxQuestionRow {
-          min-width: max-content;
+          min-width: 0 !important;
+          max-width: 100% !important;
+          overflow-wrap: break-word !important;
+          word-break: normal !important;
         }
 
           .ajxTopHelp {
@@ -8986,9 +9103,47 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
 
+
+      <style jsx global>{`
+        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
+
+        .ajxParagraph,
+        .ajxHeadingBlock,
+        .ajxSummaryText,
+        .ajxQuestionRow,
+        .ajxManualOrderedRow,
+        .ajxManualOrderedRow span,
+        .ajxRichList,
+        .ajxRichList li,
+        .ajxOutputBody,
+        .ajxCodePre,
+        .ajxCodePre code,
+        [class*="bubbleText"],
+        [class*="bubbleText"] *,
+        [class*="bubbleAi"],
+        [class*="bubbleAi"] * {
+          min-width: 0 !important;
+          max-width: 100% !important;
+          width: auto !important;
+          overflow-wrap: break-word !important;
+          word-break: normal !important;
+          white-space: normal !important;
+        }
+
+        .ajxCodePre,
+        .ajxCodePre code,
+        .ajxOutputBody {
+          white-space: pre-wrap !important;
+        }
+
+        [class*="bubbleAi"] {
+          overflow: visible !important;
+        }
+      `}</style>
     </div>
   );
 }
+
 
 
 
