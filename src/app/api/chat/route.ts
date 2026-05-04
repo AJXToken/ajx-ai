@@ -2241,12 +2241,13 @@ function shouldUsePlusBoostModel(args: {
 
   const looksLikeImageFlow =
     previousAssistantText.includes("kuvassa") ||
-    previousAssistantText.includes("image") ||
-    previousAssistantText.includes("imagen") ||
-    previousAssistantText.includes("auto") ||
-    previousAssistantText.includes("bmw");
+    previousAssistantText.includes("image analysis") ||
+    previousAssistantText.includes("análisis de imagen");
 
-  if (looksLikeImageFlow && text.length >= 15) {
+  const imageContinuationNeedsBoost =
+    /analysoi|arvioi|markkina.?arvo|arvo|miksi|vertaa|tunnista|malli|keräilijä|collector|market value|compare|identify|analyze|analyse|estimate|valor|comparar|identifica/i.test(text);
+
+  if (looksLikeImageFlow && imageContinuationNeedsBoost && text.length >= 25) {
     return { useBoost: true, reason: "image-flow-continuation" };
   }
 
@@ -4088,7 +4089,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
     }
 
-    actualModelName = OPENAI_MODEL;
+    actualModelName = openAiModelForRequest;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
     return await callOpenAIResponses({
@@ -4109,7 +4110,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
     }
 
-    actualModelName = OPENAI_MODEL;
+    actualModelName = openAiModelForRequest;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
     yield* callOpenAIResponsesStream({
@@ -4383,6 +4384,7 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
 
 
 
