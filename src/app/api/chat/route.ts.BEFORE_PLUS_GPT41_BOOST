@@ -118,8 +118,6 @@ function detectQuickActionBoostFromText(text: string): string {
 }
 // ====== CONFIG ======
 const OPENAI_MODEL = "gpt-4o-mini";
-const OPENAI_BOOST_MODEL = "gpt-4.1";
-const PLUS_BOOST_LIMIT = 150;
 
 const GEMINI_FLASH_LITE_MODEL = "gemini-2.5-flash-lite";
 const GEMINI_FLASH_MODEL = "gemini-2.5-flash";
@@ -143,8 +141,8 @@ const REDIS_REST_URL = process.env.AJX_UPSTASH_REDIS_REST_URL || "";
 const REDIS_REST_TOKEN = process.env.AJX_UPSTASH_REDIS_REST_TOKEN || "";
 const USAGE_KEY_PREFIX = "ajx:usage:v1";
 
-const PLUS_PRIMARY_LIMIT = 5000;
-const PLUS_SAVINGS_EXTRA_LIMIT = 0;
+const PLUS_PRIMARY_LIMIT = 2000;
+const PLUS_SAVINGS_EXTRA_LIMIT = 1000;
 const PLUS_SAVINGS_TOTAL_LIMIT = PLUS_PRIMARY_LIMIT + PLUS_SAVINGS_EXTRA_LIMIT;
 const PLUS_SAVINGS_MAX_OUTPUT_TOKENS = 500;
 
@@ -320,7 +318,6 @@ type UsageRow = {
   imgToday?: number;
 
   proUsedThisMonth?: number;
-  boostThisMonth?: number;
 };
 
 const usageMemoryFallback = new Map<string, UsageRow>();
@@ -337,7 +334,6 @@ function emptyUsageRow(): UsageRow {
     reqToday: 0,
     imgToday: 0,
     proUsedThisMonth: 0,
-    boostThisMonth: 0,
   };
 }
 
@@ -2127,149 +2123,6 @@ NOT:
 `.trim();
 }
 
-
-// ====== PLUS GPT-4.1 BOOST LOGIC ======
-function looksLikeQuickActionQuestionFlow(messages: Msg[]): boolean {
-  const recentAssistantMessages = messages
-    .filter((m) => m.role === "assistant")
-    .slice(-3)
-    .map((m) => String(m.content || "").trim())
-    .filter(Boolean);
-
-  const recentAssistant = recentAssistantMessages.join("\n").toLowerCase();
-
-  if (
-    recentAssistant.includes("tarvitsen ensin") ||
-    recentAssistant.includes("vastaa") ||
-    recentAssistant.includes("kysymys") ||
-    recentAssistant.includes("1.") ||
-    recentAssistant.includes("2.") ||
-    recentAssistant.includes("3.") ||
-    recentAssistant.includes("i need") ||
-    recentAssistant.includes("first i need") ||
-    recentAssistant.includes("necesito")
-  ) {
-    return true;
-  }
-
-  const questionLineCount = recentAssistantMessages
-    .join("\n")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length >= 8 && /[?？]$/.test(line)).length;
-
-  return questionLineCount >= 3;
-}
-
-function userAnswerIsGoodEnoughForBoost(text: string): boolean {
-  const s = String(text || "").trim();
-  const t = s.toLowerCase();
-
-  if (s.length < 120) return false;
-
-  let score = 0;
-
-  if (s.length >= 180) score += 1;
-  if (/\d/.test(s)) score += 1;
-  if (/[€$]|euro|eur|hinta|price|precio|budget|budjetti|presupuesto/.test(t)) score += 1;
-  if (/yritys|firma|company|empresa|palvelu|service|servicio|tuote|product|producto/.test(t)) score += 1;
-  if (/asiakas|customer|cliente|kohderyhmä|target|público|audience/.test(t)) score += 1;
-  if (/alue|kaupunki|city|area|zona|spain|suomi|finland|espanja|torrevieja|orihuela/.test(t)) score += 1;
-  if (s.split(/\s+/).length >= 35) score += 1;
-
-  const weak =
-    t === "en tiedä" ||
-    t === "en osaa sanoa" ||
-    t === "tee jotain" ||
-    t === "ihan sama" ||
-    t === "jotain" ||
-    t === "i don't know" ||
-    t === "whatever" ||
-    t === "no sé";
-
-  if (weak) return false;
-
-  return score >= 3;
-}
-
-function isRefinementRequestForBoost(text: string): boolean {
-  const t = String(text || "").toLowerCase();
-
-  return (
-    /paranna|tee parempi|myyvempi|selkeämpi|lyhyempi|pidempi|muokkaa|kirjoita uudelleen|viimeistele/.test(t) ||
-    /improve|make it better|rewrite|polish|more sales|clearer|shorter|longer/.test(t) ||
-    /mejora|reescribe|más claro|más vendedor|termina/.test(t)
-  );
-}
-
-function shouldUsePlusBoost(args: {
-  plan: PlanId;
-  usage: UsageRow;
-  messages: Msg[];
-  lastUserText: string;
-  hasImages: boolean;
-  hasTextFiles: boolean;
-}): { useBoost: boolean; reason: string } {
-  if (args.plan !== ("plus" as any)) {
-    return { useBoost: false, reason: "not-plus" };
-  }
-
-  const used = Number(args.usage.boostThisMonth || 0);
-  if (used >= 150) {
-    return { useBoost: false, reason: "limit-reached" };
-  }
-
-  const text = String(args.lastUserText || "");
-
-  // Kuva ja tiedosto: vain ensimmäinen analyysi boostilla.
-  if (args.hasImages) {
-    return { useBoost: true, reason: "image-analysis" };
-  }
-
-  if (args.hasTextFiles) {
-    return { useBoost: true, reason: "file-analysis" };
-  }
-
-  // Pikatoiminnon ensimmäinen kysymys aina minillä.
-  if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
-    return { useBoost: false, reason: "quick-first-mini" };
-  }
-
-  const assistant = args.messages.filter((m) => m.role === "assistant");
-
-  let startIndex = -1;
-  for (let i = assistant.length - 1; i >= 0; i -= 1) {
-    const c = String(assistant[i].content || "");
-    if (c.includes("quick-first-mini")) {
-      startIndex = i;
-      break;
-    }
-  }
-
-  if (startIndex >= 0) {
-    const afterQuickStart = assistant.slice(startIndex + 1);
-
-    const boostCount = afterQuickStart.filter((m) => {
-      const c = String(m.content || "");
-      return c.includes("MODEL=gpt-4.1");
-    }).length;
-
-    if (boostCount < 2) {
-      return { useBoost: true, reason: "quick-2-step" };
-    }
-  }
-
-  return { useBoost: false, reason: "mini-default" };
-}
-function plusBoostClarificationText(locale: Locale): string {
-  return l(
-    locale,
-    "Tarvitsen vielä vähän tarkemmat tiedot, jotta voin tehdä tästä oikeasti hyvän.\n\nVastaa lyhyesti näihin:\n\n1. Mikä yritys, tuote tai palvelu on kyseessä?\n2. Kenelle tämä tehdään?\n3. Mikä on hinta, alue, tavoite tai tärkein rajoite?",
-    "I need a bit more detail to make this genuinely useful.\n\nPlease answer these briefly:\n\n1. What company, product, or service is this about?\n2. Who is it for?\n3. What is the price, area, goal, or main constraint?",
-    "Necesito un poco más de detalle para hacerlo realmente útil.\n\nResponde brevemente:\n\n1. ¿De qué empresa, producto o servicio se trata?\n2. ¿Para quién es?\n3. ¿Cuál es el precio, zona, objetivo o limitación principal?"
-  );
-}
-
 // ====== Provider selection ======
 type Provider = "gemini" | "openai";
 function hasGeminiKey() {
@@ -2790,7 +2643,6 @@ async function callOpenAIResponses(opts: {
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
   maxOutputTokens?: number;
-  model?: string;
 }): Promise<string> {
   const input: any[] = [
     {
@@ -2810,7 +2662,7 @@ async function callOpenAIResponses(opts: {
   }
 
   const body: any = {
-    model: opts.model || OPENAI_MODEL,
+    model: OPENAI_MODEL,
     instructions: opts.instructions,
     input,
   };
@@ -2854,7 +2706,6 @@ async function* callOpenAIResponsesStream(opts: {
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
   maxOutputTokens?: number;
-  model?: string;
 }): AsyncGenerator<string> {
   const input: any[] = [
     {
@@ -2874,7 +2725,7 @@ async function* callOpenAIResponsesStream(opts: {
   }
 
   const body: any = {
-    model: opts.model || OPENAI_MODEL,
+    model: OPENAI_MODEL,
     instructions: opts.instructions,
     input,
     stream: true,
@@ -3415,7 +3266,6 @@ export async function POST(req: NextRequest) {
   if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
   if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
   if (typeof usage.proUsedThisMonth !== "number") usage.proUsedThisMonth = 0;
-  if (typeof usage.boostThisMonth !== "number") usage.boostThisMonth = 0;
 
   const todayKey = getDayKey();
   if (usage.dayKey !== todayKey) {
@@ -3963,12 +3813,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         : shouldTryWeb
           ? "- The user requested web search, but no usable web results were available.\n"
           : "- Do not assume fresh web data.\n") +
-    (imgCount > 0
-      ? "- One or more images are attached. Analyze the attached image directly. Do not ask what the user wants if the user asks anything about the image. Give the best useful answer from the image.\n"
-      : "") +
-    (trimmedTextFiles.length > 0
-      ? "- One or more text files or PDFs are attached. Read the attached file content directly and answer from it. Do not say you cannot inspect attachments. Do not ask what the user wants if the user asks a vague file question. Summarize the relevant contents directly.\n"
-      : "") +
+    (imgCount > 0 ? "- One or more images are attached. Use them in your answer.\n" : "") +
     (trimmedMemory.truncated
       ? "- Conversation history included here is shortened to the most relevant recent context.\n"
       : "");
@@ -3978,22 +3823,6 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     attachmentHeader +
     textFileBlocks +
     webContext;
-
-  const plusBoostDecision = shouldUsePlusBoost({
-    plan,
-    usage,
-    messages,
-    lastUserText: lastTextOriginal,
-    hasImages: imgCount > 0,
-    hasTextFiles: trimmedTextFiles.length > 0,
-  });
-
-  const openAiModelForRequest = plusBoostDecision.useBoost ? OPENAI_BOOST_MODEL : OPENAI_MODEL;
-
-  resHeaders.set("x-ajx-debug-plus-boost", String(plusBoostDecision.useBoost));
-  resHeaders.set("x-ajx-debug-plus-boost-reason", safeHeaderValue(plusBoostDecision.reason));
-  resHeaders.set("x-ajx-debug-plus-boost-used-month", String(Number(usage.boostThisMonth || 0)));
-  resHeaders.set("x-ajx-debug-plus-boost-limit", String(PLUS_BOOST_LIMIT));
 
   const primaryProvider = chooseProviderForPlan(plan, plusSavingsStateBeforeCall.activeForThisRequest);
 
@@ -4009,7 +3838,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
 
   const requestedGeminiModel = geminiSelection.model;
 
-  let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : openAiModelForRequest;
+  let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : OPENAI_MODEL;
   let actualModelName = requestedModelName;
   let fallbackUsed = "";
   let fallbackReason = "";
@@ -4030,10 +3859,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     );
   }
 
-  resHeaders.set("x-ajx-debug-primary-provider", primaryProvider);
-  resHeaders.set("x-ajx-provider", primaryProvider);
-  resHeaders.set("x-ajx-model-selected", requestedModelName);
-  console.log("PROVIDER:", primaryProvider);
+  resHeaders.set("x-ajx-debug-primary-provider", primaryProvider); console.log("PROVIDER:", primaryProvider);
   resHeaders.set("x-ajx-debug-requested-model", safeHeaderValue(requestedModelName));
   resHeaders.set("x-ajx-debug-company-pro-needed", String(geminiSelection.companyNeedsPro));
   resHeaders.set("x-ajx-debug-company-pro-available", String(geminiSelection.companyCanUsePro));
@@ -4084,7 +3910,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
     }
 
-    actualModelName = openAiModelForRequest;
+    actualModelName = OPENAI_MODEL;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
     return await callOpenAIResponses({
@@ -4105,7 +3931,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
     }
 
-    actualModelName = openAiModelForRequest;
+    actualModelName = OPENAI_MODEL;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
     yield* callOpenAIResponsesStream({
@@ -4273,12 +4099,6 @@ async function callTextNonStream(): Promise<string> {
                 plan,
                 limits: streamLimits,
                 usage,
-                boost: {
-                  used: plusBoostDecision.useBoost,
-                  reason: plusBoostDecision.reason,
-                  usedThisMonth: Number(usage.boostThisMonth || 0),
-                  limit: PLUS_BOOST_LIMIT,
-                },
                 web: {
                   requested: shouldTryWeb,
                   didWeb,
@@ -4329,7 +4149,7 @@ async function callTextNonStream(): Promise<string> {
   outText = freeLitePrefix(locale) + outText;
 }
 
-outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage); outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4350,7 +4170,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
           webPerMonth: effectiveWebLimit,
         },
         usage,
-        text: String(outText || ""),
+        text: "[PROVIDER: " + primaryProvider + "]\n\n" + String(outText || ""),
         web: {
           requested: shouldTryWeb,
           didWeb,
@@ -4378,29 +4198,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

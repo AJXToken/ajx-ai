@@ -2202,7 +2202,7 @@ function isRefinementRequestForBoost(text: string): boolean {
   );
 }
 
-function shouldUsePlusBoost(args: {
+function shouldUsePlusBoostModel(args: {
   plan: PlanId;
   usage: UsageRow;
   messages: Msg[];
@@ -2210,57 +2210,94 @@ function shouldUsePlusBoost(args: {
   hasImages: boolean;
   hasTextFiles: boolean;
 }): { useBoost: boolean; reason: string } {
-  if (args.plan !== ("plus" as any)) {
-    return { useBoost: false, reason: "not-plus" };
+  if (args.plan !== ("plus" as any)) return { useBoost: false, reason: "not-plus" };
+
+  if (String(args.lastUserText || "").includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
+    return { useBoost: false, reason: "quick-action-first-question-mini" };
   }
 
   const used = Number(args.usage.boostThisMonth || 0);
-  if (used >= 150) {
-    return { useBoost: false, reason: "limit-reached" };
-  }
+  if (used >= PLUS_BOOST_LIMIT) return { useBoost: false, reason: "plus-boost-limit-reached" };
+
+  if (args.hasImages) return { useBoost: true, reason: "image-analysis" };
 
   const text = String(args.lastUserText || "");
+  const inQuickActionFlow = looksLikeQuickActionQuestionFlow(args.messages);
+  const goodAnswer = userAnswerIsGoodEnoughForBoost(text);
 
-  // Kuva ja tiedosto: vain ensimmäinen analyysi boostilla.
-  if (args.hasImages) {
-    return { useBoost: true, reason: "image-analysis" };
+  if (inQuickActionFlow && goodAnswer) {
+    return { useBoost: true, reason: "quick-action-good-answer" };
+  }
+
+  if (isRefinementRequestForBoost(text) && text.length >= 40) {
+    return { useBoost: true, reason: "refinement-request" };
   }
 
   if (args.hasTextFiles) {
-    return { useBoost: true, reason: "file-analysis" };
+    return { useBoost: true, reason: "text-file-analysis" };
   }
 
-  // Pikatoiminnon ensimmäinen kysymys aina minillä.
-  if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
-    return { useBoost: false, reason: "quick-first-mini" };
+  const previousAssistantMessages = args.messages
+    .filter((m) => m.role === "assistant")
+    .slice(-3);
+
+  const previousAssistantText = previousAssistantMessages
+    .map((m) => String(m.content || "").toLowerCase())
+    .join("\n");
+
+  const previousHadBoost =
+    previousAssistantMessages.some((m) =>
+      String(m.content || "").includes("DEBUG | MODEL=gpt-4.1")
+    );
+
+  const looksLikeImageFlow =
+    previousAssistantText.includes("kuvassa") ||
+    previousAssistantText.includes("image analysis") ||
+    previousAssistantText.includes("análisis de imagen");
+
+  const imageContinuationNeedsBoost =
+    /analysoi|arvioi|auta|minulla ei|tiedän vain|bmw|auto|autosta|markkina.?arvo|arvo|miksi|vertaa|tunnista|malli|keräilijä|collector|help|market value|car|compare|identify|analyze|analyse|estimate|valor|coche|comparar|identifica/i.test(text);
+
+  if (looksLikeImageFlow && imageContinuationNeedsBoost && text.length >= 25) {
+    return { useBoost: true, reason: "image-flow-continuation" };
   }
 
-  const assistant = args.messages.filter((m) => m.role === "assistant");
+  const looksLikeBusinessFlow =
+    previousAssistantText.includes("tilanne") ||
+    previousAssistantText.includes("situation") ||
+    previousAssistantText.includes("toimintasuunnitelma") ||
+    previousAssistantText.includes("action plan") ||
+    previousAssistantText.includes("valmis sisältö") ||
+    previousAssistantText.includes("ready output") ||
+    previousAssistantText.includes("seuraava askel") ||
+    previousAssistantText.includes("next step");
 
-  let startIndex = -1;
-  for (let i = assistant.length - 1; i >= 0; i -= 1) {
-    const c = String(assistant[i].content || "");
-    if (c.includes("quick-first-mini")) {
-      startIndex = i;
-      break;
-    }
+  const continuationText =
+    /mitä nyt|seuraavaksi|tein niin|jatka|miten jatkan|nyt mitä|mennään eteenpäin|sain .*asiak|myynti|onnistui|what now|next|continue|i did|got .*customer|sales|it worked|qué ahora|siguiente|continúa/i.test(text);
+
+  if (looksLikeBusinessFlow && continuationText && text.length >= 15) {
+    return { useBoost: true, reason: "business-flow-continuation" };
   }
 
-  if (startIndex >= 0) {
-    const afterQuickStart = assistant.slice(startIndex + 1);
+  const smallTalkOrStop =
+    /kahville|kahvi|nukkumaan|öitä|oitä|moro|moikka|ei nyt|myöhemmin|lopetetaan|tauko|coffee|sleep|good night|later|stop|pause/i.test(text);
 
-    const boostCount = afterQuickStart.filter((m) => {
-      const c = String(m.content || "");
-      return c.includes("MODEL=gpt-4.1");
-    }).length;
+  const previousBoostCount = previousAssistantMessages.filter((m) =>
+    String(m.content || "").includes("DEBUG | MODEL=gpt-4.1")
+  ).length;
 
-    if (boostCount < 2) {
-      return { useBoost: true, reason: "quick-2-step" };
-    }
+  if (
+    previousHadBoost &&
+    previousBoostCount < 2 &&
+    !smallTalkOrStop &&
+    text.length >= 25
+  ) {
+    return { useBoost: true, reason: "sticky-boost-continuation" };
   }
 
-  return { useBoost: false, reason: "mini-default" };
+  return { useBoost: false, reason: goodAnswer ? "good-answer-no-flow" : "insufficient-user-data" };
 }
+
 function plusBoostClarificationText(locale: Locale): string {
   return l(
     locale,
@@ -3963,12 +4000,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         : shouldTryWeb
           ? "- The user requested web search, but no usable web results were available.\n"
           : "- Do not assume fresh web data.\n") +
-    (imgCount > 0
-      ? "- One or more images are attached. Analyze the attached image directly. Do not ask what the user wants if the user asks anything about the image. Give the best useful answer from the image.\n"
-      : "") +
-    (trimmedTextFiles.length > 0
-      ? "- One or more text files or PDFs are attached. Read the attached file content directly and answer from it. Do not say you cannot inspect attachments. Do not ask what the user wants if the user asks a vague file question. Summarize the relevant contents directly.\n"
-      : "") +
+    (imgCount > 0 ? "- One or more images are attached. Use them in your answer.\n" : "") +
     (trimmedMemory.truncated
       ? "- Conversation history included here is shortened to the most relevant recent context.\n"
       : "");
@@ -3979,7 +4011,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  const plusBoostDecision = shouldUsePlusBoost({
+  const plusBoostDecision = shouldUsePlusBoostModel({
     plan,
     usage,
     messages,
@@ -4330,6 +4362,7 @@ async function callTextNonStream(): Promise<string> {
 }
 
 outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BOOST=" + String(plusBoostDecision.useBoost) + " | REASON=" + plusBoostDecision.reason + "\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4378,14 +4411,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
-
-
-
-
-
-
-
-
 
 
 

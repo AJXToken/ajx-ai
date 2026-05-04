@@ -1,67 +1,4 @@
-﻿
-/* ===== AJX QUICK ACTION QUALITY BOOST ===== */
-
-function getQuickActionSystemBoost(actionId: string): string {
-  switch (actionId) {
-
-    case "customers":
-      return `
-TAVOITE: Löydä asiakkaat käytännössä.
-
-Rakenne:
-1. Missä asiakkaat ovat (konkreettiset paikat)
-2. Miten lähestyt (täsmä viesti)
-3. Mitä sanot (valmis teksti)
-4. Nopea testisuunnitelma (3 askelta)
-
-Älä anna teoriaa. Anna konkreettiset toimet.
-`;
-
-    case "pricing":
-      return `
-TAVOITE: Paranna hintaa ilman että myynti romahtaa.
-
-Rakenne:
-1. Nykyisen hinnan ongelma
-2. Uusi hinnoittelumalli (selkeä)
-3. Esimerkki hinnasta (€)
-4. Miten testaat käytännössä
-
-Ei teoriaa. Vain käytännön toteutus.
-`;
-
-    case "plan":
-      return `
-TAVOITE: Selkeä toimintasuunnitelma.
-
-Rakenne:
-1. Tavoite (1 lause)
-2. 5–7 konkreettista askelta
-3. Aikajärjestys
-4. Ensimmäinen askel heti
-
-Ei selittelyä. Tee suoraan toteutettava suunnitelma.
-`;
-
-    case "problem":
-      return `
-TAVOITE: Ratkaise ongelma.
-
-Rakenne:
-1. Mikä oikeasti on ongelma
-2. 2–3 realistista ratkaisua
-3. Paras vaihtoehto
-4. Mitä teet heti
-
-Ei ympäripyöreää. Suora ratkaisu.
-`;
-
-    default:
-      return "";
-  }
-}
-
-// src/app/api/chat/route.ts
+﻿// src/app/api/chat/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import pdfParse from "pdf-parse";
@@ -71,55 +8,8 @@ import { type PlanId } from "../../../lib/plans";
 
 export const runtime = "nodejs";
 
-
-function detectQuickActionBoostFromText(text: string): string {
-  const t = String(text || "").toLowerCase();
-
-  if (
-    t.includes("hanki asiakkaita") ||
-    t.includes("löytämään uusia asiakkaita") ||
-    t.includes("löydä asiakkaita") ||
-    t.includes("get customers") ||
-    t.includes("find new customers") ||
-    t.includes("conseguir clientes")
-  ) {
-    return getQuickActionSystemBoost("customers");
-  }
-
-  if (
-    t.includes("paranna hinnoittelua") ||
-    t.includes("hinnoitteluni") ||
-    t.includes("improve pricing") ||
-    t.includes("pricing") ||
-    t.includes("mejorar precios")
-  ) {
-    return getQuickActionSystemBoost("pricing");
-  }
-
-  if (
-    t.includes("tee toimintasuunnitelma") ||
-    t.includes("toimintasuunnitelma") ||
-    t.includes("action plan") ||
-    t.includes("plan de acción")
-  ) {
-    return getQuickActionSystemBoost("plan");
-  }
-
-  if (
-    t.includes("ratkaise yritysongelma") ||
-    t.includes("yritysongelma") ||
-    t.includes("business problem") ||
-    t.includes("resolver problema")
-  ) {
-    return getQuickActionSystemBoost("problem");
-  }
-
-  return "";
-}
 // ====== CONFIG ======
 const OPENAI_MODEL = "gpt-4o-mini";
-const OPENAI_BOOST_MODEL = "gpt-4.1";
-const PLUS_BOOST_LIMIT = 150;
 
 const GEMINI_FLASH_LITE_MODEL = "gemini-2.5-flash-lite";
 const GEMINI_FLASH_MODEL = "gemini-2.5-flash";
@@ -143,8 +33,8 @@ const REDIS_REST_URL = process.env.AJX_UPSTASH_REDIS_REST_URL || "";
 const REDIS_REST_TOKEN = process.env.AJX_UPSTASH_REDIS_REST_TOKEN || "";
 const USAGE_KEY_PREFIX = "ajx:usage:v1";
 
-const PLUS_PRIMARY_LIMIT = 5000;
-const PLUS_SAVINGS_EXTRA_LIMIT = 0;
+const PLUS_PRIMARY_LIMIT = 2000;
+const PLUS_SAVINGS_EXTRA_LIMIT = 1000;
 const PLUS_SAVINGS_TOTAL_LIMIT = PLUS_PRIMARY_LIMIT + PLUS_SAVINGS_EXTRA_LIMIT;
 const PLUS_SAVINGS_MAX_OUTPUT_TOKENS = 500;
 
@@ -320,7 +210,6 @@ type UsageRow = {
   imgToday?: number;
 
   proUsedThisMonth?: number;
-  boostThisMonth?: number;
 };
 
 const usageMemoryFallback = new Map<string, UsageRow>();
@@ -337,7 +226,6 @@ function emptyUsageRow(): UsageRow {
     reqToday: 0,
     imgToday: 0,
     proUsedThisMonth: 0,
-    boostThisMonth: 0,
   };
 }
 
@@ -1293,7 +1181,6 @@ function buildFormattingInstruction(opts: {
     "- Never flatten the whole answer into one dense paragraph.",
     "- Keep each bullet on its own line.",
     "- Keep each numbered item on its own line.",
-    "- When asking questions, do NOT use numbered lists. Use simple bullet lines instead.",
     "- If you use a heading, keep the whole heading on one line.",
     "- Do not insert random line breaks inside one sentence or inside a heading.",
     "- When writing code, always use fenced code blocks with the correct language tag.",
@@ -1543,361 +1430,17 @@ Never present legal, tax, investment or financial advice as final.
 Always tell the user to verify current conditions from the official source.
 
 OFFERS QUICK ACTION:
-Ask 3-5 numbered questions if essential details are missing:
-1. Who is the customer?
-2. What exactly is included in the work?
-3. What is the price or price range?
-4. When will the work be done?
-5. What is not included?
-
-Then produce a ready-to-send offer.
-
-FLOW RULE:
-If the user has already answered the questions (even partially),
-do NOT ask again.
-
-Proceed immediately to create the offer using:
-- provided answers
-- placeholders for missing data
-
-Never repeat the same questions twice.
-
-OFFER DECISION RULE:
-ADS QUICK ACTION:
-SALES GROWTH QUICK ACTION:
-REAL-WORLD SALES PRIORITY:
-
-If:
-- budget is under 500€
-- service is local
-- target is businesses (B2B)
-
-DO NOT prioritize ads.
-
-Instead prioritize:
-1. direct outreach (messages, calls, email)
-2. local targeting
-3. fast contact volume
-
-ADS RULE:
-Only suggest ads as secondary, not primary.
-
-EXAMPLE THINKING:
-For small local services ? fastest sales come from direct contact, not ads.
-
-FORBIDDEN PRIMARY STRATEGIES:
-- "run ads first"
-- "optimize campaigns"
-- "test creatives"
-
-PREFERRED:
-- "message 20 prospects"
-- "call 10 companies"
-- "send direct offer"
-
-After the user answers, do NOT give general advice.
-
-SALES DECISION RULE:
-Do not explain how to grow sales.
-Show exactly what to do next.
-
-RESPONSE STRUCTURE (MANDATORY):
-
-1. SITUATION (1–2 lines)
-Summarize the business in simple terms.
-
-2. QUICK WIN (1 action)
-Something that can be done immediately (today).
-
-3. ACTION PLAN (3–5 steps)
-Concrete, realistic actions.
-No generic advice.
-
-4. READY OUTPUT (MOST IMPORTANT)
-Create something usable, for example:
-- sales message
-- DM script
-- offer angle
-- campaign idea
-- landing text
-
-5. NEXT STEP
-One clear next move.
-
-DO NOT:
-- say "improve marketing"
-- say "optimize"
-- say "test different strategies"
-- give theory
-
-STYLE:
-- practical
-- direct
-- small business level
-- no fluff
-
-When the user asks for an ad, follow this flow:
-
-STEP 1 — Ask 3–5 questions if missing:
-1. What is the business?
-2. What is being sold?
-3. Who is the target customer?
-4. Where will the ad be used? (Facebook, Google, local, etc.)
-5. What is the main goal? (calls, messages, sales)
-
-STEP 2 — Create the ad immediately after answers.
-
-AD DECISION RULE:
-Do not explain advertising.
-Create the ad.
-
-OUTPUT RULE:
-Always produce 2–3 different ad versions.
-
-Each version must be clearly different:
-- one direct
-- one benefit-focused
-- one simple/local
-
-REAL-WORLD AD RULE:
-
-Ads must sound like real small business ads.
-
-Do NOT sound like:
-- marketing agency
-- AI copywriting
-- corporate branding
-
-Prefer:
-- simple sentences
-- concrete situations
-- everyday language
-
-If the ad sounds like generic marketing, rewrite it simpler.
-
-Each ad must include:
-- short headline
-- main text (max 5–7 lines)
-- clear CTA
-
-DO NOT:
-
-- mention health benefits
-- mention cleaner air
-- mention better breathing
-- mention energy savings
-- mention efficiency improvements
-- mention safety improvements
-
-No invisible benefits.
-
-Ads must only mention:
-- the service
-- the situation
-- the timing
-- the action
-
-If the benefit cannot be directly proven in the ad, do not write it.
-
-- invent prices or discounts
-- invent guarantees
-- use hype words like "best", "premium", "top quality"
-- use empty phrases like "we offer high quality service"
-
-STYLE:
-
-NO MARKETING HYPE RULE:
-Do not use:
-- improve quality of life
-- better health
-- energy savings
-- premium
-- professional service
-- high quality
-- best solution
-
-Avoid emotional exaggeration.
-
-Write ads like a real small business owner, not a marketing agency.
-
-Prefer:
-- questions
-- concrete situations
-- simple language
-- short sentences
-- simple
-- believable
-- local-business level
-- written like a real entrepreneur
-Do not explain how to make an offer.
-Make the offer.
-
-The offer must include:
-- clear title
-- customer / recipient
-- short intro
-- work scope
-- price or [price]
-- schedule or [schedule]
+Ask for customer, work scope, price or price range, timing and exclusions if missing.
+Then produce a clean offer with:
+- title
+- scope
+- price / placeholder
+- schedule
 - exclusions
 - validity
 - next step
-- professional closing
-
-Do not invent:
-- prices
-- discounts
-- guarantees
-- delivery dates
-- legal terms
-- customer names
-- health claims
-- energy savings claims
-- quality claims without proof
-- reports, inspections or recommendations unless the user gave them
-
-Avoid generic hype words:
-
-NO SALES FLUFF RULE:
-
-Do not write empty sales sentences.
-
-Do not use "we" language:
-- "we offer"
-- "our team"
-- "meidän tiimi"
-- "tarjoamme"
-- "we ensure"
-- "varmistamme"
-
-Do not make performance claims:
-- system works better
-- improves performance
-- more efficient
-- safer
-- tehokkaammin
-- turvallisemmin
-
-Write like a real contractor:
-short, factual, direct.
-
-Start directly from the work.
-Do not write empty sales sentences.
-
-Examples to avoid:
-- "Tarjoamme kattavaa palvelua"
-- "Tarjoamme laadukasta palvelua"
-- "We offer high quality service"
-- "Ofrecemos un servicio profesional"
-
-Start directly with the actual offer content.
-No filler intro sentences.
-- high quality
-- professional
-- expert
-- best
-- guaranteed
-- improves air quality
-- improves energy efficiency
-- reduces allergies
-- laadukas
-- korkealaatuinen
-- ammattitaitoinen
-- asiantunteva
-- paras
-- takuu
-- parantaa ilmanlaatua
-- parantaa energiatehokkuutta
-- vähentää allergioita
-
-If information is missing, use placeholders like:
-[customer]
-[price]
-[schedule]
-[validity]
-[phone]
-[email]
-
-Style:
-- clear
-- practical
-- ready to send
-- no hype
-- no legal overkill
-- no generic explanation
 
 ADS QUICK ACTION:
-SALES GROWTH QUICK ACTION:
-REAL-WORLD SALES PRIORITY:
-
-If:
-- budget is under 500€
-- service is local
-- target is businesses (B2B)
-
-DO NOT prioritize ads.
-
-Instead prioritize:
-1. direct outreach (messages, calls, email)
-2. local targeting
-3. fast contact volume
-
-ADS RULE:
-Only suggest ads as secondary, not primary.
-
-EXAMPLE THINKING:
-For small local services ? fastest sales come from direct contact, not ads.
-
-FORBIDDEN PRIMARY STRATEGIES:
-- "run ads first"
-- "optimize campaigns"
-- "test creatives"
-
-PREFERRED:
-- "message 20 prospects"
-- "call 10 companies"
-- "send direct offer"
-
-After the user answers, do NOT give general advice.
-
-SALES DECISION RULE:
-Do not explain how to grow sales.
-Show exactly what to do next.
-
-RESPONSE STRUCTURE (MANDATORY):
-
-1. SITUATION (1–2 lines)
-Summarize the business in simple terms.
-
-2. QUICK WIN (1 action)
-Something that can be done immediately (today).
-
-3. ACTION PLAN (3–5 steps)
-Concrete, realistic actions.
-No generic advice.
-
-4. READY OUTPUT (MOST IMPORTANT)
-Create something usable, for example:
-- sales message
-- DM script
-- offer angle
-- campaign idea
-- landing text
-
-5. NEXT STEP
-One clear next move.
-
-DO NOT:
-- say "improve marketing"
-- say "optimize"
-- say "test different strategies"
-- give theory
-
-STYLE:
-- practical
-- direct
-- small business level
-- no fluff
 Ask for company, service/product, target customer, area and offer if missing.
 Then produce:
 - one short ad
@@ -2010,43 +1553,10 @@ When giving funding options:
 - avoid generic ordering
 - always explain why the order fits this exact case
 
-FUNDING DECISION RULE:
-For funding answers, do not present options as equal.
-Always make a clear recommendation.
-
-For the Spain small-business digital/marketing case:
-- Kit Digital = first action
-- Cámara de Comercio = support channel, not main funding
-- ENISA = only second-phase option if the business is innovative/growth-oriented
-- bank/ICO loan = fallback if support is not enough or timing is urgent
-
-Use this wording style:
-"Do this first."
-"Keep this as backup."
-"Do not start here unless..."
-
 CRITICAL FUNDING RULE:
 When the topic is funding, grants or financing:
 
 DO NOT:
-
-- mention health benefits
-- mention cleaner air
-- mention better breathing
-- mention energy savings
-- mention efficiency improvements
-- mention safety improvements
-
-No invisible benefits.
-
-Ads must only mention:
-- the service
-- the situation
-- the timing
-- the action
-
-If the benefit cannot be directly proven in the ad, do not write it.
-
 - give generic lists
 - give loose suggestions
 - say "you can", "you may", "consider"
@@ -2061,50 +1571,12 @@ ALWAYS STRUCTURE LIKE THIS:
 6. 3 concrete next actions
 
 STYLE:
-
-NO MARKETING HYPE RULE:
-Do not use:
-- improve quality of life
-- better health
-- energy savings
-- premium
-- professional service
-- high quality
-- best solution
-
-Avoid emotional exaggeration.
-
-Write ads like a real small business owner, not a marketing agency.
-
-Prefer:
-- questions
-- concrete situations
-- simple language
-- short sentences
 - Be decisive
 
 TONE RULE (CRITICAL):
 Write like a practical entrepreneur giving instructions to another entrepreneur.
 
 DO NOT:
-
-- mention health benefits
-- mention cleaner air
-- mention better breathing
-- mention energy savings
-- mention efficiency improvements
-- mention safety improvements
-
-No invisible benefits.
-
-Ads must only mention:
-- the service
-- the situation
-- the timing
-- the action
-
-If the benefit cannot be directly proven in the ad, do not write it.
-
 - explain like a guide
 - use formal explanation tone
 - use soft suggestions
@@ -2120,154 +1592,11 @@ DO:
 - No filler
 
 OUTPUT MUST FEEL LIKE:
-"do this ? then this ? then this"
+"do this → then this → then this"
 
 NOT:
 "here are some options"
 `.trim();
-}
-
-
-// ====== PLUS GPT-4.1 BOOST LOGIC ======
-function looksLikeQuickActionQuestionFlow(messages: Msg[]): boolean {
-  const recentAssistantMessages = messages
-    .filter((m) => m.role === "assistant")
-    .slice(-3)
-    .map((m) => String(m.content || "").trim())
-    .filter(Boolean);
-
-  const recentAssistant = recentAssistantMessages.join("\n").toLowerCase();
-
-  if (
-    recentAssistant.includes("tarvitsen ensin") ||
-    recentAssistant.includes("vastaa") ||
-    recentAssistant.includes("kysymys") ||
-    recentAssistant.includes("1.") ||
-    recentAssistant.includes("2.") ||
-    recentAssistant.includes("3.") ||
-    recentAssistant.includes("i need") ||
-    recentAssistant.includes("first i need") ||
-    recentAssistant.includes("necesito")
-  ) {
-    return true;
-  }
-
-  const questionLineCount = recentAssistantMessages
-    .join("\n")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length >= 8 && /[?？]$/.test(line)).length;
-
-  return questionLineCount >= 3;
-}
-
-function userAnswerIsGoodEnoughForBoost(text: string): boolean {
-  const s = String(text || "").trim();
-  const t = s.toLowerCase();
-
-  if (s.length < 120) return false;
-
-  let score = 0;
-
-  if (s.length >= 180) score += 1;
-  if (/\d/.test(s)) score += 1;
-  if (/[€$]|euro|eur|hinta|price|precio|budget|budjetti|presupuesto/.test(t)) score += 1;
-  if (/yritys|firma|company|empresa|palvelu|service|servicio|tuote|product|producto/.test(t)) score += 1;
-  if (/asiakas|customer|cliente|kohderyhmä|target|público|audience/.test(t)) score += 1;
-  if (/alue|kaupunki|city|area|zona|spain|suomi|finland|espanja|torrevieja|orihuela/.test(t)) score += 1;
-  if (s.split(/\s+/).length >= 35) score += 1;
-
-  const weak =
-    t === "en tiedä" ||
-    t === "en osaa sanoa" ||
-    t === "tee jotain" ||
-    t === "ihan sama" ||
-    t === "jotain" ||
-    t === "i don't know" ||
-    t === "whatever" ||
-    t === "no sé";
-
-  if (weak) return false;
-
-  return score >= 3;
-}
-
-function isRefinementRequestForBoost(text: string): boolean {
-  const t = String(text || "").toLowerCase();
-
-  return (
-    /paranna|tee parempi|myyvempi|selkeämpi|lyhyempi|pidempi|muokkaa|kirjoita uudelleen|viimeistele/.test(t) ||
-    /improve|make it better|rewrite|polish|more sales|clearer|shorter|longer/.test(t) ||
-    /mejora|reescribe|más claro|más vendedor|termina/.test(t)
-  );
-}
-
-function shouldUsePlusBoost(args: {
-  plan: PlanId;
-  usage: UsageRow;
-  messages: Msg[];
-  lastUserText: string;
-  hasImages: boolean;
-  hasTextFiles: boolean;
-}): { useBoost: boolean; reason: string } {
-  if (args.plan !== ("plus" as any)) {
-    return { useBoost: false, reason: "not-plus" };
-  }
-
-  const used = Number(args.usage.boostThisMonth || 0);
-  if (used >= 150) {
-    return { useBoost: false, reason: "limit-reached" };
-  }
-
-  const text = String(args.lastUserText || "");
-
-  // Kuva ja tiedosto: vain ensimmäinen analyysi boostilla.
-  if (args.hasImages) {
-    return { useBoost: true, reason: "image-analysis" };
-  }
-
-  if (args.hasTextFiles) {
-    return { useBoost: true, reason: "file-analysis" };
-  }
-
-  // Pikatoiminnon ensimmäinen kysymys aina minillä.
-  if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
-    return { useBoost: false, reason: "quick-first-mini" };
-  }
-
-  const assistant = args.messages.filter((m) => m.role === "assistant");
-
-  let startIndex = -1;
-  for (let i = assistant.length - 1; i >= 0; i -= 1) {
-    const c = String(assistant[i].content || "");
-    if (c.includes("quick-first-mini")) {
-      startIndex = i;
-      break;
-    }
-  }
-
-  if (startIndex >= 0) {
-    const afterQuickStart = assistant.slice(startIndex + 1);
-
-    const boostCount = afterQuickStart.filter((m) => {
-      const c = String(m.content || "");
-      return c.includes("MODEL=gpt-4.1");
-    }).length;
-
-    if (boostCount < 2) {
-      return { useBoost: true, reason: "quick-2-step" };
-    }
-  }
-
-  return { useBoost: false, reason: "mini-default" };
-}
-function plusBoostClarificationText(locale: Locale): string {
-  return l(
-    locale,
-    "Tarvitsen vielä vähän tarkemmat tiedot, jotta voin tehdä tästä oikeasti hyvän.\n\nVastaa lyhyesti näihin:\n\n1. Mikä yritys, tuote tai palvelu on kyseessä?\n2. Kenelle tämä tehdään?\n3. Mikä on hinta, alue, tavoite tai tärkein rajoite?",
-    "I need a bit more detail to make this genuinely useful.\n\nPlease answer these briefly:\n\n1. What company, product, or service is this about?\n2. Who is it for?\n3. What is the price, area, goal, or main constraint?",
-    "Necesito un poco más de detalle para hacerlo realmente útil.\n\nResponde brevemente:\n\n1. ¿De qué empresa, producto o servicio se trata?\n2. ¿Para quién es?\n3. ¿Cuál es el precio, zona, objetivo o limitación principal?"
-  );
 }
 
 // ====== Provider selection ======
@@ -2279,15 +1608,10 @@ function hasOpenAIKey() {
   return !!process.env.OPENAI_API_KEY;
 }
 function chooseProvider(): Provider {
-  if (hasOpenAIKey()) return "openai";
-  return "openai";
-}
-
-function chooseProviderForPlan(plan: PlanId, plusSavingsActive: boolean): Provider {
-  if (hasOpenAIKey()) return "openai";
   if (hasGeminiKey()) return "gemini";
   return "openai";
 }
+
 // ====== CANONICAL LIMITS ======
 type CanonicalLimits = {
   reqPerMonth: number;
@@ -2485,9 +1809,9 @@ function freeLiteModeInstruction(locale: Locale): string {
 function freeLitePrefix(locale: Locale): string {
   return l(
     locale,
-    "Voin auttaa tässä myös ilmaisversiossa ??\nTeen sinulle kevyen version. Plus-versiossa saat laajemman ohjatun työkalun.\n\n",
-    "I can help with this in the free version ??\nI’ll create a lighter version. Plus gives you a more advanced guided tool.\n\n",
-    "Puedo ayudarte también en la versión gratuita ??\nHaré una versión ligera. En Plus tienes una versión más completa.\n\n"
+    "Voin auttaa tässä myös ilmaisversiossa 👍\nTeen sinulle kevyen version. Plus-versiossa saat laajemman ohjatun työkalun.\n\n",
+    "I can help with this in the free version 👍\nI’ll create a lighter version. Plus gives you a more advanced guided tool.\n\n",
+    "Puedo ayudarte también en la versión gratuita 👍\nHaré una versión ligera. En Plus tienes una versión más completa.\n\n"
   );
 }
 
@@ -2790,7 +2114,6 @@ async function callOpenAIResponses(opts: {
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
   maxOutputTokens?: number;
-  model?: string;
 }): Promise<string> {
   const input: any[] = [
     {
@@ -2810,7 +2133,7 @@ async function callOpenAIResponses(opts: {
   }
 
   const body: any = {
-    model: opts.model || OPENAI_MODEL,
+    model: OPENAI_MODEL,
     instructions: opts.instructions,
     input,
   };
@@ -2854,7 +2177,6 @@ async function* callOpenAIResponsesStream(opts: {
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
   maxOutputTokens?: number;
-  model?: string;
 }): AsyncGenerator<string> {
   const input: any[] = [
     {
@@ -2874,7 +2196,7 @@ async function* callOpenAIResponsesStream(opts: {
   }
 
   const body: any = {
-    model: opts.model || OPENAI_MODEL,
+    model: OPENAI_MODEL,
     instructions: opts.instructions,
     input,
     stream: true,
@@ -2995,7 +2317,7 @@ async function callGeminiGenerateContent(opts: {
 
   const j: any = await res.json();
   const text =
-    j?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "") ??
+    j?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "").join("") ??
     j?.candidates?.[0]?.content?.parts?.[0]?.text ??
     "";
 
@@ -3075,7 +2397,7 @@ async function* callGeminiStreamGenerateContent(opts: {
         }
 
         const text =
-          evt?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "") ??
+          evt?.candidates?.[0]?.content?.parts?.map?.((p: any) => p?.text || "").join("") ??
           evt?.candidates?.[0]?.content?.parts?.[0]?.text ??
           "";
 
@@ -3415,7 +2737,6 @@ export async function POST(req: NextRequest) {
   if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
   if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
   if (typeof usage.proUsedThisMonth !== "number") usage.proUsedThisMonth = 0;
-  if (typeof usage.boostThisMonth !== "number") usage.boostThisMonth = 0;
 
   const todayKey = getDayKey();
   if (usage.dayKey !== todayKey) {
@@ -3778,34 +3099,6 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     usageAfter: usage,
   });
 
-  if (
-    plan === ("plus" as any) &&
-    /liiketoimintasuunnitelm|business plan|plan de negocio/i.test(lastTextOriginal) &&
-    String(lastTextOriginal || "").trim().length < 220
-  ) {
-    const text = l(
-      locale,
-      "Teen liiketoimintasuunnitelman, mutta tarvitsen ensin 5 tietoa:\n\n1. Mikä yritys tai idea on kyseessä?\n2. Mitä myyt?\n3. Kenelle myyt?\n4. Missä maassa tai alueella yritys toimii?\n5. Tarvitsetko suunnitelman rahoitusta, omaa käyttöä vai esitystä varten?",
-      "I can create the business plan, but first I need 5 details:\n\n1. What is the business or idea?\n2. What do you sell?\n3. Who do you sell to?\n4. What country or area does the business operate in?\n5. Is the plan for funding, internal use, or presentation?",
-      "Puedo crear el plan de negocio, pero primero necesito 5 datos:\n\n1. ¿Cuál es la empresa o idea?\n2. ¿Qué vendes?\n3. ¿A quién vendes?\n4. ¿En qué país o zona opera?\n5. ¿Es para financiación, uso interno o presentación?"
-    );
-
-    return NextResponse.json(
-      {
-        ok: true,
-        plan,
-        limits: {
-          ...limits,
-          reqPerMonth: effectiveReqLimit,
-          imgAnalysesPerMonth: effectiveImgLimit,
-          webPerMonth: effectiveWebLimit,
-        },
-        usage,
-        text,
-      },
-      { status: 200, headers: resHeaders }
-    );
-  }
   if (lastTextOriginal && isModelQuestion(lastTextOriginal)) {
     let text = l(
       locale,
@@ -3963,12 +3256,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         : shouldTryWeb
           ? "- The user requested web search, but no usable web results were available.\n"
           : "- Do not assume fresh web data.\n") +
-    (imgCount > 0
-      ? "- One or more images are attached. Analyze the attached image directly. Do not ask what the user wants if the user asks anything about the image. Give the best useful answer from the image.\n"
-      : "") +
-    (trimmedTextFiles.length > 0
-      ? "- One or more text files or PDFs are attached. Read the attached file content directly and answer from it. Do not say you cannot inspect attachments. Do not ask what the user wants if the user asks a vague file question. Summarize the relevant contents directly.\n"
-      : "") +
+    (imgCount > 0 ? "- One or more images are attached. Use them in your answer.\n" : "") +
     (trimmedMemory.truncated
       ? "- Conversation history included here is shortened to the most relevant recent context.\n"
       : "");
@@ -3979,23 +3267,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  const plusBoostDecision = shouldUsePlusBoost({
-    plan,
-    usage,
-    messages,
-    lastUserText: lastTextOriginal,
-    hasImages: imgCount > 0,
-    hasTextFiles: trimmedTextFiles.length > 0,
-  });
-
-  const openAiModelForRequest = plusBoostDecision.useBoost ? OPENAI_BOOST_MODEL : OPENAI_MODEL;
-
-  resHeaders.set("x-ajx-debug-plus-boost", String(plusBoostDecision.useBoost));
-  resHeaders.set("x-ajx-debug-plus-boost-reason", safeHeaderValue(plusBoostDecision.reason));
-  resHeaders.set("x-ajx-debug-plus-boost-used-month", String(Number(usage.boostThisMonth || 0)));
-  resHeaders.set("x-ajx-debug-plus-boost-limit", String(PLUS_BOOST_LIMIT));
-
-  const primaryProvider = chooseProviderForPlan(plan, plusSavingsStateBeforeCall.activeForThisRequest);
+  const primaryProvider = chooseProvider();
 
   const geminiSelection = geminiModelForRequest({
     plan,
@@ -4009,7 +3281,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
 
   const requestedGeminiModel = geminiSelection.model;
 
-  let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : openAiModelForRequest;
+  let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : OPENAI_MODEL;
   let actualModelName = requestedModelName;
   let fallbackUsed = "";
   let fallbackReason = "";
@@ -4030,10 +3302,6 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     );
   }
 
-  resHeaders.set("x-ajx-debug-primary-provider", primaryProvider);
-  resHeaders.set("x-ajx-provider", primaryProvider);
-  resHeaders.set("x-ajx-model-selected", requestedModelName);
-  console.log("PROVIDER:", primaryProvider);
   resHeaders.set("x-ajx-debug-requested-model", safeHeaderValue(requestedModelName));
   resHeaders.set("x-ajx-debug-company-pro-needed", String(geminiSelection.companyNeedsPro));
   resHeaders.set("x-ajx-debug-company-pro-available", String(geminiSelection.companyCanUsePro));
@@ -4051,7 +3319,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     const text = await callGeminiGenerateContent({
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
-      promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
+      promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
       maxOutputTokens,
     });
@@ -4071,7 +3339,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     yield* callGeminiStreamGenerateContent({
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
-      promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
+      promptText: `${instructions}\n\n---\n\n${inputText}`.trim(),
       images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
       maxOutputTokens,
     });
@@ -4084,7 +3352,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
     }
 
-    actualModelName = openAiModelForRequest;
+    actualModelName = OPENAI_MODEL;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
     return await callOpenAIResponses({
@@ -4105,7 +3373,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       throw new Error("OPENAI_API_KEY puuttuu (.env.local).");
     }
 
-    actualModelName = openAiModelForRequest;
+    actualModelName = OPENAI_MODEL;
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
     yield* callOpenAIResponsesStream({
@@ -4121,42 +3389,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     });
   }
 
-  
-async function callViaGeminiLiteNonStream(): Promise<string> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY puuttuu (.env.local).");
-  }
-
-  actualModelName = GEMINI_FLASH_LITE_MODEL;
-  resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
-
-  return await callGeminiGenerateContent({
-    apiKey: process.env.GEMINI_API_KEY,
-    model: GEMINI_FLASH_LITE_MODEL,
-    promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
-    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
-    maxOutputTokens,
-  });
-}
-
-async function* callViaGeminiLiteStream(): AsyncGenerator<string> {
-  if (!process.env.GEMINI_API_KEY) {
-    throw new Error("GEMINI_API_KEY puuttuu (.env.local).");
-  }
-
-  actualModelName = GEMINI_FLASH_LITE_MODEL;
-  resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
-
-  yield* callGeminiStreamGenerateContent({
-    apiKey: process.env.GEMINI_API_KEY,
-    model: GEMINI_FLASH_LITE_MODEL,
-    promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
-    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
-    maxOutputTokens,
-  });
-}
-
-async function callTextNonStream(): Promise<string> {
+  async function callTextNonStream(): Promise<string> {
     if (primaryProvider === "gemini") {
       try {
         return await callViaGeminiNonStream();
@@ -4273,12 +3506,6 @@ async function callTextNonStream(): Promise<string> {
                 plan,
                 limits: streamLimits,
                 usage,
-                boost: {
-                  used: plusBoostDecision.useBoost,
-                  reason: plusBoostDecision.reason,
-                  usedThisMonth: Number(usage.boostThisMonth || 0),
-                  limit: PLUS_BOOST_LIMIT,
-                },
                 web: {
                   requested: shouldTryWeb,
                   didWeb,
@@ -4378,57 +3605,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -2210,10 +2210,13 @@ function shouldUsePlusBoost(args: {
   hasImages: boolean;
   hasTextFiles: boolean;
 }): { useBoost: boolean; reason: string } {
+
+  // vain plus
   if (args.plan !== ("plus" as any)) {
     return { useBoost: false, reason: "not-plus" };
   }
 
+  // kuukausiraja
   const used = Number(args.usage.boostThisMonth || 0);
   if (used >= 150) {
     return { useBoost: false, reason: "limit-reached" };
@@ -2221,7 +2224,7 @@ function shouldUsePlusBoost(args: {
 
   const text = String(args.lastUserText || "");
 
-  // Kuva ja tiedosto: vain ensimmäinen analyysi boostilla.
+  // ===== KUVA / TIEDOSTO =====
   if (args.hasImages) {
     return { useBoost: true, reason: "image-analysis" };
   }
@@ -2230,15 +2233,18 @@ function shouldUsePlusBoost(args: {
     return { useBoost: true, reason: "file-analysis" };
   }
 
-  // Pikatoiminnon ensimmäinen kysymys aina minillä.
+  // ===== PIKATOIMINTO =====
+
+  // eka kysymys = mini
   if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
     return { useBoost: false, reason: "quick-first-mini" };
   }
 
-  const assistant = args.messages.filter((m) => m.role === "assistant");
+  const assistant = args.messages.filter(m => m.role === "assistant");
 
+  // etsi viimeisin pikatoiminnon aloitus
   let startIndex = -1;
-  for (let i = assistant.length - 1; i >= 0; i -= 1) {
+  for (let i = assistant.length - 1; i >= 0; i--) {
     const c = String(assistant[i].content || "");
     if (c.includes("quick-first-mini")) {
       startIndex = i;
@@ -2247,18 +2253,20 @@ function shouldUsePlusBoost(args: {
   }
 
   if (startIndex >= 0) {
-    const afterQuickStart = assistant.slice(startIndex + 1);
+    const after = assistant.slice(startIndex + 1);
 
-    const boostCount = afterQuickStart.filter((m) => {
+    const boostCount = after.filter(m => {
       const c = String(m.content || "");
       return c.includes("MODEL=gpt-4.1");
     }).length;
 
+    // max 2 boostia
     if (boostCount < 2) {
       return { useBoost: true, reason: "quick-2-step" };
     }
   }
 
+  // ===== MUU =====
   return { useBoost: false, reason: "mini-default" };
 }
 function plusBoostClarificationText(locale: Locale): string {
@@ -3963,12 +3971,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         : shouldTryWeb
           ? "- The user requested web search, but no usable web results were available.\n"
           : "- Do not assume fresh web data.\n") +
-    (imgCount > 0
-      ? "- One or more images are attached. Analyze the attached image directly. Do not ask what the user wants if the user asks anything about the image. Give the best useful answer from the image.\n"
-      : "") +
-    (trimmedTextFiles.length > 0
-      ? "- One or more text files or PDFs are attached. Read the attached file content directly and answer from it. Do not say you cannot inspect attachments. Do not ask what the user wants if the user asks a vague file question. Summarize the relevant contents directly.\n"
-      : "") +
+    (imgCount > 0 ? "- One or more images are attached. Use them in your answer.\n" : "") +
     (trimmedMemory.truncated
       ? "- Conversation history included here is shortened to the most relevant recent context.\n"
       : "");
@@ -3979,7 +3982,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  const plusBoostDecision = shouldUsePlusBoost({
+  const plusBoostDecision = shouldUsePlusBoostModel({
     plan,
     usage,
     messages,
@@ -4330,6 +4333,7 @@ async function callTextNonStream(): Promise<string> {
 }
 
 outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BOOST=" + String(plusBoostDecision.useBoost) + " | REASON=" + plusBoostDecision.reason + "\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4378,13 +4382,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
-
-
-
-
-
-
-
 
 
 

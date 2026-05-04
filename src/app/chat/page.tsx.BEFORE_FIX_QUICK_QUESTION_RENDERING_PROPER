@@ -159,229 +159,6 @@ function renderImagesFromContent(text: string) {
           <img src={u} alt="AJX Image" className={styles.inlineImage} />
         </a>
       ))}
-    
-<style jsx global>{`
-  @media (max-width: 980px) {
-    .ajxTopControls {
-      overflow: visible !important;
-      gap: 5px !important;
-    }
-
-    .ajxTopHelp {
-      display: inline-flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      flex: 0 0 auto !important;
-      order: 3 !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:first-of-type {
-      flex: 1 1 auto !important;
-      min-width: 92px !important;
-      max-width: 132px !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:last-of-type {
-      flex: 0 0 auto !important;
-      max-width: 62px !important;
-    }
-
-    .ajxTopControls .ajxSelect {
-      height: 34px !important;
-      font-size: 12px !important;
-      padding-top: 6px !important;
-      padding-bottom: 6px !important;
-    }
-  }
-`}</style>
-    
-<style jsx global>{`
-  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
-  .ajxComposerHelp {
-    display: none !important;
-  }
-
-  /* ===== FORCE TOP HELP VISIBLE ===== */
-  .ajxTopHelp {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-`}</style>
-    
-<style jsx global>{``}</style>
-    
-<style jsx global>{`
-  /* ===== AJX FINAL TEXT WRAP FIX ===== */
-  .ajxParagraph,
-  .ajxQuestionList,
-  .ajxQuestionRow,
-  .ajxManualOrderedList,
-  .ajxManualOrderedRow,
-  .ajxHeadingBlock,
-  .ajxSummaryText,
-  .ajxOutputBox,
-  .ajxOutputBody,
-  .ajxRichList,
-  .ajxRichList li,
-  .ajxCodeBlockWrap,
-  .ajxMessage,
-  .ajxMessage *,
-  [class*="bubbleText"],
-  [class*="bubbleText"] * {
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .ajxCodePre,
-  .ajxCodePre code {
-    white-space: pre-wrap !important;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX QUICK ACTION GRID FIX ===== */
-
-  .ajxQuickActionsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media (min-width: 900px) {
-    .ajxQuickActionsGrid {
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
-
-  @media (min-width: 981px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-    }
-
-    .ajxToolsDrawer > *,
-    .ajxMobileToolsPanel > *,
-    .ajxQuickActionsGrid > *,
-    .ajxQuickActions > *,
-    .ajxQuickActionList > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
-
-  @media (min-width: 981px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-    [class*="quickActions"] > *,
-    [class*="QuickActions"] > *,
-    [class*="quickActionGrid"] > *,
-    [class*="QuickActionGrid"] > *,
-    [class*="quickActionList"] > *,
-    [class*="QuickActionList"] > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
@@ -414,7 +191,7 @@ function isOrderedLine(line: string) {
 }
 
 function isDividerLine(line: string) {
-  return /^(-{3,}|×\s*×\s*×)$/.test(line.trim());
+  return /^(-{3,}|â€”\s*â€”\s*â€”)$/.test(line.trim());
 }
 
 function isMarkdownHeadingLine(line: string) {
@@ -832,129 +609,26 @@ function extractCopyBox(text: string, locale: Locale): ExtractedCopyBox {
   return null;
 }
 
-
-function isLikelyQuestionStart(line: string) {
-  const s = String(line || "")
-    .trim()
-    .replace(/^\d+[\.\)]\s+/, "")
-    .toLowerCase();
-
-  if (!s) return false;
-
-  if (/[?ï¼Ÿ]$/.test(s)) return true;
-
-  return (
-    s.startsWith("mikä ") ||
-    s.startsWith("mitä ") ||
-    s.startsWith("millainen ") ||
-    s.startsWith("millaisia ") ||
-    s.startsWith("mihin ") ||
-    s.startsWith("mitkä ") ||
-    s.startsWith("millä ") ||
-    s.startsWith("missä ") ||
-    s.startsWith("milloin ") ||
-    s.startsWith("onko ") ||
-    s.startsWith("oletko ") ||
-    s.startsWith("haluatko ") ||
-    s.startsWith("what ") ||
-    s.startsWith("which ") ||
-    s.startsWith("who ") ||
-    s.startsWith("where ") ||
-    s.startsWith("when ") ||
-    s.startsWith("why ") ||
-    s.startsWith("how ") ||
-    s.startsWith("do ") ||
-    s.startsWith("does ") ||
-    s.startsWith("are ") ||
-    s.startsWith("is ") ||
-    s.startsWith("have ") ||
-    s.startsWith("has ") ||
-    s.startsWith("qué ") ||
-    s.startsWith("que ") ||
-    s.startsWith("cuál ") ||
-    s.startsWith("cual ") ||
-    s.startsWith("cuáles ") ||
-    s.startsWith("cuales ") ||
-    s.startsWith("cómo ") ||
-    s.startsWith("como ") ||
-    s.startsWith("dónde ") ||
-    s.startsWith("donde ") ||
-    s.startsWith("cuándo ") ||
-    s.startsWith("cuando ") ||
-    s.startsWith("tienes ") ||
-    s.startsWith("hay ")
-  );
-}
-
-function normalizeQuestionRenderLines(lines: string[]) {
-  const out: string[] = [];
-
-  for (let i = 0; i < lines.length; i += 1) {
-    const raw = lines[i] ?? "";
-    const current = raw.trim();
-
-    if (/^\d+[\.\)]$/.test(current)) {
-      let j = i + 1;
-      while (j < lines.length && !String(lines[j] || "").trim()) {
-        j += 1;
-      }
-
-      const next = String(lines[j] || "").trim();
-
-      if (next && !isLikelyQuestionStart(next)) {
-        out.push(`${current} ${next}`.trim());
-        i = j;
-        continue;
-      }
-
-      continue;
-    }
-
-    if (/^\d+[\.\)]\s+/.test(current) && isLikelyQuestionStart(current)) {
-      let combined = current.replace(/^\d+[\.\)]\s+/, "").trim();
-      let j = i + 1;
-
-      while (j < lines.length && !/[?ï¼Ÿ]$/.test(combined)) {
-        const nextRaw = lines[j] ?? "";
-        const next = nextRaw.trim();
-
-        if (!next) {
-          j += 1;
-          continue;
-        }
-
-        const nextClean = next.replace(/^\d+[\.\)]\s+/, "").trim();
-
-        if (isLikelyQuestionStart(nextClean) && combined.length > 40) {
-          break;
-        }
-
-        combined = `${combined} ${nextClean}`.replace(/\s+/g, " ").trim();
-        j += 1;
-      }
-
-      out.push(combined);
-      i = j - 1;
-      continue;
-    }
-
-    out.push(raw);
-  }
-
-  return out;
-}
-
 function renderPlainRichText(text: string, locale: Locale) {
   const content = stripMarkdownImages(text || "");
   if (!content) return null;
 
   const normalized = normalizeInlineListSequences(
-    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\n× × ×\n")
+    content.replace(/\r\n/g, "\n").replace(/\n?---\n?/g, "\nâ€” â€” â€”\n")
   );
 
   let rawLines = normalizePlainTextBreaks(normalized.split("\n"));
-  rawLines = normalizeQuestionRenderLines(rawLines);
 
+  rawLines = rawLines.filter((line, idx, arr) => {
+    const current = String(line || "").trim();
+    const next = String(arr[idx + 1] || "").trim();
+
+    if (/^\d+[\.\)]$/.test(current) && (isQuestionLine(next) || /^\d+[\.\)]\s+/.test(next))) {
+      return false;
+    }
+
+    return true;
+  });
   const out: React.ReactNode[] = [];
 
   let paragraphBuffer: string[] = [];
@@ -982,8 +656,8 @@ function renderPlainRichText(text: string, locale: Locale) {
           lineHeight: 1.72,
           maxWidth: "100%",
           minWidth: 0,
-          overflowWrap: "break-word",
-          wordBreak: "normal",
+          overflowWrap: "anywhere",
+          wordBreak: "break-word",
         }}
       >
         {renderInlineFormatting(paragraphText)}
@@ -1053,8 +727,8 @@ function renderPlainRichText(text: string, locale: Locale) {
               fontWeight: 700,
               maxWidth: "100%",
               minWidth: 0,
-              overflowWrap: "break-word",
-              wordBreak: "normal",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {renderInlineFormatting(line.replace(/^[^:]+:\s*/, ""))}
@@ -1107,8 +781,8 @@ function renderPlainRichText(text: string, locale: Locale) {
               lineHeight: 1.35,
               maxWidth: "100%",
               minWidth: 0,
-              overflowWrap: "break-word",
-              wordBreak: "normal",
+              overflowWrap: "anywhere",
+              wordBreak: "break-word",
             }}
           >
             {renderInlineFormatting(cleanHeadingText(line))}
@@ -1146,11 +820,11 @@ function renderPlainRichText(text: string, locale: Locale) {
               key={idx}
               style={{
                 margin: "0 0 6px 0",
-                overflowWrap: "break-word",
-                wordBreak: "normal",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}
             >
-              {renderInlineFormatting(item)}
+              {renderInlineFormatting(`${idx + 1}. ${item}`)}
             </li>
           ))}
         </ul>
@@ -1166,68 +840,36 @@ function renderPlainRichText(text: string, locale: Locale) {
       const items: string[] = [];
       let j = i;
 
-      while (j < rawLines.length) {
-        const current = rawLines[j]?.trim() ?? "";
-
-        if (!current) {
-          j += 1;
-          continue;
-        }
-
-        if (isOrderedLine(current)) {
-          items.push(cleanOrderedText(current));
-          j += 1;
-          continue;
-        }
-
-        if (items.length > 0 && isBulletLine(current)) {
-          items[items.length - 1] = `${items[items.length - 1]}\n- ${cleanBulletText(current)}`;
-          j += 1;
-          continue;
-        }
-
-        if (items.length > 0 && !isStructuralLine(current) && !isQuestionLine(current)) {
-          items[items.length - 1] = `${items[items.length - 1]}\n${current}`;
-          j += 1;
-          continue;
-        }
-
-        break;
+      while (j < rawLines.length && isOrderedLine(rawLines[j].trim())) {
+        items.push(cleanOrderedText(rawLines[j].trim()));
+        j += 1;
       }
 
       out.push(
-        <div
+        <ol
           key={`ol-${i}`}
-          className="ajxManualOrderedList"
+          className="ajxRichListOrdered"
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 8,
             margin: "0 0 16px 0",
+            paddingLeft: 20,
+            lineHeight: 1.68,
             maxWidth: "100%",
             minWidth: 0,
           }}
         >
           {items.map((item, idx) => (
-            <div
+            <li
               key={idx}
-              className="ajxManualOrderedRow"
               style={{
-                display: "grid",
-                gridTemplateColumns: "28px minmax(0, 1fr)",
-                gap: 8,
-                lineHeight: 1.68,
-                maxWidth: "100%",
-                minWidth: 0,
+                margin: "0 0 6px 0",
+                overflowWrap: "anywhere",
+                wordBreak: "break-word",
               }}
             >
-              <span style={{ fontWeight: 950, color: "#15803d" }}>{idx + 1}.</span>
-              <span style={{ minWidth: 0, overflowWrap: "break-word", wordBreak: "normal", whiteSpace: "pre-wrap" }}>
-                {renderInlineFormatting(item)}
-              </span>
-            </div>
+              {renderInlineFormatting(`${idx + 1}. ${item}`)}
+            </li>
           ))}
-        </div>
+        </ol>
       );
 
       i = j - 1;
@@ -1270,8 +912,8 @@ function renderPlainRichText(text: string, locale: Locale) {
                   fontWeight: 700,
                   maxWidth: "100%",
                   minWidth: 0,
-                  overflowWrap: "break-word",
-                  wordBreak: "normal",
+                  overflowWrap: "anywhere",
+                  wordBreak: "break-word",
                 }}
               >
                 {renderInlineFormatting(`${idx + 1}. ${item}`)}
@@ -1296,234 +938,11 @@ function renderPlainRichText(text: string, locale: Locale) {
       style={{
         minWidth: 0,
         maxWidth: "100%",
-        overflowWrap: "break-word",
-        wordBreak: "normal",
+        overflowWrap: "anywhere",
+        wordBreak: "break-word",
       }}
     >
       {out}
-    
-<style jsx global>{`
-  @media (max-width: 980px) {
-    .ajxTopControls {
-      overflow: visible !important;
-      gap: 5px !important;
-    }
-
-    .ajxTopHelp {
-      display: inline-flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      flex: 0 0 auto !important;
-      order: 3 !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:first-of-type {
-      flex: 1 1 auto !important;
-      min-width: 92px !important;
-      max-width: 132px !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:last-of-type {
-      flex: 0 0 auto !important;
-      max-width: 62px !important;
-    }
-
-    .ajxTopControls .ajxSelect {
-      height: 34px !important;
-      font-size: 12px !important;
-      padding-top: 6px !important;
-      padding-bottom: 6px !important;
-    }
-  }
-`}</style>
-    
-<style jsx global>{`
-  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
-  .ajxComposerHelp {
-    display: none !important;
-  }
-
-  /* ===== FORCE TOP HELP VISIBLE ===== */
-  .ajxTopHelp {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-`}</style>
-    
-<style jsx global>{``}</style>
-    
-<style jsx global>{`
-  /* ===== AJX FINAL TEXT WRAP FIX ===== */
-  .ajxParagraph,
-  .ajxQuestionList,
-  .ajxQuestionRow,
-  .ajxManualOrderedList,
-  .ajxManualOrderedRow,
-  .ajxHeadingBlock,
-  .ajxSummaryText,
-  .ajxOutputBox,
-  .ajxOutputBody,
-  .ajxRichList,
-  .ajxRichList li,
-  .ajxCodeBlockWrap,
-  .ajxMessage,
-  .ajxMessage *,
-  [class*="bubbleText"],
-  [class*="bubbleText"] * {
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .ajxCodePre,
-  .ajxCodePre code {
-    white-space: pre-wrap !important;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX QUICK ACTION GRID FIX ===== */
-
-  .ajxQuickActionsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media (min-width: 900px) {
-    .ajxQuickActionsGrid {
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
-
-  @media (min-width: 981px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-    }
-
-    .ajxToolsDrawer > *,
-    .ajxMobileToolsPanel > *,
-    .ajxQuickActionsGrid > *,
-    .ajxQuickActions > *,
-    .ajxQuickActionList > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
-
-  @media (min-width: 981px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-    [class*="quickActions"] > *,
-    [class*="QuickActions"] > *,
-    [class*="quickActionGrid"] > *,
-    [class*="QuickActionGrid"] > *,
-    [class*="quickActionList"] > *,
-    [class*="QuickActionList"] > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
@@ -1546,8 +965,8 @@ function RichMessage({
       style={{
         minWidth: 0,
         maxWidth: "100%",
-        overflowWrap: "break-word",
-        wordBreak: "normal",
+        overflowWrap: "anywhere",
+        wordBreak: "break-word",
       }}
     >
       {segments.map((segment, idx) => {
@@ -1584,229 +1003,6 @@ function RichMessage({
           </div>
         );
       })}
-    
-<style jsx global>{`
-  @media (max-width: 980px) {
-    .ajxTopControls {
-      overflow: visible !important;
-      gap: 5px !important;
-    }
-
-    .ajxTopHelp {
-      display: inline-flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      flex: 0 0 auto !important;
-      order: 3 !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:first-of-type {
-      flex: 1 1 auto !important;
-      min-width: 92px !important;
-      max-width: 132px !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:last-of-type {
-      flex: 0 0 auto !important;
-      max-width: 62px !important;
-    }
-
-    .ajxTopControls .ajxSelect {
-      height: 34px !important;
-      font-size: 12px !important;
-      padding-top: 6px !important;
-      padding-bottom: 6px !important;
-    }
-  }
-`}</style>
-    
-<style jsx global>{`
-  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
-  .ajxComposerHelp {
-    display: none !important;
-  }
-
-  /* ===== FORCE TOP HELP VISIBLE ===== */
-  .ajxTopHelp {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-`}</style>
-    
-<style jsx global>{``}</style>
-    
-<style jsx global>{`
-  /* ===== AJX FINAL TEXT WRAP FIX ===== */
-  .ajxParagraph,
-  .ajxQuestionList,
-  .ajxQuestionRow,
-  .ajxManualOrderedList,
-  .ajxManualOrderedRow,
-  .ajxHeadingBlock,
-  .ajxSummaryText,
-  .ajxOutputBox,
-  .ajxOutputBody,
-  .ajxRichList,
-  .ajxRichList li,
-  .ajxCodeBlockWrap,
-  .ajxMessage,
-  .ajxMessage *,
-  [class*="bubbleText"],
-  [class*="bubbleText"] * {
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .ajxCodePre,
-  .ajxCodePre code {
-    white-space: pre-wrap !important;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX QUICK ACTION GRID FIX ===== */
-
-  .ajxQuickActionsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media (min-width: 900px) {
-    .ajxQuickActionsGrid {
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
-
-  @media (min-width: 981px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-    }
-
-    .ajxToolsDrawer > *,
-    .ajxMobileToolsPanel > *,
-    .ajxQuickActionsGrid > *,
-    .ajxQuickActions > *,
-    .ajxQuickActionList > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
-
-  @media (min-width: 981px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-    [class*="quickActions"] > *,
-    [class*="QuickActions"] > *,
-    [class*="quickActionGrid"] > *,
-    [class*="QuickActionGrid"] > *,
-    [class*="quickActionList"] > *,
-    [class*="QuickActionList"] > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
@@ -2042,8 +1238,8 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     return [
       `MODO_PIKATOIMINTO: ${action.id}`,
       "No des una respuesta larga ni un plan final todavÃ­a.",
-      "Haz primero exactamente 3×5 preguntas cortas y concretas para recopilar la información necesaria.",
-      "Presenta solo esas preguntas, cada una en su propia lÃ­nea, sin numeraciÃ³n ni viÃ±etas.",
+      "Haz primero exactamente 3â€“5 preguntas cortas y concretas para recopilar la información necesaria.",
+      "Presenta solo esas preguntas numeradas del 1 al 5, cada una en su propia lÃ­nea.",
       "No expliques tu razonamiento.",
       "No aÃ±adas resumen, introducciÃ³n larga ni propuesta final todavÃ­a.",
       "Cuando el usuario responda, entonces crea la oferta, el plan o la soluciÃ³n basÃ¡ndote en sus respuestas.",
@@ -2054,8 +1250,8 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     return [
       `QUICK_ACTION_MODE: ${action.id}`,
       "Do not give a long answer or a final plan yet.",
-      "First ask exactly 3×5 short, concrete questions needed to complete the task.",
-      "Output only those questions, each on its own line, without numbering or bullet points.",
+      "First ask exactly 3â€“5 short, concrete questions needed to complete the task.",
+      "Output only those questions numbered 1–5, each on its own line.",
       "Do not explain your reasoning.",
       "Do not add a summary, long intro, or final proposal yet.",
       "After the user answers, then create the offer, plan, or solution based on those answers.",
@@ -2065,25 +1261,14 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   return [
     `PIKATOIMINTO_TILA: ${action.id}`,
     "Ã„lÃ¤ anna vielÃ¤ pitkÃ¤Ã¤ vastausta tai valmista suunnitelmaa.",
-    "Kysy ensin tÃ¤smÃ¤lleen 3×5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
-    "Tulosta vain nuo kysymykset, jokainen omalle rivilleen, ilman numerointia tai listamerkkejä.",
+    "Kysy ensin tÃ¤smÃ¤lleen 3â€“5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
+    "Tulosta vain nuo kysymykset numeroituna 1–5, jokainen omalle rivilleen.",
     "Ã„lÃ¤ selitÃ¤ ajatteluasi.",
     "Ã„lÃ¤ lisÃ¤Ã¤ yhteenvetoa, pitkÃ¤Ã¤ johdantoa tai lopullista tarjousta vielÃ¤.",
     "Kun kÃ¤yttÃ¤jÃ¤ vastaa, tee vasta sitten tarjous, suunnitelma tai ratkaisu vastausten perusteella.",
   ].join("\n");
 }
 
-function plusUpsellMessage(locale: Locale): string {
-  if (locale === "es") {
-    return "Esta función pertenece a la versión Plus.\nPlus te ayuda a terminar el trabajo, no solo a planearlo.\n\n[ Actualizar a Plus → ]";
-  }
-
-  if (locale === "en") {
-    return "This feature is part of the Plus plan.\nPlus helps you get the work done, not just plan it.\n\n[ Upgrade to Plus → ]";
-  }
-
-  return "Tämä ominaisuus kuuluu Plus-versioon.\nPlus auttaa sinua tekemään työn valmiiksi — ei pelkästään suunnittelemaan.\n\n[ Päivitä Plus → ]";
-}
 function quickActionLockedText(locale: Locale): string {
   if (locale === "es") {
     return "Los accesos rÃ¡pidos estÃ¡n disponibles en Plus. Con Plus, AJX AI te guÃ­a paso a paso para crear ofertas, anuncios, planes de ventas, financiaciÃ³n y soluciones de negocio.";
@@ -2272,99 +1457,18 @@ function imageEditStartedText(locale: Locale): string {
 }
 
 function imageQueuedText(locale: Locale): string {
-  if (locale === "es") return "Imagen añadida. Pulsa Analizar imagen y envía tu pregunta.";
-  if (locale === "en") return "Image added. Press Analyze image and send your question.";
-  return "Kuva lisätty. Paina Analysoi kuva ja lähetä kysymys.";
+  if (locale === "es") return "Kuva lisÃ¤tty. Valitse analysointi tai muokkaus ja lÃ¤hetÃ¤ pyyntÃ¶.";
+  if (locale === "en") return "Image attached. Choose analyze or edit, then send your request.";
+  return "Kuva lisÃ¤tty. Valitse analyysi tai muokkaus ja lÃ¤hetÃ¤ pyyntÃ¶.";
 }
-function sanitizeUiStatusText(value: string, locale: Locale): string {
-  const s = String(value || "").trim();
-  const low = s.toLowerCase();
-
-  if (
-    low.includes("kirjoita kuvan pyyntö") ||
-    low.includes("kirjoita kuvan pyynto") ||
-    low.includes("muokkausohje") ||
-    low.includes("write an image prompt") ||
-    low.includes("write image prompt") ||
-    low.includes("editing instruction") ||
-    low.includes("escribe una petición de imagen") ||
-    low.includes("instrucción de edición")
-  ) {
-    return "";
-  }
-
-  if (
-    low.includes("suurikokoinen kielimalli") ||
-    low.includes("large language model") ||
-    low.includes("google on kouluttanut") ||
-    low.includes("trained by google") ||
-    low.includes("gemini") ||
-    low.includes("openai") ||
-    low.includes("gpt")
-  ) {
-    return "";
-  }
-
-  return s;
-}
-
-function safeAttachmentName(name: string, kind: "image" | "file"): string {
-  const raw = String(name || "").trim();
-  const extMatch = raw.match(/\.[a-z0-9]{1,8}$/i);
-  const ext = extMatch ? extMatch[0].toLowerCase() : kind === "image" ? ".jpg" : "";
-  const base = raw.replace(/\.[a-z0-9]{1,8}$/i, "");
-
-  const cleaned = base
-    .replace(/[^\p{L}\p{N}\s._-]/gu, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (!cleaned) return kind === "image" ? `kuva${ext || ".jpg"}` : `tiedosto${ext}`;
-  return `${cleaned}${ext}`;
-}
-function plusImageCapabilityText(locale: Locale): string {
-  if (locale === "es") {
-    return "Puedes analizar la imagen. La edición de imágenes no está incluida en Plus.";
-  }
-
-  if (locale === "en") {
-    return "You can analyze the image. Image editing is not included in Plus.";
-  }
-
-  return "Voit analysoida kuvan. Kuvan muokkaus ei kuulu Plus-versioon.";
-}
-function stressButtonText(locale: Locale): string {
-  if (locale === "es") {
-    return "Vale. Paramos un momento.\n\n¿Qué describe mejor la situación?\n\n1. Hay demasiadas cosas\n2. No sé por dónde empezar\n3. Algo no funciona\n4. Necesito una decisión rápida\n\n⠀\n\n**Instrucción**\nResponde con el número o escríbelo con tus palabras.";
-  }
-
-  if (locale === "en") {
-    return "Okay. Let’s stop for a moment.\n\nWhat describes the situation best?\n\n1. Too much to do\n2. I don’t know where to start\n3. Something is not working\n4. I need a quick decision\n\n⠀\n\n**Instruction**\nReply with the number or write it in your own words.";
-  }
-
-  return "Okei. Pysähdytään hetkeksi.\n\nMikä kuvaa tilannetta parhaiten?\n\n1. Liikaa tekemistä\n2. En tiedä mistä aloittaa\n3. Jokin bugaa tai ei toimi\n4. Tarvitsen nopean päätöksen\n\n⠀\n\n**Ohje**\nVastaa numerolla tai kirjoita omin sanoin.";
-}
-
-function fileQueuedText(locale: Locale): string {
-  if (locale === "es") {
-    return "Archivo añadido. Pulsa Analizar archivo y enviar.\n\nTamaño máximo recomendado: 3.5 MB.";
-  }
-
-  if (locale === "en") {
-    return "File added. Press Analyze file and send.\n\nRecommended max file size: 3.5 MB.";
-  }
-
-  return "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä.\n\nSuositeltu tiedoston enimmäiskoko 3.5 Mt.";
-}
-
 function attachmentHintText(locale: Locale): string {
   if (locale === "es") {
-    return "Adjuntos: puedes subir imágenes, PDF y otros archivos. Tamaño máximo recomendado: 3,5 MB.";
+    return "Adjuntos: puedes subir imÃ¡genes, PDF y otros archivos. TamaÃ±o mÃ¡ximo recomendado: 3,5 MB.";
   }
   if (locale === "en") {
     return "Attachments: you can upload images, PDFs, and other files. Recommended maximum size: 3.5 MB.";
   }
-  return "Liitteet: voit ladata kuvia, PDF:iä ja muita tiedostoja. Suositeltu enimmäiskoko: 3.5 MB.";
+  return "Liitteet: voit ladata kuvia, PDF:iÃ¤ ja muita tiedostoja. Suositeltu enimmÃ¤iskoko: 3.5 MB.";
 }
 
 function attachFileMenuLabel(locale: Locale): string {
@@ -2497,13 +1601,7 @@ export default function ChatPage(): React.JSX.Element {
     [pending]
   );
 
-  const firstPendingFile = useMemo(
-    () => pending.find((p) => p.kind === "file") || null,
-    [pending]
-  );
-
   const hasPendingImage = !!firstPendingImage;
-  const hasPendingFile = !!firstPendingFile;
   const suggestedImageIntent = useMemo(() => detectImageIntent(input), [input]);
   const effectiveImageIntent: ImageIntentChoice = manualImageIntent ?? suggestedImageIntent;
 
@@ -3021,8 +2119,8 @@ export default function ChatPage(): React.JSX.Element {
             whiteSpace: "pre-wrap",
             maxWidth: "100%",
             minWidth: 0,
-            overflowWrap: "break-word",
-            wordBreak: "normal",
+            overflowWrap: "anywhere",
+            wordBreak: "break-word",
           }}
         >
           {stripped || ""}
@@ -3075,7 +2173,7 @@ export default function ChatPage(): React.JSX.Element {
         {
           id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
           kind,
-          name: safeAttachmentName(compressed.name || file.name || "kuva.jpg", "image"),
+          name: compressed.name || file.name || "image.jpg",
           type: compressed.type || "image/jpeg",
           dataUrl: compressed.dataUrl,
         },
@@ -3101,26 +2199,16 @@ export default function ChatPage(): React.JSX.Element {
       {
         id: `${Date.now()}_${Math.random().toString(16).slice(2)}`,
         kind,
-        name: safeAttachmentName(file.name || "tiedosto", "file"),
+        name: file.name || "file",
         type: file.type || "application/octet-stream",
         dataUrl,
       },
     ]);
     setManualImageIntent(null);
-    setImageStatus(fileQueuedText(locale));
   }
 
   function removeAttachmentChip(id: string) {
-    setPending((prev) => {
-      const next = prev.filter((p) => p.id !== id);
-
-      if (next.length === 0) {
-        setImageStatus("");
-        setManualImageIntent(null);
-      }
-
-      return next;
-    });
+    setPending((prev) => prev.filter((x) => x.id !== id));
   }
 
   function computePlusMenuPos() {
@@ -3555,7 +2643,7 @@ export default function ChatPage(): React.JSX.Element {
               ? "Kuvan muokkaus on kÃ¤ytÃ¶ssÃ¤ vain Pro- ja Company-tasoilla."
               : locale === "es"
                 ? "La ediciÃ³n de imÃ¡genes estÃ¡ disponible solo en los planes Pro y Company."
-                : "In Plus, you can analyze an image or generate a new one. Image editing is not included in Plus."
+                : "Image editing is available only on Pro and Company plans."
           );
           return;
         }
@@ -3580,10 +2668,10 @@ export default function ChatPage(): React.JSX.Element {
       if (effectiveImageIntent === null) {
         appendAssistantMessage(
           locale === "fi"
-            ? "Paina ensin Analysoi kuva ja lähetä kysymys."
+            ? "Valitse ensin haluatko analysoida kuvan vai muokata sitÃ¤."
             : locale === "es"
-              ? "Pulsa primero Analizar imagen y envía tu pregunta."
-              : "Press Analyze image first and send your question."
+              ? "Primero elige si quieres analizar o editar la imagen."
+              : "First choose whether you want to analyze or edit the image."
         );
         return;
       }
@@ -3594,7 +2682,7 @@ export default function ChatPage(): React.JSX.Element {
 
   async function runQuickAction(action: QuickAction) {
     if (effectiveCanonical === "free") {
-      appendAssistantMessage(plusUpsellMessage(locale));
+      appendAssistantMessage(quickActionLockedText(locale));
       return;
     }
 
@@ -3633,35 +2721,21 @@ export default function ChatPage(): React.JSX.Element {
   const imageIntentHint = useMemo(() => {
     if (!hasPendingImage) return "";
 
-    if (!canEditImages) {
-      if (effectiveImageIntent === "analyze") {
-        return locale === "fi"
-          ? "Tulkinta: kuvan analyysi"
-          : locale === "es"
-            ? "Interpretación: análisis de imagen"
-            : "Interpretation: image analysis";
-      }
-
-      return locale === "fi"
-        ? "Paina Analysoi kuva ja lähetä kysymys."
-        : locale === "es"
-          ? "Pulsa Analizar imagen y envía tu pregunta."
-          : "Press Analyze image and send your question.";
-    }
-
     if (effectiveImageIntent === "edit") {
       return locale === "fi"
         ? "Tulkinta: kuvan muokkaus"
         : locale === "es"
-          ? "Interpretación: edición de imagen"
+          ? "InterpretaciÃ³n: ediciÃ³n de imagen"
           : "Interpretation: image editing";
     }
+  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
+  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
 
     if (effectiveImageIntent === "analyze") {
       return locale === "fi"
         ? "Tulkinta: kuvan analyysi"
         : locale === "es"
-          ? "Interpretación: análisis de imagen"
+          ? "InterpretaciÃ³n: anÃ¡lisis de imagen"
           : "Interpretation: image analysis";
     }
 
@@ -3670,10 +2744,7 @@ export default function ChatPage(): React.JSX.Element {
       : locale === "es"
         ? "Elige si quieres analizar o editar la imagen"
         : "Choose whether you want to analyze or edit the image";
-  }, [canEditImages, effectiveImageIntent, hasPendingImage, locale]);
-
-  const attachmentHint = useMemo(() => attachmentHintText(locale), [locale]);
-  const attachFileLabel = useMemo(() => attachFileMenuLabel(locale), [locale]);
+  }, [effectiveImageIntent, hasPendingImage, locale]);
 
   const sendDisabled =
     loading ||
@@ -3713,86 +2784,6 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
-        .ajxQuestionRow::before,
-        .ajxQuestionRow::after {
-          content: none !important;
-          display: none !important;
-        }
-
-        .ajxQuestionRow {
-          display: block !important;
-        }
-      `}</style>
-
-
-      <style jsx global>{`
-        .ajxQuestionRow {
-          display: grid !important;
-          grid-template-columns: 28px minmax(0, 1fr) !important;
-          gap: 8px !important;
-          align-items: start !important;
-        }
-
-        .ajxQuestionRow::before,
-        .ajxQuestionRow::after {
-          content: none !important;
-          display: none !important;
-        }
-      `}</style>
-
-
-      <style jsx global>{`
-        .ajxQuestionRow::before,
-        .ajxQuestionRow::after {
-          content: none !important;
-          display: none !important;
-        }
-      `}</style>
-
-
-      <style jsx global>{`
-        .ajxRichListOrdered {
-          list-style-type: decimal !important;
-          list-style-position: outside !important;
-          padding-left: 24px !important;
-        }
-
-        .ajxRichListOrdered li {
-          display: list-item !important;
-          list-style-type: decimal !important;
-        }
-      `}</style>
-
-
-      <style jsx global>{`
-        /* ===== AJX QUESTION NUMBER FIX FINAL ===== */
-
-        .ajxQuestionList {
-          display: flex !important;
-          flex-direction: column !important;
-          gap: 10px !important;
-        }
-
-        .ajxQuestionRow {
-          display: grid !important;
-          grid-template-columns: 24px minmax(0, 1fr) !important;
-          gap: 8px !important;
-          align-items: start !important;
-        }
-
-        .ajxQuestionRow:nth-child(1)
-        .ajxQuestionRow:nth-child(2)
-        .ajxQuestionRow:nth-child(3)
-        .ajxQuestionRow:nth-child(4)
-        .ajxQuestionRow:nth-child(5)
-
-        .ajxQuestionRow::before {
-          font-weight: 950 !important;
-          color: #15803d !important;
-        }
-      `}</style>
-
-<style jsx global>{`
         /* ===== AJX UI FRAME CLEANUP FAST ===== */
 
         .ajxTopControls,
@@ -3860,103 +2851,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxTopControls {
             background: transparent !important;
             border: 0 !important;
@@ -4037,103 +2931,6 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxToolsDrawerMoved {
             display: none !important;
           }
@@ -4143,103 +2940,6 @@ export default function ChatPage(): React.JSX.Element {
 
       <style jsx global>{`
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxMobileToolsOpen .ajxCompactTools {
             display: none !important;
           }
@@ -4305,103 +3005,6 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX MOBILE TOOLS PANEL FIX ===== */
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxToolsDrawerMoved {
             position: fixed !important;
             left: 18px !important;
@@ -4435,103 +3038,6 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX MOBILE QUICK ACTION MODAL V1 ===== */
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxMobileQuickModal {
             position: fixed !important;
             inset: 0 !important;
@@ -4664,103 +3170,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxCompactTools {
             margin-top: 0 !important;
             transform: translateY(-18px) !important;
@@ -4793,103 +3202,6 @@ export default function ChatPage(): React.JSX.Element {
 
         /* Chat-alueelle enemmän hengitystilaa */
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           [class*="msgList"] {
             padding-left: 22px !important;
             padding-right: 22px !important;
@@ -4964,103 +3276,6 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX REMOVE EXTRA INNER FRAMES ===== */
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           :global([class*="topbar"]) {
             border: 0 !important;
             box-shadow: none !important;
@@ -5138,103 +3353,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           :global([class*="msgList"]) {
             padding-left: 14px !important;
             padding-right: 14px !important;
@@ -5381,7 +3499,9 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxCompactToolBtn b::before,
-        .ajxToolsDrawerBtn b
+        .ajxToolsDrawerBtn b::before {
+          content: none !important;
+        }
 
         .ajxCompactToolBtn b::after,
         .ajxToolsDrawerBtn b::after {
@@ -5799,28 +3919,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxCompactTop {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          gap: 10px !important;
-        }
-
-        .ajxTopHelpBtn {
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          height: 34px !important;
-          padding: 0 12px !important;
-          border-radius: 999px !important;
-          border: 1px solid rgba(11, 13, 18, 0.10) !important;
-          background: rgba(255,255,255,0.92) !important;
-          color: #0b0d12 !important;
-          font-size: 13px !important;
-          font-weight: 800 !important;
-          white-space: nowrap !important;
-          box-shadow: 0 8px 20px rgba(11, 13, 18, 0.07) !important;
-        }
-
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
@@ -6419,7 +4517,7 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -6437,7 +4535,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           overflow-y: hidden;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -6457,10 +4555,7 @@ export default function ChatPage(): React.JSX.Element {
         .ajxHeadingBlock,
         .ajxSummaryText,
         .ajxQuestionRow {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
+          min-width: max-content;
         }
 
         .ajxImageIntentBar {
@@ -6515,74 +4610,6 @@ export default function ChatPage(): React.JSX.Element {
           box-shadow: 0 10px 22px rgba(11, 13, 18, 0.14);
         }
 
-        .ajxComposerTools button[aria-label="Pura jumitus"],
-        .ajxComposerTools button[aria-label="Desbloquear"],
-        .ajxComposerTools button[aria-label="Unblock"] {
-          order: 50 !important;
-          width: 42px !important;
-          height: 42px !important;
-          min-width: 42px !important;
-          min-height: 42px !important;
-          max-width: 42px !important;
-          max-height: 42px !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          font-size: 20px !important;
-          line-height: 1 !important;
-          padding: 0 !important;
-          border-radius: 999px !important;
-        }
-
-        button[aria-label="Pura jumitus"],
-        button[aria-label="Desbloquear"],
-        button[aria-label="Unblock"] {
-          order: 999 !important;
-          width: 42px !important;
-          height: 42px !important;
-          min-width: 42px !important;
-          min-height: 42px !important;
-          max-width: 42px !important;
-          max-height: 42px !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          font-size: 20px !important;
-          line-height: 1 !important;
-          padding: 0 !important;
-          border-radius: 999px !important;
-          flex: 0 0 42px !important;
-        }
-
-        .ajxImageButtonWrap {
-          order: 998 !important;
-        }
-        .ajxImageButtonWrap {
-          order: 40 !important;
-        }
-        button[aria-label="Pura jumitus"],
-        button[aria-label="Desbloquear"],
-        button[aria-label="Unblock"] {
-          order: 999 !important;
-          width: 42px !important;
-          height: 42px !important;
-          min-width: 42px !important;
-          min-height: 42px !important;
-          max-width: 42px !important;
-          max-height: 42px !important;
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          font-size: 20px !important;
-          line-height: 1 !important;
-          padding: 0 !important;
-          border-radius: 999px !important;
-          flex: 0 0 42px !important;
-        }
-
-        .ajxImageButtonWrap {
-          order: 998 !important;
-        }
         .ajxImageButtonWrap {
           display: inline-flex;
           align-items: center;
@@ -6701,109 +4728,12 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxBubbleScrollInner {
-          min-width: 0 !important;
+          min-width: max-content;
         }
 
 
 
                 @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxTopBar {
             display: flex;
             align-items: center;
@@ -6873,7 +4803,7 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -6891,7 +4821,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           overflow-y: hidden;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -6924,10 +4854,7 @@ export default function ChatPage(): React.JSX.Element {
         .ajxHeadingBlock,
         .ajxSummaryText,
         .ajxQuestionRow {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
+          min-width: max-content;
         }
 
           .ajxTopHelp {
@@ -7073,103 +5000,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxCompactTools {
             margin: 8px 14px 18px 14px !important;
           }
@@ -7263,103 +5093,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxCompactTools {
             margin: 18px auto 18px auto !important;
             padding: 24px !important;
@@ -7462,28 +5195,6 @@ export default function ChatPage(): React.JSX.Element {
           }
 
           .ajxCompactTop {
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          gap: 10px !important;
-        }
-
-        .ajxTopHelpBtn {
-          display: inline-flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          height: 34px !important;
-          padding: 0 12px !important;
-          border-radius: 999px !important;
-          border: 1px solid rgba(11, 13, 18, 0.10) !important;
-          background: rgba(255,255,255,0.92) !important;
-          color: #0b0d12 !important;
-          font-size: 13px !important;
-          font-weight: 800 !important;
-          white-space: nowrap !important;
-          box-shadow: 0 8px 20px rgba(11, 13, 18, 0.07) !important;
-        }
-
             margin-bottom: 12px !important;
           }
 
@@ -7599,103 +5310,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           .ajxCompactGrid,
           .ajxToolsDrawer {
             grid-template-columns: 1fr !important;
@@ -7716,103 +5330,6 @@ export default function ChatPage(): React.JSX.Element {
         /* ===== AJX FINAL CHAT AREA + INNER BOX FIX ===== */
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           :global([class*="topTitle"]) {
             display: none !important;
           }
@@ -7868,103 +5385,6 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         @media (max-width: 980px) {
-          .ajxTopHelpBtn {
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            height: 42px !important;
-            padding: 0 14px !important;
-            border-radius: 18px !important;
-            border: 1px solid rgba(11, 13, 18, 0.10) !important;
-            background: rgba(255,255,255,0.92) !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            box-shadow: 0 10px 26px rgba(11, 13, 18, 0.08) !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 7px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 42px !important;
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 42px !important;
-            min-width: 42px !important;
-            height: 42px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[title="Ohjeet"],
-          .ajxComposerTools button[aria-label="Ohjeet"],
-          .ajxComposerTools button[title="Help"],
-          .ajxComposerTools button[aria-label="Help"],
-          .ajxComposerTools button[title="Ayuda"],
-          .ajxComposerTools button[aria-label="Ayuda"] {
-            display: none !important;
-          }
-
-          .ajxComposerTools {
-            display: flex !important;
-            flex-wrap: nowrap !important;
-            align-items: center !important;
-            gap: 8px !important;
-            width: 100% !important;
-          }
-
-          .ajxComposerTools > button,
-          .ajxComposerTools .ajxImageButtonWrap {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-          }
-
-          .ajxComposerTools > button {
-            padding: 0 !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-          }
-
-          .ajxComposerTools .ajxImageButtonWrap button {
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            padding: 0 !important;
-          }
-
-          .ajxComposerTools button[aria-label="Pura jumitus"],
-          .ajxComposerTools button[aria-label="Desbloquear"],
-          .ajxComposerTools button[aria-label="Unblock"] {
-            flex: 0 0 44px !important;
-            width: 44px !important;
-            min-width: 44px !important;
-            height: 44px !important;
-            order: 45 !important;
-          }
-
-          .ajxImageButtonWrap {
-            order: 40 !important;
-          }
-
           :global([class*="msgList"]) {
             padding-left: 16px !important;
             padding-right: 16px !important;
@@ -8100,30 +5520,11 @@ export default function ChatPage(): React.JSX.Element {
               </div>
             </div>
 
-            <div className="ajxTopControls" style={isMobile ? { minWidth: 0, width: "100%", justifyContent: "flex-end", flexWrap: "nowrap", overflow: "visible", gap: "6px", alignItems: "center" } : undefined}>
+            <div className="ajxTopControls" style={isMobile ? { minWidth: 0, width: "100%", justifyContent: "flex-end", flexWrap: "nowrap", overflow: "hidden", gap: "6px", alignItems: "center" } : undefined}>
               <a
                 href={`/help?lang=${locale}`}
                 className="ajxHelpLink ajxTopHelp"
                 title={helpLabel}
-                aria-label={helpLabel}
-                style={
-                  isMobile
-                    ? {
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flex: "0 0 auto",
-                        height: 34,
-                        minWidth: 0,
-                        padding: "0 10px",
-                        borderRadius: 14,
-                        fontSize: 12,
-                        fontWeight: 900,
-                        whiteSpace: "nowrap",
-                        textDecoration: "none",
-                      }
-                    : undefined
-                }
               >
                 {helpLabel}
               </a>
@@ -8224,23 +5625,6 @@ export default function ChatPage(): React.JSX.Element {
                         </div>
                       </div>
                       <div className="ajxCompactPlan">{planLabel}</div>
-
-                      <button
-                        type="button"
-                        className="ajxTopHelpBtn"
-                        onClick={() => {
-                          appendAssistantMessage(
-                            locale === "fi"
-                              ? "Ohjeet\n\nAJX AI auttaa yrittäjää tekemään konkreettisia töitä: tarjouksia, mainoksia, myyntisuunnitelmia, hinnoittelua, rahoituksen hakua ja yritysongelmien ratkaisua.\n\nVoit kirjoittaa normaalisti tai käyttää pikatoimintoja."
-                              : locale === "es"
-                                ? "Ayuda\n\nAJX AI ayuda a emprendedores a hacer trabajo práctico: ofertas, anuncios, ventas, precios, financiación y resolución de problemas.\n\nPuedes escribir normalmente o usar acciones rápidas."
-                                : "Help\n\nAJX AI helps entrepreneurs do practical work: offers, ads, sales plans, pricing, funding and business problem solving.\n\nYou can write normally or use quick actions."
-                          );
-                          scrollToBottom(true);
-                        }}
-                      >
-                        {helpLabel}
-                      </button>
                     </div>
 
                     <div className="ajxCompactGrid">
@@ -8363,38 +5747,6 @@ export default function ChatPage(): React.JSX.Element {
                         </button>
                       ) : null}
 
-                      <button
-                        className={styles.btnIcon}
-                        type="button"
-                        title={
-                          locale === "fi"
-                            ? "Pura jumitus"
-                            : locale === "es"
-                              ? "Desbloquear"
-                              : "Unblock"
-                        }
-                        aria-label={
-                          locale === "fi"
-                            ? "Pura jumitus"
-                            : locale === "es"
-                              ? "Desbloquear"
-                              : "Unblock"
-                        }
-                        onClick={() => {
-                          if (effectiveCanonical === "free") {
-                            appendAssistantMessage(plusUpsellMessage(locale));
-                            scrollToBottom(true);
-                            return;
-                          }
-
-                          appendAssistantMessage(stressButtonText(locale));
-                          scrollToBottom(true);
-                        }}
-                        disabled={loading}
-                      >
-                        🤯
-                      </button>
-                      
                       {showImageButton ? (
                         <div ref={imageButtonWrapRef} className="ajxImageButtonWrap">
                           <ImageButton
@@ -8431,7 +5783,7 @@ export default function ChatPage(): React.JSX.Element {
                                 return;
                               }
 
-                              setImageStatus(sanitizeUiStatusText(s, locale));
+                              setImageStatus(s);
 
                               if (
                                 low.includes("http") ||
@@ -8491,6 +5843,13 @@ export default function ChatPage(): React.JSX.Element {
                       >
                         ⚡
                       </button>
+                      <a
+                        href={`/help?lang=${locale}`}
+                        className="ajxHelpLink ajxComposerHelp"
+                        title={helpLabel}
+                      >
+                        {helpLabel}
+                      </a>
 
                       <button
                         className={`${styles.btnGhost} ajxActionBtn`}
@@ -8539,111 +5898,48 @@ export default function ChatPage(): React.JSX.Element {
                   </div>
 
                   {toolsOpen && !isMobile ? (
-  <div
-    className="ajxDesktopToolsGrid"
-    style={{
-      width: "100%",
-      display: "grid",
-      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-      gap: 10,
-      margin: "12px 0 10px 0",
-      padding: 14,
-      borderRadius: 24,
-      background: "rgba(255,255,255,0.94)",
-      border: "1px solid rgba(16,24,40,0.08)",
-      boxShadow: "0 18px 48px rgba(16,24,40,0.10)",
-      boxSizing: "border-box",
-    }}
-  >
-    {quickActions.map((action) => (
-      <button
-        key={action.id}
-        type="button"
-        className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
-        onClick={() => {
-          setToolsOpen(false);
-          runQuickAction(action).catch(() => {});
-        }}
-        style={{
-          width: "100%",
-          minWidth: 0,
-          minHeight: 62,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          padding: "13px 14px",
-          borderRadius: 18,
-          background: action.id === "offer" ? "linear-gradient(90deg, #effdf4, #ffffff)" : "rgba(255,255,255,0.96)",
-          color: "#101318",
-          border: action.id === "offer" ? "1px solid rgba(22,163,74,0.24)" : "1px solid rgba(16,24,40,0.08)",
-          boxShadow: "0 10px 24px rgba(16,24,40,0.045)",
-          textAlign: "left",
-          cursor: "pointer",
-        }}
-      >
-        <div className="ajxActionText">
-          <span className="ajxActionLabel">
-            {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
-          </span>
-          {action.subtitle ? (
-            <span className="ajxActionSubtitle">{action.subtitle}</span>
-          ) : null}
-        </div>
-        <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
-      </button>
-    ))}
-  </div>
-) : null}
-                  {pending.some((p) => p.kind === "file") ? (
-                    <div className="ajxImageIntentBar">
-                      <div className="ajxImageIntentHint">
-                        {locale === "fi"
-                          ? "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä."
-                          : locale === "es"
-                            ? "Archivo añadido. Pulsa Analizar archivo y enviar."
-                            : "File added. Press Analyze file and send."}
-                      </div>
-
-                      <div className="ajxImageIntentHint">
-                        {locale === "fi"
-                          ? "Suositeltu tiedoston enimmäiskoko 3.5 Mt."
-                          : locale === "es"
-                            ? "Tamaño máximo recomendado: 3.5 MB."
-                            : "Recommended max file size: 3.5 MB."}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="ajxIntentBtn ajxIntentBtnActive"
-                        onClick={() => {
-                          if (!input.trim()) {
-                            setInput(
-                              locale === "fi"
-                                ? "Analysoi tiedosto ja kerro tärkeimmät asiat."
-                                : locale === "es"
-                                  ? "Analiza el archivo y dime los puntos principales."
-                                  : "Analyze the file and tell me the main points."
-                            );
-                          }
-
-                          setImageStatus(
-                            locale === "fi"
-                              ? "Tulkinta: tiedoston analyysi"
-                              : locale === "es"
-                                ? "Interpretación: análisis de archivo"
-                                : "Interpretation: file analysis"
-                          );
-
-                          requestAnimationFrame(() => inputRef.current?.focus());
-                        }}
-                      >
-                        {locale === "fi"
-                          ? "Analysoi tiedosto"
-                          : locale === "es"
-                            ? "Analizar archivo"
-                            : "Analyze file"}
-                      </button>
+                    <div
+                      className="ajxToolsDrawer ajxToolsDrawerMoved"
+                      style={
+                        isMobile
+                          ? {
+                              position: "fixed",
+                              left: 18,
+                              right: 18,
+                              bottom: 170,
+                              zIndex: 99999,
+                              maxHeight: "55vh",
+                              overflowY: "auto",
+                              WebkitOverflowScrolling: "touch",
+                              padding: 14,
+                              borderRadius: 26,
+                              background: "rgba(255,255,255,0.98)",
+                              boxShadow: "0 24px 80px rgba(16,24,40,0.24)",
+                            }
+                          : undefined
+                      }
+                    >
+                      {quickActions.map((action) => (
+                        <button
+                          key={action.id}
+                          type="button"
+                          className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
+                          onClick={() => {
+                            setToolsOpen(false);
+                            runQuickAction(action).catch(() => {});
+                          }}
+                        >
+                          <div className="ajxActionText">
+                            <span className="ajxActionLabel">
+                              {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+                            </span>
+                            {action.subtitle ? (
+                              <span className="ajxActionSubtitle">{action.subtitle}</span>
+                            ) : null}
+                          </div>
+                          <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
+                        </button>
+                      ))}
                     </div>
                   ) : null}
                   {hasPendingImage ? (
@@ -8655,7 +5951,7 @@ export default function ChatPage(): React.JSX.Element {
                         className={`ajxIntentBtn ${
                           effectiveImageIntent === "analyze" ? "ajxIntentBtnActive" : ""
                         }`}
-                        onClick={() => { setManualImageIntent("analyze"); setImageStatus(""); }}
+                        onClick={() => setManualImageIntent("analyze")}
                       >
                         {locale === "fi"
                           ? "Analysoi kuva"
@@ -8680,7 +5976,7 @@ export default function ChatPage(): React.JSX.Element {
                         </button>
                       ) : null}
 
-                      {canEditImages && manualImageIntent ? (
+                      {manualImageIntent ? (
                         <button
                           type="button"
                           className="ajxIntentBtn"
@@ -8723,7 +6019,7 @@ export default function ChatPage(): React.JSX.Element {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".pdf,.txt,.csv,.json,.md,.doc,.docx,.xls,.xlsx,application/pdf,text/plain,text/csv,application/json" style={{ display: "none" }}
+                    style={{ display: "none" }}
                     onChange={async (e) => {
                       const f = e.target.files?.[0];
                       e.target.value = "";
@@ -8751,7 +6047,7 @@ export default function ChatPage(): React.JSX.Element {
                     <div className="ajxChips">
                       {pending.map((p) => (
                         <div key={p.id} className="ajxChip" title={p.type}>
-                          <span>{p.kind === "image" ? "Kuva" : "Tiedosto"}</span>
+                          <span>{p.kind === "image" ? "ðŸ–¼ï¸" : "ðŸ“Ž"}</span>
                           <span className="ajxChipName">{p.name}</span>
                           <button
                             className={styles.btnTinyDanger}
@@ -8760,15 +6056,11 @@ export default function ChatPage(): React.JSX.Element {
                             style={{ padding: "4px 8px" }}
                             type="button"
                           >
-                            ×
+                            Ã—
                           </button>
                         </div>
                       ))}
                     </div>
-                  ) : null}
-
-                  {hasPendingImage && !canEditImages && effectiveCanonical === "plus" ? (
-                    <div className="ajxStatusNote">{plusImageCapabilityText(locale)}</div>
                   ) : null}
 
                   {imageStatus ? <div className="ajxStatusNote">{imageStatus}</div> : null}
@@ -8848,23 +6140,6 @@ export default function ChatPage(): React.JSX.Element {
             maxWidth: "calc(100vw - 24px)",
           }}
         >
-          <button
-            type="button"
-            className={`${styles.btnGhost} ajxMenuItem`}
-            onClick={() => setPlusOpen(false)}
-            aria-label="Sulje"
-            title="Sulje"
-            style={{
-              justifyContent: "flex-end",
-              fontWeight: 900,
-              fontSize: 18,
-              paddingTop: 8,
-              paddingBottom: 8,
-            }}
-          >
-            ×
-          </button>
-
           {canAttachImagesForAnalysis ? (
           <button
             className={`${styles.btnGhost} ajxMenuItem`}
@@ -8906,281 +6181,9 @@ export default function ChatPage(): React.JSX.Element {
           ) : null}
         </div>
       ) : null}
-    
-<style jsx global>{`
-  @media (max-width: 980px) {
-    .ajxTopControls {
-      overflow: visible !important;
-      gap: 5px !important;
-    }
-
-    .ajxTopHelp {
-      display: inline-flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      flex: 0 0 auto !important;
-      order: 3 !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:first-of-type {
-      flex: 1 1 auto !important;
-      min-width: 92px !important;
-      max-width: 132px !important;
-    }
-
-    .ajxTopControls .ajxControlGroup:last-of-type {
-      flex: 0 0 auto !important;
-      max-width: 62px !important;
-    }
-
-    .ajxTopControls .ajxSelect {
-      height: 34px !important;
-      font-size: 12px !important;
-      padding-top: 6px !important;
-      padding-bottom: 6px !important;
-    }
-  }
-`}</style>
-    
-<style jsx global>{`
-  /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
-  .ajxComposerHelp {
-    display: none !important;
-  }
-
-  /* ===== FORCE TOP HELP VISIBLE ===== */
-  .ajxTopHelp {
-    display: inline-flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-`}</style>
-    
-<style jsx global>{``}</style>
-    
-<style jsx global>{`
-  /* ===== AJX FINAL TEXT WRAP FIX ===== */
-  .ajxParagraph,
-  .ajxQuestionList,
-  .ajxQuestionRow,
-  .ajxManualOrderedList,
-  .ajxManualOrderedRow,
-  .ajxHeadingBlock,
-  .ajxSummaryText,
-  .ajxOutputBox,
-  .ajxOutputBody,
-  .ajxRichList,
-  .ajxRichList li,
-  .ajxCodeBlockWrap,
-  .ajxMessage,
-  .ajxMessage *,
-  [class*="bubbleText"],
-  [class*="bubbleText"] * {
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .ajxCodePre,
-  .ajxCodePre code {
-    white-space: pre-wrap !important;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX QUICK ACTION GRID FIX ===== */
-
-  .ajxQuickActionsGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  @media (min-width: 900px) {
-    .ajxQuickActionsGrid {
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
-
-  @media (min-width: 981px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-    }
-
-    .ajxToolsDrawer > *,
-    .ajxMobileToolsPanel > *,
-    .ajxQuickActionsGrid > *,
-    .ajxQuickActions > *,
-    .ajxQuickActionList > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    .ajxToolsDrawer,
-    .ajxMobileToolsPanel,
-    .ajxQuickActionsGrid,
-    .ajxQuickActions,
-    .ajxQuickActionList {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-    
-<style jsx global>{`
-  /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
-
-  @media (min-width: 981px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-      gap: 12px !important;
-      align-items: stretch !important;
-      width: 100% !important;
-      max-width: 100% !important;
-    }
-
-    [class*="quickActions"] > *,
-    [class*="QuickActions"] > *,
-    [class*="quickActionGrid"] > *,
-    [class*="QuickActionGrid"] > *,
-    [class*="quickActionList"] > *,
-    [class*="QuickActionList"] > * {
-      width: 100% !important;
-      min-width: 0 !important;
-    }
-  }
-
-  @media (max-width: 980px) {
-    [class*="quickActions"],
-    [class*="QuickActions"],
-    [class*="quickActionGrid"],
-    [class*="QuickActionGrid"],
-    [class*="quickActionList"],
-    [class*="QuickActionList"] {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 10px !important;
-    }
-  }
-`}</style>
-
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

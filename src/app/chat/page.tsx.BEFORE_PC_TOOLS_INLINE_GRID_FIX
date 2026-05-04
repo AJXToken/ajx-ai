@@ -345,43 +345,6 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
 
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
@@ -1487,43 +1450,6 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
 
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
@@ -1770,43 +1696,6 @@ function RichMessage({
   }
 `}</style>
 
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
@@ -2073,17 +1962,6 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
   ].join("\n");
 }
 
-function plusUpsellMessage(locale: Locale): string {
-  if (locale === "es") {
-    return "Esta función pertenece a la versión Plus.\nPlus te ayuda a terminar el trabajo, no solo a planearlo.\n\n[ Actualizar a Plus → ]";
-  }
-
-  if (locale === "en") {
-    return "This feature is part of the Plus plan.\nPlus helps you get the work done, not just plan it.\n\n[ Upgrade to Plus → ]";
-  }
-
-  return "Tämä ominaisuus kuuluu Plus-versioon.\nPlus auttaa sinua tekemään työn valmiiksi — ei pelkästään suunnittelemaan.\n\n[ Päivitä Plus → ]";
-}
 function quickActionLockedText(locale: Locale): string {
   if (locale === "es") {
     return "Los accesos rÃ¡pidos estÃ¡n disponibles en Plus. Con Plus, AJX AI te guÃ­a paso a paso para crear ofertas, anuncios, planes de ventas, financiaciÃ³n y soluciones de negocio.";
@@ -3594,7 +3472,7 @@ export default function ChatPage(): React.JSX.Element {
 
   async function runQuickAction(action: QuickAction) {
     if (effectiveCanonical === "free") {
-      appendAssistantMessage(plusUpsellMessage(locale));
+      appendAssistantMessage(quickActionLockedText(locale));
       return;
     }
 
@@ -6419,7 +6297,7 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -6437,7 +6315,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           overflow-y: hidden;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -6457,10 +6335,7 @@ export default function ChatPage(): React.JSX.Element {
         .ajxHeadingBlock,
         .ajxSummaryText,
         .ajxQuestionRow {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
+          min-width: max-content;
         }
 
         .ajxImageIntentBar {
@@ -6701,7 +6576,7 @@ export default function ChatPage(): React.JSX.Element {
         }
 
         .ajxBubbleScrollInner {
-          min-width: 0 !important;
+          min-width: max-content;
         }
 
 
@@ -6873,7 +6748,7 @@ export default function ChatPage(): React.JSX.Element {
           font-size: 14px;
           font-family: inherit;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           overflow-x: auto;
           overflow-y: hidden;
           -webkit-overflow-scrolling: touch;
@@ -6891,7 +6766,7 @@ export default function ChatPage(): React.JSX.Element {
           overflow-x: auto;
           overflow-y: hidden;
           max-width: 100%;
-          min-width: 0 !important;
+          min-width: max-content;
           white-space: pre;
           font-size: 13px;
           line-height: 1.55;
@@ -6924,10 +6799,7 @@ export default function ChatPage(): React.JSX.Element {
         .ajxHeadingBlock,
         .ajxSummaryText,
         .ajxQuestionRow {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
+          min-width: max-content;
         }
 
           .ajxTopHelp {
@@ -8381,12 +8253,6 @@ export default function ChatPage(): React.JSX.Element {
                               : "Unblock"
                         }
                         onClick={() => {
-                          if (effectiveCanonical === "free") {
-                            appendAssistantMessage(plusUpsellMessage(locale));
-                            scrollToBottom(true);
-                            return;
-                          }
-
                           appendAssistantMessage(stressButtonText(locale));
                           scrollToBottom(true);
                         }}
@@ -8539,62 +8405,50 @@ export default function ChatPage(): React.JSX.Element {
                   </div>
 
                   {toolsOpen && !isMobile ? (
-  <div
-    className="ajxDesktopToolsGrid"
-    style={{
-      width: "100%",
-      display: "grid",
-      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-      gap: 10,
-      margin: "12px 0 10px 0",
-      padding: 14,
-      borderRadius: 24,
-      background: "rgba(255,255,255,0.94)",
-      border: "1px solid rgba(16,24,40,0.08)",
-      boxShadow: "0 18px 48px rgba(16,24,40,0.10)",
-      boxSizing: "border-box",
-    }}
-  >
-    {quickActions.map((action) => (
-      <button
-        key={action.id}
-        type="button"
-        className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
-        onClick={() => {
-          setToolsOpen(false);
-          runQuickAction(action).catch(() => {});
-        }}
-        style={{
-          width: "100%",
-          minWidth: 0,
-          minHeight: 62,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-          padding: "13px 14px",
-          borderRadius: 18,
-          background: action.id === "offer" ? "linear-gradient(90deg, #effdf4, #ffffff)" : "rgba(255,255,255,0.96)",
-          color: "#101318",
-          border: action.id === "offer" ? "1px solid rgba(22,163,74,0.24)" : "1px solid rgba(16,24,40,0.08)",
-          boxShadow: "0 10px 24px rgba(16,24,40,0.045)",
-          textAlign: "left",
-          cursor: "pointer",
-        }}
-      >
-        <div className="ajxActionText">
-          <span className="ajxActionLabel">
-            {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
-          </span>
-          {action.subtitle ? (
-            <span className="ajxActionSubtitle">{action.subtitle}</span>
-          ) : null}
-        </div>
-        <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
-      </button>
-    ))}
-  </div>
-) : null}
+                    <div
+                      className="ajxToolsDrawer ajxToolsDrawerMoved"
+                      style={
+                        isMobile
+                          ? {
+                              position: "fixed",
+                              left: 18,
+                              right: 18,
+                              bottom: 170,
+                              zIndex: 99999,
+                              maxHeight: "55vh",
+                              overflowY: "auto",
+                              WebkitOverflowScrolling: "touch",
+                              padding: 14,
+                              borderRadius: 26,
+                              background: "rgba(255,255,255,0.98)",
+                              boxShadow: "0 24px 80px rgba(16,24,40,0.24)",
+                            }
+                          : undefined
+                      }
+                    >
+                      {quickActions.map((action) => (
+                        <button
+                          key={action.id}
+                          type="button"
+                          className={`ajxToolsDrawerBtn ${effectiveCanonical === "free" ? "ajxQuickActionLocked" : ""}`}
+                          onClick={() => {
+                            setToolsOpen(false);
+                            runQuickAction(action).catch(() => {});
+                          }}
+                        >
+                          <div className="ajxActionText">
+                            <span className="ajxActionLabel">
+                              {effectiveCanonical === "free" ? `🔒 ${action.label}` : action.label}
+                            </span>
+                            {action.subtitle ? (
+                              <span className="ajxActionSubtitle">{action.subtitle}</span>
+                            ) : null}
+                          </div>
+                          <span className="ajxPlainArrow" style={{ flex: "0 0 auto", marginLeft: 8, color: "#16a34a", fontSize: 22, fontWeight: 950, lineHeight: 1 }}>›</span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                   {pending.some((p) => p.kind === "file") ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">
@@ -9092,54 +8946,9 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
 
-
-      <style jsx global>{`
-        /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
-
-        .ajxParagraph,
-        .ajxHeadingBlock,
-        .ajxSummaryText,
-        .ajxQuestionRow,
-        .ajxManualOrderedRow,
-        .ajxManualOrderedRow span,
-        .ajxRichList,
-        .ajxRichList li,
-        .ajxOutputBody,
-        .ajxCodePre,
-        .ajxCodePre code,
-        [class*="bubbleText"],
-        [class*="bubbleText"] *,
-        [class*="bubbleAi"],
-        [class*="bubbleAi"] * {
-          min-width: 0 !important;
-          max-width: 100% !important;
-          width: auto !important;
-          overflow-wrap: break-word !important;
-          word-break: normal !important;
-          white-space: normal !important;
-        }
-
-        .ajxCodePre,
-        .ajxCodePre code,
-        .ajxOutputBody {
-          white-space: pre-wrap !important;
-        }
-
-        [class*="bubbleAi"] {
-          overflow: visible !important;
-        }
-      `}</style>
     </div>
   );
 }
-
-
-
-
-
-
-
-
 
 
 

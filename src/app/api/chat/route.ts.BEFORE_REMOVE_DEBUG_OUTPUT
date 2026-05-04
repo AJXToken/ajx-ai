@@ -4330,6 +4330,7 @@ async function callTextNonStream(): Promise<string> {
 }
 
 outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BOOST=" + String(plusBoostDecision.useBoost) + " | REASON=" + plusBoostDecision.reason + "\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4378,9 +4379,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
-
-
-
 
 
 
