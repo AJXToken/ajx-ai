@@ -2212,6 +2212,10 @@ function shouldUsePlusBoostModel(args: {
 }): { useBoost: boolean; reason: string } {
   if (args.plan !== ("plus" as any)) return { useBoost: false, reason: "not-plus" };
 
+  if (String(args.lastUserText || "").includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
+    return { useBoost: false, reason: "quick-action-first-question-mini" };
+  }
+
   const used = Number(args.usage.boostThisMonth || 0);
   if (used >= PLUS_BOOST_LIMIT) return { useBoost: false, reason: "plus-boost-limit-reached" };
 
@@ -2245,7 +2249,7 @@ function shouldUsePlusBoostModel(args: {
     previousAssistantText.includes("análisis de imagen");
 
   const imageContinuationNeedsBoost =
-    /analysoi|arvioi|markkina.?arvo|arvo|miksi|vertaa|tunnista|malli|keräilijä|collector|market value|compare|identify|analyze|analyse|estimate|valor|comparar|identifica/i.test(text);
+    /analysoi|arvioi|auta|minulla ei|tiedän vain|bmw|auto|autosta|markkina.?arvo|arvo|miksi|vertaa|tunnista|malli|keräilijä|collector|help|market value|car|compare|identify|analyze|analyse|estimate|valor|coche|comparar|identifica/i.test(text);
 
   if (looksLikeImageFlow && imageContinuationNeedsBoost && text.length >= 25) {
     return { useBoost: true, reason: "image-flow-continuation" };
@@ -2262,7 +2266,7 @@ function shouldUsePlusBoostModel(args: {
     previousAssistantText.includes("next step");
 
   const continuationText =
-    /mitä nyt|seuraavaksi|tein niin|jatka|miten jatkan|nyt mitä|what now|next|continue|i did|qué ahora|siguiente|continúa/i.test(text);
+    /mitä nyt|seuraavaksi|tein niin|jatka|miten jatkan|nyt mitä|mennään eteenpäin|sain .*asiak|myynti|onnistui|what now|next|continue|i did|got .*customer|sales|it worked|qué ahora|siguiente|continúa/i.test(text);
 
   if (looksLikeBusinessFlow && continuationText && text.length >= 15) {
     return { useBoost: true, reason: "business-flow-continuation" };
@@ -4384,6 +4388,7 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
 
 
 
