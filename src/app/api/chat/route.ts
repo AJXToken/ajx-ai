@@ -2130,13 +2130,15 @@ NOT:
 
 // ====== PLUS GPT-4.1 BOOST LOGIC ======
 function looksLikeQuickActionQuestionFlow(messages: Msg[]): boolean {
-  const recentAssistant = messages
+  const recentAssistantMessages = messages
     .filter((m) => m.role === "assistant")
     .slice(-3)
-    .map((m) => String(m.content || "").toLowerCase())
-    .join("\n");
+    .map((m) => String(m.content || "").trim())
+    .filter(Boolean);
 
-  return (
+  const recentAssistant = recentAssistantMessages.join("\n").toLowerCase();
+
+  if (
     recentAssistant.includes("tarvitsen ensin") ||
     recentAssistant.includes("vastaa") ||
     recentAssistant.includes("kysymys") ||
@@ -2146,7 +2148,17 @@ function looksLikeQuickActionQuestionFlow(messages: Msg[]): boolean {
     recentAssistant.includes("i need") ||
     recentAssistant.includes("first i need") ||
     recentAssistant.includes("necesito")
-  );
+  ) {
+    return true;
+  }
+
+  const questionLineCount = recentAssistantMessages
+    .join("\n")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length >= 8 && /[?？]$/.test(line)).length;
+
+  return questionLineCount >= 3;
 }
 
 function userAnswerIsGoodEnoughForBoost(text: string): boolean {
@@ -4329,6 +4341,7 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
 
 
 
