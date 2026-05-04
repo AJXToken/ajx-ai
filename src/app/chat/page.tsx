@@ -3286,7 +3286,18 @@ export default function ChatPage(): React.JSX.Element {
                   : null;
 
           if (typeof explicitFull === "string") {
-            applyText(explicitFull);
+            const debugPrefix =
+              obj?.type === "final"
+                ? "DEBUG | MODEL=" +
+                  String(obj?.actualModel || "unknown") +
+                  " | BOOST=" +
+                  String(obj?.boost?.used ?? "unknown") +
+                  " | REASON=" +
+                  String(obj?.boost?.reason || "none") +
+                  "\n\n"
+                : "";
+
+            applyText(debugPrefix + explicitFull);
           }
 
           return;
@@ -8978,6 +8989,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
