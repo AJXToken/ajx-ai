@@ -3986,7 +3986,10 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     );
   }
 
-  resHeaders.set("x-ajx-debug-primary-provider", primaryProvider); console.log("PROVIDER:", primaryProvider);
+  resHeaders.set("x-ajx-debug-primary-provider", primaryProvider);
+  resHeaders.set("x-ajx-provider", primaryProvider);
+  resHeaders.set("x-ajx-model-selected", requestedModelName);
+  console.log("PROVIDER:", primaryProvider);
   resHeaders.set("x-ajx-debug-requested-model", safeHeaderValue(requestedModelName));
   resHeaders.set("x-ajx-debug-company-pro-needed", String(geminiSelection.companyNeedsPro));
   resHeaders.set("x-ajx-debug-company-pro-available", String(geminiSelection.companyCanUsePro));
@@ -4276,7 +4279,8 @@ async function callTextNonStream(): Promise<string> {
   outText = freeLitePrefix(locale) + outText;
 }
 
-outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage); outText = "[PROVIDER: " + primaryProvider + "]\n\n" + outText;
+outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
+outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BOOST=" + String(plusBoostDecision.useBoost) + " | REASON=" + plusBoostDecision.reason + "\n\n" + outText;
 
     if (!isUsableModelText(outText)) {
       throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
@@ -4297,7 +4301,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
           webPerMonth: effectiveWebLimit,
         },
         usage,
-        text: "[PROVIDER: " + primaryProvider + "]\n\n" + String(outText || ""),
+        text: String(outText || ""),
         web: {
           requested: shouldTryWeb,
           didWeb,
@@ -4325,6 +4329,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
