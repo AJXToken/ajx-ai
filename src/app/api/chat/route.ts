@@ -4241,6 +4241,12 @@ async function callTextNonStream(): Promise<string> {
                 plan,
                 limits: streamLimits,
                 usage,
+                boost: {
+                  used: plusBoostDecision.useBoost,
+                  reason: plusBoostDecision.reason,
+                  usedThisMonth: Number(usage.boostThisMonth || 0),
+                  limit: PLUS_BOOST_LIMIT,
+                },
                 web: {
                   requested: shouldTryWeb,
                   didWeb,
@@ -4341,6 +4347,9 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
+
+
 
 
 
