@@ -2210,21 +2210,18 @@ function shouldUsePlusBoost(args: {
   hasImages: boolean;
   hasTextFiles: boolean;
 }): { useBoost: boolean; reason: string } {
-
-  // vain plus
   if (args.plan !== ("plus" as any)) {
     return { useBoost: false, reason: "not-plus" };
   }
 
-  // kuukausiraja
   const used = Number(args.usage.boostThisMonth || 0);
   if (used >= 150) {
     return { useBoost: false, reason: "limit-reached" };
   }
 
-  const text = String(args.lastUserText || "");
+  const text = String(args.lastUserText || "").trim();
+  const low = text.toLowerCase();
 
-  // ===== KUVA / TIEDOSTO =====
   if (args.hasImages) {
     return { useBoost: true, reason: "image-analysis" };
   }
@@ -2233,18 +2230,23 @@ function shouldUsePlusBoost(args: {
     return { useBoost: true, reason: "file-analysis" };
   }
 
-  // ===== PIKATOIMINTO =====
-
-  // eka kysymys = mini
   if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
     return { useBoost: false, reason: "quick-first-mini" };
   }
 
-  const assistant = args.messages.filter(m => m.role === "assistant");
+  const lowValueReply =
+    text.length < 25 ||
+    /^(ok|okei|joo|juu|jaa|aha|no niin|selvä|vitut|vittu|perkele|väsyttää|menen|meen|nukkumaan|kahville|moro|moikka|lol|haha|yes|yeah|no|nope|okey|vale|si|sí|no sé|me voy|café|cafe)$/i.test(low) ||
+    /kahvi|kahville|nukkumaan|väsyttää|tauko|lopetan|myöhemmin|coffee|sleep|tired|later|pause|café|cafe|dormir|cansado|luego|pausa/i.test(low);
 
-  // etsi viimeisin pikatoiminnon aloitus
+  if (lowValueReply) {
+    return { useBoost: false, reason: "mini-low-value-reply" };
+  }
+
+  const assistant = args.messages.filter((m) => m.role === "assistant");
+
   let startIndex = -1;
-  for (let i = assistant.length - 1; i >= 0; i--) {
+  for (let i = assistant.length - 1; i >= 0; i -= 1) {
     const c = String(assistant[i].content || "");
     if (c.includes("quick-first-mini")) {
       startIndex = i;
@@ -2255,18 +2257,16 @@ function shouldUsePlusBoost(args: {
   if (startIndex >= 0) {
     const after = assistant.slice(startIndex + 1);
 
-    const boostCount = after.filter(m => {
+    const boostCount = after.filter((m) => {
       const c = String(m.content || "");
       return c.includes("MODEL=gpt-4.1");
     }).length;
 
-    // max 2 boostia
     if (boostCount < 2) {
       return { useBoost: true, reason: "quick-2-step" };
     }
   }
 
-  // ===== MUU =====
   return { useBoost: false, reason: "mini-default" };
 }
 function plusBoostClarificationText(locale: Locale): string {
@@ -3971,7 +3971,12 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         : shouldTryWeb
           ? "- The user requested web search, but no usable web results were available.\n"
           : "- Do not assume fresh web data.\n") +
-    (imgCount > 0 ? "- One or more images are attached. Use them in your answer.\n" : "") +
+    (imgCount > 0
+      ? "- One or more images are attached. Analyze the attached image directly. Do not ask what the user wants if the user asks anything about the image. Give the best useful answer from the image.\n"
+      : "") +
+    (trimmedTextFiles.length > 0
+      ? "- One or more text files or PDFs are attached. Read the attached file content directly and answer from it. Do not say you cannot inspect attachments. Do not ask what the user wants if the user asks a vague file question. Summarize the relevant contents directly.\n"
+      : "") +
     (trimmedMemory.truncated
       ? "- Conversation history included here is shortened to the most relevant recent context.\n"
       : "");
@@ -4382,6 +4387,7 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
 
 
 
