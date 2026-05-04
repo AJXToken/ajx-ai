@@ -118,6 +118,8 @@ function detectQuickActionBoostFromText(text: string): string {
 }
 // ====== CONFIG ======
 const OPENAI_MODEL = "gpt-4o-mini";
+const OPENAI_BOOST_MODEL = "gpt-4.1";
+const PLUS_BOOST_LIMIT = 100;
 
 const GEMINI_FLASH_LITE_MODEL = "gemini-2.5-flash-lite";
 const GEMINI_FLASH_MODEL = "gemini-2.5-flash";
@@ -141,8 +143,8 @@ const REDIS_REST_URL = process.env.AJX_UPSTASH_REDIS_REST_URL || "";
 const REDIS_REST_TOKEN = process.env.AJX_UPSTASH_REDIS_REST_TOKEN || "";
 const USAGE_KEY_PREFIX = "ajx:usage:v1";
 
-const PLUS_PRIMARY_LIMIT = 2000;
-const PLUS_SAVINGS_EXTRA_LIMIT = 1000;
+const PLUS_PRIMARY_LIMIT = 5000;
+const PLUS_SAVINGS_EXTRA_LIMIT = 0;
 const PLUS_SAVINGS_TOTAL_LIMIT = PLUS_PRIMARY_LIMIT + PLUS_SAVINGS_EXTRA_LIMIT;
 const PLUS_SAVINGS_MAX_OUTPUT_TOKENS = 500;
 
@@ -318,6 +320,7 @@ type UsageRow = {
   imgToday?: number;
 
   proUsedThisMonth?: number;
+  boostThisMonth?: number;
 };
 
 const usageMemoryFallback = new Map<string, UsageRow>();
@@ -334,6 +337,7 @@ function emptyUsageRow(): UsageRow {
     reqToday: 0,
     imgToday: 0,
     proUsedThisMonth: 0,
+    boostThisMonth: 0,
   };
 }
 
@@ -2123,6 +2127,112 @@ NOT:
 `.trim();
 }
 
+
+// ====== PLUS GPT-4.1 BOOST LOGIC ======
+function looksLikeQuickActionQuestionFlow(messages: Msg[]): boolean {
+  const recentAssistant = messages
+    .filter((m) => m.role === "assistant")
+    .slice(-3)
+    .map((m) => String(m.content || "").toLowerCase())
+    .join("\n");
+
+  return (
+    recentAssistant.includes("tarvitsen ensin") ||
+    recentAssistant.includes("vastaa") ||
+    recentAssistant.includes("kysymys") ||
+    recentAssistant.includes("1.") ||
+    recentAssistant.includes("2.") ||
+    recentAssistant.includes("3.") ||
+    recentAssistant.includes("i need") ||
+    recentAssistant.includes("first i need") ||
+    recentAssistant.includes("necesito")
+  );
+}
+
+function userAnswerIsGoodEnoughForBoost(text: string): boolean {
+  const s = String(text || "").trim();
+  const t = s.toLowerCase();
+
+  if (s.length < 120) return false;
+
+  let score = 0;
+
+  if (s.length >= 180) score += 1;
+  if (/\d/.test(s)) score += 1;
+  if (/[€$]|euro|eur|hinta|price|precio|budget|budjetti|presupuesto/.test(t)) score += 1;
+  if (/yritys|firma|company|empresa|palvelu|service|servicio|tuote|product|producto/.test(t)) score += 1;
+  if (/asiakas|customer|cliente|kohderyhmä|target|público|audience/.test(t)) score += 1;
+  if (/alue|kaupunki|city|area|zona|spain|suomi|finland|espanja|torrevieja|orihuela/.test(t)) score += 1;
+  if (s.split(/\s+/).length >= 35) score += 1;
+
+  const weak =
+    t === "en tiedä" ||
+    t === "en osaa sanoa" ||
+    t === "tee jotain" ||
+    t === "ihan sama" ||
+    t === "jotain" ||
+    t === "i don't know" ||
+    t === "whatever" ||
+    t === "no sé";
+
+  if (weak) return false;
+
+  return score >= 3;
+}
+
+function isRefinementRequestForBoost(text: string): boolean {
+  const t = String(text || "").toLowerCase();
+
+  return (
+    /paranna|tee parempi|myyvempi|selkeämpi|lyhyempi|pidempi|muokkaa|kirjoita uudelleen|viimeistele/.test(t) ||
+    /improve|make it better|rewrite|polish|more sales|clearer|shorter|longer/.test(t) ||
+    /mejora|reescribe|más claro|más vendedor|termina/.test(t)
+  );
+}
+
+function shouldUsePlusBoostModel(args: {
+  plan: PlanId;
+  usage: UsageRow;
+  messages: Msg[];
+  lastUserText: string;
+  hasImages: boolean;
+  hasTextFiles: boolean;
+}): { useBoost: boolean; reason: string } {
+  if (args.plan !== ("plus" as any)) return { useBoost: false, reason: "not-plus" };
+
+  const used = Number(args.usage.boostThisMonth || 0);
+  if (used >= PLUS_BOOST_LIMIT) return { useBoost: false, reason: "plus-boost-limit-reached" };
+
+  if (args.hasImages) return { useBoost: true, reason: "image-analysis" };
+
+  const text = String(args.lastUserText || "");
+  const inQuickActionFlow = looksLikeQuickActionQuestionFlow(args.messages);
+  const goodAnswer = userAnswerIsGoodEnoughForBoost(text);
+
+  if (inQuickActionFlow && goodAnswer) {
+    return { useBoost: true, reason: "quick-action-good-answer" };
+  }
+
+  if (isRefinementRequestForBoost(text) && text.length >= 40) {
+    return { useBoost: true, reason: "refinement-request" };
+  }
+
+  if (args.hasTextFiles && text.length >= 80) {
+    return { useBoost: true, reason: "text-file-analysis" };
+  }
+
+  return { useBoost: false, reason: goodAnswer ? "good-answer-no-flow" : "insufficient-user-data" };
+}
+
+function plusBoostClarificationText(locale: Locale): string {
+  return l(
+    locale,
+    "Tarvitsen vielä vähän tarkemmat tiedot, jotta voin tehdä tästä oikeasti hyvän.\n\nVastaa lyhyesti näihin:\n\n1. Mikä yritys, tuote tai palvelu on kyseessä?\n2. Kenelle tämä tehdään?\n3. Mikä on hinta, alue, tavoite tai tärkein rajoite?",
+    "I need a bit more detail to make this genuinely useful.\n\nPlease answer these briefly:\n\n1. What company, product, or service is this about?\n2. Who is it for?\n3. What is the price, area, goal, or main constraint?",
+    "Necesito un poco más de detalle para hacerlo realmente útil.\n\nResponde brevemente:\n\n1. ¿De qué empresa, producto o servicio se trata?\n2. ¿Para quién es?\n3. ¿Cuál es el precio, zona, objetivo o limitación principal?"
+  );
+}
+
 // ====== Provider selection ======
 type Provider = "gemini" | "openai";
 function hasGeminiKey() {
@@ -3266,6 +3376,7 @@ export async function POST(req: NextRequest) {
   if (typeof usage.extraMsgThisMonth !== "number") usage.extraMsgThisMonth = 0;
   if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
   if (typeof usage.proUsedThisMonth !== "number") usage.proUsedThisMonth = 0;
+  if (typeof usage.boostThisMonth !== "number") usage.boostThisMonth = 0;
 
   const todayKey = getDayKey();
   if (usage.dayKey !== todayKey) {
@@ -3824,6 +3935,22 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
+  const plusBoostDecision = shouldUsePlusBoostModel({
+    plan,
+    usage,
+    messages,
+    lastUserText: lastTextOriginal,
+    hasImages: imgCount > 0,
+    hasTextFiles: trimmedTextFiles.length > 0,
+  });
+
+  const openAiModelForRequest = plusBoostDecision.useBoost ? OPENAI_BOOST_MODEL : OPENAI_MODEL;
+
+  resHeaders.set("x-ajx-debug-plus-boost", String(plusBoostDecision.useBoost));
+  resHeaders.set("x-ajx-debug-plus-boost-reason", safeHeaderValue(plusBoostDecision.reason));
+  resHeaders.set("x-ajx-debug-plus-boost-used-month", String(Number(usage.boostThisMonth || 0)));
+  resHeaders.set("x-ajx-debug-plus-boost-limit", String(PLUS_BOOST_LIMIT));
+
   const primaryProvider = chooseProviderForPlan(plan, plusSavingsStateBeforeCall.activeForThisRequest);
 
   const geminiSelection = geminiModelForRequest({
@@ -3838,7 +3965,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
 
   const requestedGeminiModel = geminiSelection.model;
 
-  let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : OPENAI_MODEL;
+  let requestedModelName = primaryProvider === "gemini" ? requestedGeminiModel : openAiModelForRequest;
   let actualModelName = requestedModelName;
   let fallbackUsed = "";
   let fallbackReason = "";
@@ -4198,6 +4325,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
