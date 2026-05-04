@@ -2229,8 +2229,42 @@ function shouldUsePlusBoostModel(args: {
     return { useBoost: true, reason: "refinement-request" };
   }
 
-  if (args.hasTextFiles && text.length >= 80) {
+  if (args.hasTextFiles) {
     return { useBoost: true, reason: "text-file-analysis" };
+  }
+
+  const previousAssistantText = args.messages
+    .filter((m) => m.role === "assistant")
+    .slice(-2)
+    .map((m) => String(m.content || "").toLowerCase())
+    .join("\n");
+
+  const looksLikeImageFlow =
+    previousAssistantText.includes("kuvassa") ||
+    previousAssistantText.includes("image") ||
+    previousAssistantText.includes("imagen") ||
+    previousAssistantText.includes("auto") ||
+    previousAssistantText.includes("bmw");
+
+  if (looksLikeImageFlow && text.length >= 15) {
+    return { useBoost: true, reason: "image-flow-continuation" };
+  }
+
+  const looksLikeBusinessFlow =
+    previousAssistantText.includes("tilanne") ||
+    previousAssistantText.includes("situation") ||
+    previousAssistantText.includes("toimintasuunnitelma") ||
+    previousAssistantText.includes("action plan") ||
+    previousAssistantText.includes("valmis sisältö") ||
+    previousAssistantText.includes("ready output") ||
+    previousAssistantText.includes("seuraava askel") ||
+    previousAssistantText.includes("next step");
+
+  const continuationText =
+    /mitä nyt|seuraavaksi|tein niin|jatka|miten jatkan|nyt mitä|what now|next|continue|i did|qué ahora|siguiente|continúa/i.test(text);
+
+  if (looksLikeBusinessFlow && continuationText && text.length >= 15) {
+    return { useBoost: true, reason: "business-flow-continuation" };
   }
 
   return { useBoost: false, reason: goodAnswer ? "good-answer-no-flow" : "insufficient-user-data" };
@@ -2765,6 +2799,7 @@ async function callOpenAIResponses(opts: {
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
   maxOutputTokens?: number;
+  model?: string;
 }): Promise<string> {
   const input: any[] = [
     {
@@ -2784,7 +2819,7 @@ async function callOpenAIResponses(opts: {
   }
 
   const body: any = {
-    model: OPENAI_MODEL,
+    model: opts.model || OPENAI_MODEL,
     instructions: opts.instructions,
     input,
   };
@@ -2828,6 +2863,7 @@ async function* callOpenAIResponsesStream(opts: {
   inputText: string;
   images?: { mime: string; base64: string; name: string }[];
   maxOutputTokens?: number;
+  model?: string;
 }): AsyncGenerator<string> {
   const input: any[] = [
     {
@@ -2847,7 +2883,7 @@ async function* callOpenAIResponsesStream(opts: {
   }
 
   const body: any = {
-    model: OPENAI_MODEL,
+    model: opts.model || OPENAI_MODEL,
     instructions: opts.instructions,
     input,
     stream: true,
@@ -4347,6 +4383,10 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
+
+
+
 
 
 
