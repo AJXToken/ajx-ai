@@ -119,7 +119,7 @@ function detectQuickActionBoostFromText(text: string): string {
 // ====== CONFIG ======
 const OPENAI_MODEL = "gpt-4o-mini";
 const OPENAI_BOOST_MODEL = "gpt-4.1";
-const PLUS_BOOST_LIMIT = 100;
+const PLUS_BOOST_LIMIT = 150;
 
 const GEMINI_FLASH_LITE_MODEL = "gemini-2.5-flash-lite";
 const GEMINI_FLASH_MODEL = "gemini-2.5-flash";
@@ -2202,7 +2202,7 @@ function isRefinementRequestForBoost(text: string): boolean {
   );
 }
 
-function shouldUsePlusBoostModel(args: {
+function shouldUsePlusBoost(args: {
   plan: PlanId;
   usage: UsageRow;
   messages: Msg[];
@@ -2210,82 +2210,65 @@ function shouldUsePlusBoostModel(args: {
   hasImages: boolean;
   hasTextFiles: boolean;
 }): { useBoost: boolean; reason: string } {
-  if (args.plan !== ("plus" as any)) return { useBoost: false, reason: "not-plus" };
 
-  if (String(args.lastUserText || "").includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
-    return { useBoost: false, reason: "quick-action-first-question-mini" };
+  // vain plus
+  if (args.plan !== ("plus" as any)) {
+    return { useBoost: false, reason: "not-plus" };
   }
 
+  // kuukausiraja
   const used = Number(args.usage.boostThisMonth || 0);
-  if (used >= PLUS_BOOST_LIMIT) return { useBoost: false, reason: "plus-boost-limit-reached" };
-
-  if (args.hasImages) return { useBoost: true, reason: "image-analysis" };
+  if (used >= 150) {
+    return { useBoost: false, reason: "limit-reached" };
+  }
 
   const text = String(args.lastUserText || "");
-  const inQuickActionFlow = looksLikeQuickActionQuestionFlow(args.messages);
-  const goodAnswer = userAnswerIsGoodEnoughForBoost(text);
 
-  if (inQuickActionFlow && goodAnswer) {
-    return { useBoost: true, reason: "quick-action-good-answer" };
-  }
-
-  if (isRefinementRequestForBoost(text) && text.length >= 40) {
-    return { useBoost: true, reason: "refinement-request" };
+  // ===== KUVA / TIEDOSTO =====
+  if (args.hasImages) {
+    return { useBoost: true, reason: "image-analysis" };
   }
 
   if (args.hasTextFiles) {
-    return { useBoost: true, reason: "text-file-analysis" };
+    return { useBoost: true, reason: "file-analysis" };
   }
 
-  const previousAssistantMessages = args.messages
-    .filter((m) => m.role === "assistant")
-    .slice(-3);
+  // ===== PIKATOIMINTO =====
 
-  const previousAssistantText = previousAssistantMessages
-    .map((m) => String(m.content || "").toLowerCase())
-    .join("\n");
-
-  const previousHadBoost =
-    previousAssistantMessages.some((m) =>
-      String(m.content || "").includes("DEBUG | MODEL=gpt-4.1")
-    );
-
-  const looksLikeImageFlow =
-    previousAssistantText.includes("kuvassa") ||
-    previousAssistantText.includes("image analysis") ||
-    previousAssistantText.includes("análisis de imagen");
-
-  const imageContinuationNeedsBoost =
-    /analysoi|arvioi|auta|minulla ei|tiedän vain|bmw|auto|autosta|markkina.?arvo|arvo|miksi|vertaa|tunnista|malli|keräilijä|collector|help|market value|car|compare|identify|analyze|analyse|estimate|valor|coche|comparar|identifica/i.test(text);
-
-  if (looksLikeImageFlow && imageContinuationNeedsBoost && text.length >= 25) {
-    return { useBoost: true, reason: "image-flow-continuation" };
+  // eka kysymys = mini
+  if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
+    return { useBoost: false, reason: "quick-first-mini" };
   }
 
-  const looksLikeBusinessFlow =
-    previousAssistantText.includes("tilanne") ||
-    previousAssistantText.includes("situation") ||
-    previousAssistantText.includes("toimintasuunnitelma") ||
-    previousAssistantText.includes("action plan") ||
-    previousAssistantText.includes("valmis sisältö") ||
-    previousAssistantText.includes("ready output") ||
-    previousAssistantText.includes("seuraava askel") ||
-    previousAssistantText.includes("next step");
+  const assistant = args.messages.filter(m => m.role === "assistant");
 
-  const continuationText =
-    /mitä nyt|seuraavaksi|tein niin|jatka|miten jatkan|nyt mitä|mennään eteenpäin|sain .*asiak|myynti|onnistui|what now|next|continue|i did|got .*customer|sales|it worked|qué ahora|siguiente|continúa/i.test(text);
-
-  if (looksLikeBusinessFlow && continuationText && text.length >= 15) {
-    return { useBoost: true, reason: "business-flow-continuation" };
+  // etsi viimeisin pikatoiminnon aloitus
+  let startIndex = -1;
+  for (let i = assistant.length - 1; i >= 0; i--) {
+    const c = String(assistant[i].content || "");
+    if (c.includes("quick-first-mini")) {
+      startIndex = i;
+      break;
+    }
   }
 
-  if (previousHadBoost && text.length >= 10) {
-    return { useBoost: true, reason: "sticky-boost-continuation" };
+  if (startIndex >= 0) {
+    const after = assistant.slice(startIndex + 1);
+
+    const boostCount = after.filter(m => {
+      const c = String(m.content || "");
+      return c.includes("MODEL=gpt-4.1");
+    }).length;
+
+    // max 2 boostia
+    if (boostCount < 2) {
+      return { useBoost: true, reason: "quick-2-step" };
+    }
   }
 
-  return { useBoost: false, reason: goodAnswer ? "good-answer-no-flow" : "insufficient-user-data" };
+  // ===== MUU =====
+  return { useBoost: false, reason: "mini-default" };
 }
-
 function plusBoostClarificationText(locale: Locale): string {
   return l(
     locale,
@@ -3999,7 +3982,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  const plusBoostDecision = shouldUsePlusBoostModel({
+  const plusBoostDecision = shouldUsePlusBoost({
     plan,
     usage,
     messages,
@@ -4399,6 +4382,10 @@ outText = "PROVIDER=" + primaryProvider + " | MODEL=" + actualModelName + " | BO
     );
   }
 }
+
+
+
+
 
 
 
