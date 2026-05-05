@@ -2129,25 +2129,24 @@ NOT:
 
 
 // ====== PLUS GPT-4.1 BOOST LOGIC ======
-function countAssistantRepliesAfterLastQuickActionMarker(messages: Msg[]): number {
-  let markerIndex = -1;
+function countAssistantRepliesAfterLastQuickAction(messages: Msg[]): number {
+  let lastQuickUserIndex = -1;
 
   for (let i = messages.length - 1; i >= 0; i -= 1) {
     const m = messages[i];
-
     if (
       m.role === "user" &&
       String(m.content || "").includes("[AJX_QUICK_ACTION_INSTRUCTION]")
     ) {
-      markerIndex = i;
+      lastQuickUserIndex = i;
       break;
     }
   }
 
-  if (markerIndex < 0) return -1;
+  if (lastQuickUserIndex < 0) return -1;
 
   return messages
-    .slice(markerIndex + 1)
+    .slice(lastQuickUserIndex + 1)
     .filter((m) => m.role === "assistant" && String(m.content || "").trim())
     .length;
 }
@@ -2171,8 +2170,6 @@ function shouldUsePlusBoost(args: {
 
   const text = String(args.lastUserText || "");
 
-  // Kuva ja tiedosto: vain se varsinainen liitepyyntö boostilla.
-  // Jatkokysymykset ilman liitettä menevät minillä.
   if (args.hasImages) {
     return { useBoost: true, reason: "image-analysis" };
   }
@@ -2181,21 +2178,14 @@ function shouldUsePlusBoost(args: {
     return { useBoost: true, reason: "file-analysis" };
   }
 
-  // Pikatoiminnon aloitus / ensimmäinen kysymyssetti aina minillä.
   if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
     return { useBoost: false, reason: "quick-first-mini" };
   }
 
-  const assistantRepliesAfterMarker =
-    countAssistantRepliesAfterLastQuickActionMarker(args.messages);
+  const assistantRepliesAfterQuick = countAssistantRepliesAfterLastQuickAction(args.messages);
 
-  // Mekaaninen sääntö:
-  // 0 = pikatoimintoa ei ole vielä vastattu
-  // 1 = toinen kierros minillä
-  // 2 ja 3 = kaksi boost-vastausta
-  // 4+ = takaisin minille
-  if (assistantRepliesAfterMarker === 2 || assistantRepliesAfterMarker === 3) {
-    return { useBoost: true, reason: "quick-boost-slot" };
+  if (assistantRepliesAfterQuick >= 1 && assistantRepliesAfterQuick <= 2) {
+    return { useBoost: true, reason: "quick-two-followups" };
   }
 
   return { useBoost: false, reason: "mini-default" };
@@ -4339,8 +4329,6 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
-
-
 
 
 
