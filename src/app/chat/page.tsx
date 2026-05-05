@@ -3242,42 +3242,45 @@ export default function ChatPage(): React.JSX.Element {
         const cp = toCanonicalPlan(devPlan);
         headers["x-ajx-dev-plan"] = canonicalToHeaderPlan(cp) as any;
       }
+      const ajxMessagesForBoost = Array.isArray(convoForBackend) ? convoForBackend : [];
 
-      const ajxQuickBoostKey = "ajx:quickBoostStep:" + String(activeId || "default");
-      const ajxOutgoingText = String(
-        convoForBackend?.[convoForBackend.length - 1]?.content || ""
-      );
+      let ajxLastQuickActionIndex = -1;
 
-      const ajxStartsQuickAction =
-        ajxOutgoingText.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
-        ajxOutgoingText.includes("PIKATOIMINTO_TILA:") ||
-        ajxOutgoingText.includes("QUICK_ACTION_MODE:") ||
-        ajxOutgoingText.includes("MODO_PIKATOIMINTO:");
+      for (let i = ajxMessagesForBoost.length - 1; i >= 0; i -= 1) {
+        const m = ajxMessagesForBoost[i];
+        const content = String(m?.content || "");
 
-      let forceBoost = false;
-
-      if (ajxStartsQuickAction) {
-        window.localStorage.setItem(ajxQuickBoostKey, "0");
-      } else {
-        const step = Number(window.localStorage.getItem(ajxQuickBoostKey) || "-1");
-
-        // Mekaaninen sääntö:
-        // step 0 = eka käyttäjän vastaus pikatoiminnon jälkeen -> mini
-        // step 1 = boost
-        // step 2 = boost
-        // step 3+ = mini
-        forceBoost = step === 1 || step === 2;
-
-        if (step >= 0) {
-          const nextStep = step + 1;
-
-          if (nextStep > 2) {
-            window.localStorage.removeItem(ajxQuickBoostKey);
-          } else {
-            window.localStorage.setItem(ajxQuickBoostKey, String(nextStep));
-          }
+        if (
+          m?.role === "user" &&
+          (
+            content.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
+            content.includes("PIKATOIMINTO_TILA:") ||
+            content.includes("QUICK_ACTION_MODE:") ||
+            content.includes("MODO_PIKATOIMINTO:")
+          )
+        ) {
+          ajxLastQuickActionIndex = i;
+          break;
         }
       }
+
+      const ajxAssistantRepliesAfterQuick =
+        ajxLastQuickActionIndex >= 0
+          ? ajxMessagesForBoost
+              .slice(ajxLastQuickActionIndex + 1)
+              .filter((m) => m?.role === "assistant" && String(m?.content || "").trim())
+              .length
+          : -1;
+
+      // LUKITTU SÄÄNTÖ:
+      // pikatoiminto -> mini
+      // ensimmäinen AI-vastaus kysymyksillä -> mini
+      // käyttäjä vastaa -> toinen AI-vastaus -> boost
+      // käyttäjä vastaa -> kolmas AI-vastaus -> boost
+      // neljäs ja siitä eteenpäin -> mini
+      const forceBoost =
+        ajxAssistantRepliesAfterQuick === 1 ||
+        ajxAssistantRepliesAfterQuick === 2;
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -9178,6 +9181,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
