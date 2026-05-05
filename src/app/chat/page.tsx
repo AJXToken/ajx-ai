@@ -3282,13 +3282,12 @@ export default function ChatPage(): React.JSX.Element {
 
       // 🔒 LUKITTU LOGIIKKA
       // 0 = kysymykset → mini
-      // 1 = ensimmäinen vastaus → mini
+      // 1 = ensimmäinen vastaus → ⚡
       // 2 = toinen vastaus → ⚡
-      // 3 = kolmas vastaus → ⚡
-      // 4+ = mini
+      // 3+ = mini
       const forceBoost =
-        assistantAfterQuick === 2 ||
-        assistantAfterQuick === 3;
+        assistantAfterQuick === 1 ||
+        assistantAfterQuick === 2;
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -9189,6 +9188,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
