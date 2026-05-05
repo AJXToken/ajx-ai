@@ -3401,7 +3401,10 @@ export default function ChatPage(): React.JSX.Element {
               obj?.type === "final" &&
               (
                 obj?.boost?.used === true ||
-                String(obj?.boost?.used || "").toLowerCase() === "true"
+                String(obj?.boost?.used || "").toLowerCase() === "true" ||
+                String(obj?.boost?.reason || "").toLowerCase().includes("quick") ||
+                String(obj?.boost?.reason || "").toLowerCase().includes("image") ||
+                String(obj?.boost?.reason || "").toLowerCase().includes("file")
               );
 
             const boostIcon = boostUsed ? "⚡ " : "";
@@ -9141,7 +9144,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 
