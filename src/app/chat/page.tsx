@@ -3242,45 +3242,36 @@ export default function ChatPage(): React.JSX.Element {
         const cp = toCanonicalPlan(devPlan);
         headers["x-ajx-dev-plan"] = canonicalToHeaderPlan(cp) as any;
       }
-      const ajxMessagesForBoost = Array.isArray(convoForBackend) ? convoForBackend : [];
+            const ajxMessagesForBoost = Array.isArray(convoForBackend) ? convoForBackend : [];
 
-      let ajxLastQuickActionIndex = -1;
+      // löydä viimeinen user-viesti ennen tätä (eli nykyinen prompt)
+      let lastUserIndex = -1;
 
       for (let i = ajxMessagesForBoost.length - 1; i >= 0; i -= 1) {
-        const m = ajxMessagesForBoost[i];
-        const content = String(m?.content || "");
-
-        if (
-          m?.role === "user" &&
-          (
-            content.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
-            content.includes("PIKATOIMINTO_TILA:") ||
-            content.includes("QUICK_ACTION_MODE:") ||
-            content.includes("MODO_PIKATOIMINTO:")
-          )
-        ) {
-          ajxLastQuickActionIndex = i;
+        if (ajxMessagesForBoost[i]?.role === "user") {
+          lastUserIndex = i;
           break;
         }
       }
 
-      const ajxAssistantRepliesAfterQuick =
-        ajxLastQuickActionIndex >= 0
+      // laske kuinka monta assistant vastausta on ennen tätä user-viestiä
+      const assistantCountBefore =
+        lastUserIndex >= 0
           ? ajxMessagesForBoost
-              .slice(ajxLastQuickActionIndex + 1)
+              .slice(0, lastUserIndex)
               .filter((m) => m?.role === "assistant" && String(m?.content || "").trim())
               .length
-          : -1;
+          : 0;
 
-      // LUKITTU SÄÄNTÖ:
-      // pikatoiminto -> mini
-      // ensimmäinen AI-vastaus kysymyksillä -> mini
-      // käyttäjä vastaa -> toinen AI-vastaus -> boost
-      // käyttäjä vastaa -> kolmas AI-vastaus -> boost
-      // neljäs ja siitä eteenpäin -> mini
+      // 🧠 LOGIIKKA:
+      // 0 = kysymykset
+      // 1 = vielä mini
+      // 2 = ⚡
+      // 3 = ⚡
+      // 4+ = mini
       const forceBoost =
-        ajxAssistantRepliesAfterQuick === 1 ||
-        ajxAssistantRepliesAfterQuick === 2;
+        assistantCountBefore === 2 ||
+        assistantCountBefore === 3;
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -9181,6 +9172,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
