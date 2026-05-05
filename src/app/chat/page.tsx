@@ -3397,7 +3397,10 @@ export default function ChatPage(): React.JSX.Element {
                   : null;
 
           if (typeof explicitFull === "string") {
-            applyText(explicitFull);
+            const boostIcon =
+              obj?.type === "final" && obj?.boost?.used === true ? "⚡ " : "";
+
+            applyText(boostIcon + explicitFull);
           }
 
           return;
@@ -9132,6 +9135,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
