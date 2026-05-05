@@ -4188,6 +4188,10 @@ async function callTextNonStream(): Promise<string> {
   injectResponsibilityReminder
 );
 
+
+            if (plusBoostDecision.useBoost) {
+              finalText = "⚡ " + finalText;
+            }
 if (plusBoostDecision.useBoost) {
   finalText = "⚡ " + finalText;
 }
@@ -4270,7 +4274,11 @@ if (plusBoostDecision.useBoost) {
 
 outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
 
+    
     if (plusBoostDecision.useBoost) {
+      outText = "⚡ " + outText;
+    }
+if (plusBoostDecision.useBoost) {
   outText = "⚡ " + outText;
 }
 
@@ -4321,6 +4329,7 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
+
 
 
 
