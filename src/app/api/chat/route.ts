@@ -2129,36 +2129,6 @@ NOT:
 
 
 // ====== PLUS GPT-4.1 BOOST LOGIC ======
-function isQuickActionMarkerText(text: string): boolean {
-  const s = String(text || "");
-  return (
-    s.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
-    s.includes("PIKATOIMINTO_TILA:") ||
-    s.includes("QUICK_ACTION_MODE:") ||
-    s.includes("MODO_PIKATOIMINTO:")
-  );
-}
-
-function countAssistantRepliesAfterLastQuickActionMarker(messages: Msg[]): number {
-  let markerIndex = -1;
-
-  for (let i = messages.length - 1; i >= 0; i -= 1) {
-    const m = messages[i];
-
-    if (m.role === "user" && isQuickActionMarkerText(String(m.content || ""))) {
-      markerIndex = i;
-      break;
-    }
-  }
-
-  if (markerIndex < 0) return -1;
-
-  return messages
-    .slice(markerIndex + 1)
-    .filter((m) => m.role === "assistant" && String(m.content || "").trim())
-    .length;
-}
-
 function shouldUsePlusBoost(args: {
   plan: PlanId;
   usage: UsageRow;
@@ -2176,25 +2146,12 @@ function shouldUsePlusBoost(args: {
     return { useBoost: false, reason: "limit-reached" };
   }
 
-  const text = String(args.lastUserText || "");
-
   if (args.hasImages) {
     return { useBoost: true, reason: "image-analysis" };
   }
 
   if (args.hasTextFiles) {
     return { useBoost: true, reason: "file-analysis" };
-  }
-
-  if (isQuickActionMarkerText(text)) {
-    return { useBoost: false, reason: "quick-first-mini" };
-  }
-
-  const assistantRepliesAfterMarker =
-    countAssistantRepliesAfterLastQuickActionMarker(args.messages);
-
-  if (assistantRepliesAfterMarker === 2 || assistantRepliesAfterMarker === 3) {
-    return { useBoost: true, reason: "quick-boost-slot" };
   }
 
   return { useBoost: false, reason: "mini-default" };
@@ -4210,10 +4167,10 @@ async function callTextNonStream(): Promise<string> {
 
 
             if (plusBoostDecision.useBoost) {
-              finalText = "⚡ " + finalText;
+              finalText = ("⚡ " + finalText.replace(/^(⚡\s*)+/g, "")).trim();
             }
 if (plusBoostDecision.useBoost) {
-  finalText = "⚡ " + finalText;
+  finalText = ("⚡ " + finalText.replace(/^(⚡\s*)+/g, "")).trim();
 }
 
             finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
@@ -4296,10 +4253,10 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
 
     
     if (plusBoostDecision.useBoost) {
-      outText = "⚡ " + outText;
+      outText = ("⚡ " + outText.replace(/^(⚡\s*)+/g, "")).trim();
     }
 if (plusBoostDecision.useBoost) {
-  outText = "⚡ " + outText;
+  outText = ("⚡ " + outText.replace(/^(⚡\s*)+/g, "")).trim();
 }
 
 if (!isUsableModelText(outText)) {
@@ -4349,6 +4306,7 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
+
 
 
 

@@ -3269,7 +3269,13 @@ export default function ChatPage(): React.JSX.Element {
         forceBoost = step === 1 || step === 2;
 
         if (step >= 0) {
-          window.localStorage.setItem(ajxQuickBoostKey, String(step + 1));
+          const nextStep = step + 1;
+
+          if (nextStep > 2) {
+            window.localStorage.removeItem(ajxQuickBoostKey);
+          } else {
+            window.localStorage.setItem(ajxQuickBoostKey, String(nextStep));
+          }
         }
       }
 
@@ -3435,7 +3441,7 @@ export default function ChatPage(): React.JSX.Element {
                 String(obj?.boost?.used || "").toLowerCase() === "true"
               );
 
-            const boostIcon = boostUsed ? "⚡ " : "";
+            const boostIcon = boostUsed && !String(explicitFull || "").trim().startsWith("⚡") ? "⚡ " : "";
 
             applyText(boostIcon + explicitFull);
           }
@@ -9172,6 +9178,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
