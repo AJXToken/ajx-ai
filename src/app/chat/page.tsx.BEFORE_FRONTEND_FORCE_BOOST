@@ -3243,36 +3243,6 @@ export default function ChatPage(): React.JSX.Element {
         headers["x-ajx-dev-plan"] = canonicalToHeaderPlan(cp) as any;
       }
 
-      const ajxQuickBoostKey = "ajx:quickBoostStep:" + String(activeId || "default");
-      const ajxOutgoingText = String(
-        convoForBackend?.[convoForBackend.length - 1]?.content || ""
-      );
-
-      const ajxStartsQuickAction =
-        ajxOutgoingText.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
-        ajxOutgoingText.includes("PIKATOIMINTO_TILA:") ||
-        ajxOutgoingText.includes("QUICK_ACTION_MODE:") ||
-        ajxOutgoingText.includes("MODO_PIKATOIMINTO:");
-
-      let forceBoost = false;
-
-      if (ajxStartsQuickAction) {
-        window.localStorage.setItem(ajxQuickBoostKey, "0");
-      } else {
-        const step = Number(window.localStorage.getItem(ajxQuickBoostKey) || "-1");
-
-        // Mekaaninen sääntö:
-        // step 0 = eka käyttäjän vastaus pikatoiminnon jälkeen -> mini
-        // step 1 = boost
-        // step 2 = boost
-        // step 3+ = mini
-        forceBoost = step === 1 || step === 2;
-
-        if (step >= 0) {
-          window.localStorage.setItem(ajxQuickBoostKey, String(step + 1));
-        }
-      }
-
       const res = await fetch("/api/chat", {
         method: "POST",
         headers,
@@ -3285,7 +3255,6 @@ export default function ChatPage(): React.JSX.Element {
           rolesEnabled: true,
           role: modeToRole(usedMode),
           attachments: attachmentsForRequest,
-          forceBoost,
         }),
       });
 
@@ -9172,7 +9141,6 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
 
 
 

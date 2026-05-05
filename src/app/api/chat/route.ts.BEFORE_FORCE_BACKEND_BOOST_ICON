@@ -3324,7 +3324,6 @@ export async function POST(req: NextRequest) {
   const stream = !!body?.stream;
   const bodyUseWeb = !!body?.useWeb;
   const webBoost = !!body?.webBoost;
-  const forceBoost = body?.forceBoost === true;
 
   const messagesRaw: Msg[] = Array.isArray(body?.messages) ? body.messages : [];
   const locale = normLocale(body?.locale);
@@ -3919,7 +3918,7 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     textFileBlocks +
     webContext;
 
-  let plusBoostDecision = shouldUsePlusBoost({
+  const plusBoostDecision = shouldUsePlusBoost({
     plan,
     usage,
     messages,
@@ -3927,14 +3926,6 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
     hasImages: imgCount > 0,
     hasTextFiles: trimmedTextFiles.length > 0,
   });
-
-  if (
-    forceBoost &&
-    plan === ("plus" as any) &&
-    Number(usage.boostThisMonth || 0) < PLUS_BOOST_LIMIT
-  ) {
-    plusBoostDecision = { useBoost: true, reason: "frontend-force-boost" };
-  }
 
   const openAiModelForRequest = plusBoostDecision.useBoost ? OPENAI_BOOST_MODEL : OPENAI_MODEL;
 
@@ -4349,8 +4340,6 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
-
-
 
 
 
