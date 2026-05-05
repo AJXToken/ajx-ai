@@ -2129,77 +2129,26 @@ NOT:
 
 
 // ====== PLUS GPT-4.1 BOOST LOGIC ======
-function looksLikeQuickActionQuestionFlow(messages: Msg[]): boolean {
-  const recentAssistantMessages = messages
-    .filter((m) => m.role === "assistant")
-    .slice(-3)
-    .map((m) => String(m.content || "").trim())
-    .filter(Boolean);
+function countAssistantRepliesAfterLastQuickAction(messages: Msg[]): number {
+  let lastQuickUserIndex = -1;
 
-  const recentAssistant = recentAssistantMessages.join("\n").toLowerCase();
-
-  if (
-    recentAssistant.includes("tarvitsen ensin") ||
-    recentAssistant.includes("vastaa") ||
-    recentAssistant.includes("kysymys") ||
-    recentAssistant.includes("1.") ||
-    recentAssistant.includes("2.") ||
-    recentAssistant.includes("3.") ||
-    recentAssistant.includes("i need") ||
-    recentAssistant.includes("first i need") ||
-    recentAssistant.includes("necesito")
-  ) {
-    return true;
+  for (let i = messages.length - 1; i >= 0; i -= 1) {
+    const m = messages[i];
+    if (
+      m.role === "user" &&
+      String(m.content || "").includes("[AJX_QUICK_ACTION_INSTRUCTION]")
+    ) {
+      lastQuickUserIndex = i;
+      break;
+    }
   }
 
-  const questionLineCount = recentAssistantMessages
-    .join("\n")
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length >= 8 && /[?？]$/.test(line)).length;
+  if (lastQuickUserIndex < 0) return -1;
 
-  return questionLineCount >= 3;
-}
-
-function userAnswerIsGoodEnoughForBoost(text: string): boolean {
-  const s = String(text || "").trim();
-  const t = s.toLowerCase();
-
-  if (s.length < 120) return false;
-
-  let score = 0;
-
-  if (s.length >= 180) score += 1;
-  if (/\d/.test(s)) score += 1;
-  if (/[€$]|euro|eur|hinta|price|precio|budget|budjetti|presupuesto/.test(t)) score += 1;
-  if (/yritys|firma|company|empresa|palvelu|service|servicio|tuote|product|producto/.test(t)) score += 1;
-  if (/asiakas|customer|cliente|kohderyhmä|target|público|audience/.test(t)) score += 1;
-  if (/alue|kaupunki|city|area|zona|spain|suomi|finland|espanja|torrevieja|orihuela/.test(t)) score += 1;
-  if (s.split(/\s+/).length >= 35) score += 1;
-
-  const weak =
-    t === "en tiedä" ||
-    t === "en osaa sanoa" ||
-    t === "tee jotain" ||
-    t === "ihan sama" ||
-    t === "jotain" ||
-    t === "i don't know" ||
-    t === "whatever" ||
-    t === "no sé";
-
-  if (weak) return false;
-
-  return score >= 3;
-}
-
-function isRefinementRequestForBoost(text: string): boolean {
-  const t = String(text || "").toLowerCase();
-
-  return (
-    /paranna|tee parempi|myyvempi|selkeämpi|lyhyempi|pidempi|muokkaa|kirjoita uudelleen|viimeistele/.test(t) ||
-    /improve|make it better|rewrite|polish|more sales|clearer|shorter|longer/.test(t) ||
-    /mejora|reescribe|más claro|más vendedor|termina/.test(t)
-  );
+  return messages
+    .slice(lastQuickUserIndex + 1)
+    .filter((m) => m.role === "assistant" && String(m.content || "").trim())
+    .length;
 }
 
 function shouldUsePlusBoost(args: {
@@ -2215,13 +2164,12 @@ function shouldUsePlusBoost(args: {
   }
 
   const used = Number(args.usage.boostThisMonth || 0);
-  if (used >= 150) {
+  if (used >= PLUS_BOOST_LIMIT) {
     return { useBoost: false, reason: "limit-reached" };
   }
 
   const text = String(args.lastUserText || "");
 
-  // Kuva ja tiedosto: vain ensimmäinen analyysi boostilla.
   if (args.hasImages) {
     return { useBoost: true, reason: "image-analysis" };
   }
@@ -2230,37 +2178,19 @@ function shouldUsePlusBoost(args: {
     return { useBoost: true, reason: "file-analysis" };
   }
 
-  // Pikatoiminnon ensimmäinen kysymys aina minillä.
   if (text.includes("[AJX_QUICK_ACTION_INSTRUCTION]")) {
     return { useBoost: false, reason: "quick-first-mini" };
   }
 
-  const assistant = args.messages.filter((m) => m.role === "assistant");
+  const assistantRepliesAfterQuick = countAssistantRepliesAfterLastQuickAction(args.messages);
 
-  let startIndex = -1;
-  for (let i = assistant.length - 1; i >= 0; i -= 1) {
-    const c = String(assistant[i].content || "");
-    if (c.includes("quick-first-mini")) {
-      startIndex = i;
-      break;
-    }
-  }
-
-  if (startIndex >= 0) {
-    const afterQuickStart = assistant.slice(startIndex + 1);
-
-    const boostCount = afterQuickStart.filter((m) => {
-      const c = String(m.content || "");
-      return c.includes("MODEL=gpt-4.1");
-    }).length;
-
-    if (boostCount < 2) {
-      return { useBoost: true, reason: "quick-2-step" };
-    }
+  if (assistantRepliesAfterQuick >= 1 && assistantRepliesAfterQuick <= 2) {
+    return { useBoost: true, reason: "quick-two-followups" };
   }
 
   return { useBoost: false, reason: "mini-default" };
 }
+
 function plusBoostClarificationText(locale: Locale): string {
   return l(
     locale,
@@ -3990,6 +3920,11 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
 
   const openAiModelForRequest = plusBoostDecision.useBoost ? OPENAI_BOOST_MODEL : OPENAI_MODEL;
 
+  if (plusBoostDecision.useBoost) {
+    usage.boostThisMonth = Number(usage.boostThisMonth || 0) + 1;
+    await saveUsageRow(storeUserKey, monthKey, usage);
+  }
+
   resHeaders.set("x-ajx-debug-plus-boost", String(plusBoostDecision.useBoost));
   resHeaders.set("x-ajx-debug-plus-boost-reason", safeHeaderValue(plusBoostDecision.reason));
   resHeaders.set("x-ajx-debug-plus-boost-used-month", String(Number(usage.boostThisMonth || 0)));
@@ -4378,6 +4313,7 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
 
 
 
