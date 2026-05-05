@@ -3996,8 +3996,8 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
       promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
-      images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
-      maxOutputTokens,
+      images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),      maxOutputTokens,
+      model: openAiModelForRequest,
     });
 
     await recordCompanyProUsageIfNeeded();
@@ -4016,8 +4016,8 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
       apiKey: process.env.GEMINI_API_KEY,
       model: requestedGeminiModel,
       promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
-      images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
-      maxOutputTokens,
+      images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),      maxOutputTokens,
+      model: openAiModelForRequest,
     });
 
     await recordCompanyProUsageIfNeeded();
@@ -4041,7 +4041,6 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         name: im.name,
       })),      maxOutputTokens,
       model: openAiModelForRequest,
-
     });
   }
 
@@ -4063,7 +4062,6 @@ if (lastTextOriginal.length > budget.maxLastUserChars) {
         name: im.name,
       })),      maxOutputTokens,
       model: openAiModelForRequest,
-
     });
   }
 
@@ -4080,9 +4078,9 @@ async function callViaGeminiLiteNonStream(): Promise<string> {
     apiKey: process.env.GEMINI_API_KEY,
     model: GEMINI_FLASH_LITE_MODEL,
     promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
-    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
-    maxOutputTokens,
-  });
+    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),      maxOutputTokens,
+      model: openAiModelForRequest,
+    });
 }
 
 async function* callViaGeminiLiteStream(): AsyncGenerator<string> {
@@ -4094,11 +4092,11 @@ async function* callViaGeminiLiteStream(): AsyncGenerator<string> {
   resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
 
   yield* callGeminiStreamGenerateContent({
-      apiKey: process.env.GEMINI_API_KEY,
-      model: requestedGeminiModel,
-      promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
-      images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),
-      maxOutputTokens,
+    apiKey: process.env.GEMINI_API_KEY,
+    model: GEMINI_FLASH_LITE_MODEL,
+    promptText: `${instructions}` + "`n`n---`n`n" + `${inputText}`,
+    images: prepared.images.map((im) => ({ mime: im.mime, base64: im.base64 })),      maxOutputTokens,
+      model: openAiModelForRequest,
     });
 }
 
@@ -4340,10 +4338,6 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
-
-
-
-
 
 
 
