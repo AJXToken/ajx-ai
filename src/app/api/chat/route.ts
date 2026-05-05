@@ -4182,11 +4182,15 @@ async function callTextNonStream(): Promise<string> {
             }
 
             let finalText = applySafetyPostProcessing(
-              full,
-              locale,
-              safetyFlags,
-              injectResponsibilityReminder
-            );
+  full,
+  locale,
+  safetyFlags,
+  injectResponsibilityReminder
+);
+
+if (plusBoostDecision.useBoost) {
+  finalText = "⚡ " + finalText;
+}
 
             finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
 
@@ -4266,9 +4270,13 @@ async function callTextNonStream(): Promise<string> {
 
 outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
 
-    if (!isUsableModelText(outText)) {
-      throw new Error("Malli palautti tyhjÃ¤n vastauksen.");
-    }
+    if (plusBoostDecision.useBoost) {
+  outText = "⚡ " + outText;
+}
+
+if (!isUsableModelText(outText)) {
+  throw new Error("Malli palautti tyhjän vastauksen.");
+}
 
     resHeaders.set("x-ajx-debug-actual-model", safeHeaderValue(actualModelName));
     resHeaders.set("x-ajx-debug-fallback", safeHeaderValue(fallbackUsed || "none"));
@@ -4313,6 +4321,9 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     );
   }
 }
+
+
+
 
 
 
