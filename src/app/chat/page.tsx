@@ -3256,7 +3256,15 @@ export default function ChatPage(): React.JSX.Element {
             c.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
             c.includes("PIKATOIMINTO_TILA:") ||
             c.includes("QUICK_ACTION_MODE:") ||
-            c.includes("MODO_PIKATOIMINTO:")
+            c.includes("MODO_PIKATOIMINTO:") ||
+            c.toLowerCase().includes("auta minua luomaan selkeä ja myyvä tarjous") ||
+            c.toLowerCase().includes("auta minua luomaan selkeä ja myyvä mainos") ||
+            c.toLowerCase().includes("analysoi nykyinen hinnoitteluni") ||
+            c.toLowerCase().includes("auta minua löytämään uusia asiakkaita") ||
+            c.toLowerCase().includes("auta minua löytämään konkreettisia tapoja kasvattaa myyntiä") ||
+            c.toLowerCase().includes("auta minua parantamaan markkinointia") ||
+            c.toLowerCase().includes("auta minua ratkaisemaan yritysongelma") ||
+            c.toLowerCase().includes("auta minua löytämään yritykselleni rahoitusta")
           )
         ) {
           lastQuickIndex = i;
@@ -9181,6 +9189,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
