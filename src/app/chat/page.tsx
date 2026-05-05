@@ -3242,36 +3242,45 @@ export default function ChatPage(): React.JSX.Element {
         const cp = toCanonicalPlan(devPlan);
         headers["x-ajx-dev-plan"] = canonicalToHeaderPlan(cp) as any;
       }
-            const ajxMessagesForBoost = Array.isArray(convoForBackend) ? convoForBackend : [];
+                  const ajxMessagesForBoost = Array.isArray(convoForBackend) ? convoForBackend : [];
 
-      // löydä viimeinen user-viesti ennen tätä (eli nykyinen prompt)
-      let lastUserIndex = -1;
+      let lastQuickIndex = -1;
 
-      for (let i = ajxMessagesForBoost.length - 1; i >= 0; i -= 1) {
-        if (ajxMessagesForBoost[i]?.role === "user") {
-          lastUserIndex = i;
+      for (let i = ajxMessagesForBoost.length - 1; i >= 0; i--) {
+        const m = ajxMessagesForBoost[i];
+        const c = String(m?.content || "");
+
+        if (
+          m?.role === "user" &&
+          (
+            c.includes("[AJX_QUICK_ACTION_INSTRUCTION]") ||
+            c.includes("PIKATOIMINTO_TILA:") ||
+            c.includes("QUICK_ACTION_MODE:") ||
+            c.includes("MODO_PIKATOIMINTO:")
+          )
+        ) {
+          lastQuickIndex = i;
           break;
         }
       }
 
-      // laske kuinka monta assistant vastausta on ennen tätä user-viestiä
-      const assistantCountBefore =
-        lastUserIndex >= 0
+      const assistantAfterQuick =
+        lastQuickIndex >= 0
           ? ajxMessagesForBoost
-              .slice(0, lastUserIndex)
+              .slice(lastQuickIndex + 1)
               .filter((m) => m?.role === "assistant" && String(m?.content || "").trim())
               .length
           : 0;
 
-      // 🧠 LOGIIKKA:
-      // 0 = kysymykset
-      // 1 = vielä mini
-      // 2 = ⚡
-      // 3 = ⚡
+      // 🔒 LUKITTU LOGIIKKA
+      // 0 = kysymykset → mini
+      // 1 = ensimmäinen vastaus → mini
+      // 2 = toinen vastaus → ⚡
+      // 3 = kolmas vastaus → ⚡
       // 4+ = mini
       const forceBoost =
-        assistantCountBefore === 2 ||
-        assistantCountBefore === 3;
+        assistantAfterQuick === 2 ||
+        assistantAfterQuick === 3;
 
       const res = await fetch("/api/chat", {
         method: "POST",
@@ -9172,6 +9181,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
