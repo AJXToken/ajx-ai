@@ -218,7 +218,7 @@ function canonicalImageGenLimits(plan: PlanId): Limits {
     case "basic":
       return { imgGenPerMonth: 0, imgGenPerDay: 1 };
     case "plus":
-      return { imgGenPerMonth: 0, imgGenPerDay: 2 };
+      return { imgGenPerMonth: 30, imgGenPerDay: 4 };
     case "pro":
       return { imgGenPerMonth: 100, imgGenPerDay: 0 };
     case "company":
@@ -672,4 +672,5 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 
