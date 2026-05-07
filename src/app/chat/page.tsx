@@ -8297,34 +8297,7 @@ export default function ChatPage(): React.JSX.Element {
                       <div className="ajxCompactPlan">{planLabel}</div></div>
 
                     <div className="ajxCompactGrid">
-                      <button
-            type="button"
-            aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-            title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-            onClick={() => setToolsOpen(false)}
-            style={{
-              position: "sticky",
-              top: 0,
-              marginLeft: "auto",
-              marginBottom: 10,
-              width: 38,
-              height: 38,
-              borderRadius: 999,
-              border: "1px solid rgba(16,24,40,0.10)",
-              background: "#ffffff",
-              color: "#101318",
-              fontSize: 24,
-              fontWeight: 900,
-              lineHeight: 1,
-              cursor: "pointer",
-              boxShadow: "0 8px 22px rgba(16,24,40,0.10)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            ×
-          </button>{quickActions.map((action) => (
+                      {quickActions.map((action) => (
                         <button
                           key={action.id}
                           type="button"
@@ -9343,6 +9316,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
