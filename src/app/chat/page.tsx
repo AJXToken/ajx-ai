@@ -382,6 +382,230 @@ function renderImagesFromContent(text: string) {
           overflow: visible !important;
         }
       `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -1524,6 +1748,230 @@ function renderPlainRichText(text: string, locale: Locale) {
           overflow: visible !important;
         }
       `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -1805,6 +2253,230 @@ function RichMessage({
 
         [class*="bubbleAi"] {
           overflow: visible !important;
+        }
+      `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
         }
       `}</style>
     </div>
@@ -9409,6 +10081,232 @@ export default function ChatPage(): React.JSX.Element {
           overflow: visible !important;
         }
       `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
+
+        @media (min-width: 981px) {
+          [class*="topbar"] {
+            display: grid !important;
+            grid-template-columns: auto minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 16px !important;
+            min-height: 72px !important;
+            padding: 14px 24px !important;
+            overflow: visible !important;
+          }
+
+          [class*="topLeft"] {
+            min-width: 0 !important;
+            width: auto !important;
+            flex: 0 0 auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+
+          [class*="topTitle"] {
+            display: none !important;
+          }
+
+          .ajxTopControls {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 10px !important;
+            flex-wrap: nowrap !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopHelp {
+            order: 1 !important;
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+          }
+
+          .ajxAgentGroup {
+            order: 2 !important;
+            flex: 0 1 270px !important;
+            width: 270px !important;
+            min-width: 220px !important;
+            max-width: 270px !important;
+            height: 42px !important;
+            padding: 0 12px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 40px !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 22px 0 0 !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            order: 3 !important;
+            flex: 0 0 76px !important;
+            width: 76px !important;
+            min-width: 76px !important;
+            max-width: 76px !important;
+            height: 42px !important;
+            padding: 0 8px !important;
+            border-radius: 16px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxControlLabel {
+            display: none !important;
+          }
+
+          .ajxSelect {
+            height: 40px !important;
+            font-size: 13px !important;
+            font-weight: 950 !important;
+            box-shadow: none !important;
+          }
+
+          .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
+
+
