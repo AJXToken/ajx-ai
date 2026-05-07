@@ -3183,7 +3183,7 @@ function imageEditStartedText(locale: Locale): string {
 function imageQueuedText(locale: Locale): string {
   if (locale === "es") return "Imagen añadida. Pulsa Analizar imagen y envía tu pregunta.";
   if (locale === "en") return "Image added. Press Analyze image and send your question.";
-  return "Kuva lisätty. Paina Analysoi kuva ja lähetä kysymys.";
+  return "Kuva lisätty. Kirjoita kysymys ja lähetä — AJX analysoi kuvan automaattisesti.";
 }
 function sanitizeUiStatusText(value: string, locale: Locale): string {
   const s = String(value || "").trim();
@@ -4543,16 +4543,7 @@ export default function ChatPage(): React.JSX.Element {
         return;
       }
 
-      if (effectiveImageIntent === null) {
-        appendAssistantMessage(
-          locale === "fi"
-            ? "Paina ensin Analysoi kuva ja lähetä kysymys."
-            : locale === "es"
-              ? "Pulsa primero Analizar imagen y envía tu pregunta."
-              : "Press Analyze image first and send your question."
-        );
-        return;
-      }
+      
     }
 
     await sendTextDirect(text);
@@ -4655,7 +4646,7 @@ export default function ChatPage(): React.JSX.Element {
   const sendDisabled =
     loading ||
     (!input.trim() && pending.length === 0) ||
-    (hasPendingImage && !!input.trim() && effectiveImageIntent === null);
+    false;
 
   const mobileShellStyle: React.CSSProperties = isMobile
     ? {
@@ -9683,97 +9674,13 @@ export default function ChatPage(): React.JSX.Element {
                   {pending.some((p) => p.kind === "file") ? (
                     <div className="ajxImageIntentBar">
                       <div className="ajxImageIntentHint">
-                        {locale === "fi"
-                          ? "Tiedosto lisätty. Paina Analysoi tiedosto ja lähetä."
-                          : locale === "es"
-                            ? "Archivo añadido. Pulsa Analizar archivo y enviar."
-                            : "File added. Press Analyze file and send."}
+                        {fileQueuedText(locale)}
                       </div>
-
-                      <div className="ajxImageIntentHint">
-                        {locale === "fi"
-                          ? "Suositeltu tiedoston enimmäiskoko 3.5 Mt."
-                          : locale === "es"
-                            ? "Tamaño máximo recomendado: 3.5 MB."
-                            : "Recommended max file size: 3.5 MB."}
-                      </div>
-
-                      <button
-                        type="button"
-                        className="ajxIntentBtn ajxIntentBtnActive"
-                        onClick={() => {
-                          if (!input.trim()) {
-                            setInput(
-                              locale === "fi"
-                                ? "Analysoi tiedosto ja kerro tärkeimmät asiat."
-                                : locale === "es"
-                                  ? "Analiza el archivo y dime los puntos principales."
-                                  : "Analyze the file and tell me the main points."
-                            );
-                          }
-
-                          setImageStatus(
-                            locale === "fi"
-                              ? "Tulkinta: tiedoston analyysi"
-                              : locale === "es"
-                                ? "Interpretación: análisis de archivo"
-                                : "Interpretation: file analysis"
-                          );
-
-                          requestAnimationFrame(() => inputRef.current?.focus());
-                        }}
-                      >
-                        {locale === "fi"
-                          ? "Analysoi tiedosto"
-                          : locale === "es"
-                            ? "Analizar archivo"
-                            : "Analyze file"}
-                      </button>
                     </div>
                   ) : null}
                   {hasPendingImage ? (
                     <div className="ajxImageIntentBar">
-                      <div className="ajxImageIntentHint">{imageIntentHint}</div>
-
-                      <button
-                        type="button"
-                        className={`ajxIntentBtn ${
-                          effectiveImageIntent === "analyze" ? "ajxIntentBtnActive" : ""
-                        }`}
-                        onClick={() => { setManualImageIntent("analyze"); setImageStatus(""); }}
-                      >
-                        {locale === "fi"
-                          ? "Analysoi kuva"
-                          : locale === "es"
-                            ? "Analizar imagen"
-                            : "Analyze image"}
-                      </button>
-
-                      {canEditImages ? (
-                        <button
-                          type="button"
-                          className={`ajxIntentBtn ${
-                            effectiveImageIntent === "edit" ? "ajxIntentBtnActive" : ""
-                          }`}
-                          onClick={() => setManualImageIntent("edit")}
-                        >
-                          {locale === "fi"
-                            ? "Muokkaa kuvaa"
-                            : locale === "es"
-                              ? "Editar imagen"
-                              : "Edit image"}
-                        </button>
-                      ) : null}
-
-                      {canEditImages && manualImageIntent ? (
-                        <button
-                          type="button"
-                          className="ajxIntentBtn"
-                          onClick={() => setManualImageIntent(null)}
-                        >
-                          Auto
-                        </button>
-                      ) : null}
+                      <div className="ajxImageIntentHint">{imageQueuedText(locale)}</div>
                     </div>
                   ) : null}
 
@@ -10624,6 +10531,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
