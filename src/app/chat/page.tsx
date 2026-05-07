@@ -8051,7 +8051,72 @@ export default function ChatPage(): React.JSX.Element {
         }
       `}</style>
 
-      <div
+      
+      <style jsx global>{`
+        /* ===== AJX TOPBAR AGENT REWORK FINAL ===== */
+
+        @media (max-width: 980px) {
+          .ajxTopControls {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-end !important;
+            gap: 6px !important;
+            width: 100% !important;
+            min-width: 0 !important;
+            overflow: visible !important;
+          }
+
+          .ajxTopControls .ajxAgentGroup {
+            flex: 1 1 auto !important;
+            min-width: 156px !important;
+            max-width: 190px !important;
+            height: 40px !important;
+            padding: 0 8px 0 11px !important;
+            border-radius: 17px !important;
+            background: #ffffff !important;
+            border: 1px solid rgba(16,24,40,0.10) !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+          }
+
+          .ajxAgentLabel {
+            display: inline-flex !important;
+            flex: 0 0 auto !important;
+            font-size: 12px !important;
+            font-weight: 950 !important;
+            color: #101318 !important;
+            white-space: nowrap !important;
+          }
+
+          .ajxAgentGroup .ajxSelectWrap {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            width: 100% !important;
+            height: 38px !important;
+            padding: 0 20px 0 0 !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            font-size: 12px !important;
+            font-weight: 950 !important;
+          }
+
+          .ajxTopControls .ajxControlGroup:last-of-type {
+            flex: 0 0 58px !important;
+            max-width: 58px !important;
+          }
+
+          .ajxTopHelp {
+            flex: 0 0 auto !important;
+          }
+        }
+      `}</style>
+<div
         className={styles.layout}
         style={
           isMobile
@@ -8197,7 +8262,7 @@ export default function ChatPage(): React.JSX.Element {
               </a>
 
               <div
-  className="ajxControlGroup"
+  className="ajxControlGroup ajxAgentGroup"
   aria-label={t(locale, "ui.ajx_mode")}
   style={
     isMobile
@@ -8220,6 +8285,7 @@ export default function ChatPage(): React.JSX.Element {
   }
 >
   <span
+    className="ajxAgentLabel"
     style={{
       fontSize: 13,
       fontWeight: 800,
@@ -9346,221 +9412,3 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style jsx global>{`
-  /* ===== AJX AGENT SELECTOR FINAL ===== */
-
-  .ajxTopControls .ajxAgentGroup {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-
-    height: 42px !important;
-    padding: 0 10px 0 12px !important;
-
-    background: #ffffff !important;
-    border: 1px solid rgba(16,24,40,0.10) !important;
-    border-radius: 18px !important;
-
-    box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
-  }
-
-  .ajxAgentGroup .ajxControlLabel {
-    display: none !important;
-  }
-
-  .ajxAgentLabel {
-    font-size: 13px !important;
-    font-weight: 950 !important;
-    color: #101318 !important;
-    white-space: nowrap !important;
-  }
-
-  .ajxAgentGroup .ajxSelectWrap {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-  }
-
-  .ajxAgentGroup .ajxAgentSelect {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-
-    height: 38px !important;
-
-    font-size: 13px !important;
-    font-weight: 950 !important;
-
-    padding-right: 20px !important;
-  }
-
-  @media (max-width: 980px) {
-    .ajxTopControls .ajxAgentGroup {
-      height: 40px !important;
-      border-radius: 17px !important;
-      padding: 0 8px 0 10px !important;
-    }
-
-    .ajxAgentLabel,
-    .ajxAgentGroup .ajxAgentSelect {
-      font-size: 12px !important;
-    }
-  }
-`}</style>
-
