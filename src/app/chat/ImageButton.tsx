@@ -1,4 +1,4 @@
-// src/app/chat/ImageButton.tsx
+﻿// src/app/chat/ImageButton.tsx
 "use client";
 
 import React from "react";
@@ -17,8 +17,6 @@ type Props = {
   getPrompt: () => string;
   clearPrompt?: () => void;
   onStatus?: (txt: string) => void;
-
-  // Valinnainen: page.tsx voi myöhemmin antaa liitetyn kuvan tähän.
   getSourceImage?: () => SourceImage | null;
 };
 
@@ -39,29 +37,10 @@ function readLocale(): Locale {
   }
 }
 
-function toAbsoluteUrl(u: string): string {
-  const s = String(u || "").trim();
-  if (!s) return "";
-  if (s.startsWith("http://") || s.startsWith("https://")) return s;
-
-  try {
-    return `${window.location.origin}${s.startsWith("/") ? "" : "/"}${s}`;
-  } catch {
-    return s;
-  }
-}
-
 function makeMarkdownImageFromBase64Png(b64: string) {
   const clean = String(b64 || "").trim();
   if (!clean) return "";
-  const dataUrl = `data:image/png;base64,${clean}`;
-  return `![AJX Image](${dataUrl})`;
-}
-
-function makeMarkdownImageFromAnyUrl(url: string) {
-  const abs = toAbsoluteUrl(url);
-  if (!abs) return "";
-  return `![AJX Image](${abs})`;
+  return `![AJX Image](data:image/png;base64,${clean})`;
 }
 
 function looksLikeEditPrompt(prompt: string, locale: Locale) {
@@ -107,11 +86,13 @@ function getAskText(locale: Locale, hasSourceImage: boolean) {
       ? "Kuva on liitetty. Kirjoita muokkausohje tai uuden kuvan prompt."
       : t(locale, "image.prompt.ask");
   }
+
   if (locale === "es") {
     return hasSourceImage
       ? "Hay una imagen adjunta. Escribe la instrucción de edición o el prompt de nueva imagen."
       : t(locale, "image.prompt.ask");
   }
+
   return hasSourceImage
     ? "An image is attached. Write the edit instruction or a new image prompt."
     : t(locale, "image.prompt.ask");
@@ -181,8 +162,6 @@ export default function ImageButton(props: Props) {
         prompt,
         size: DEFAULT_IMAGE_SIZE,
         locale,
-
-        // Halvempi oletusprofiili backendille
         preferredProvider: "gemini",
         preferredModelFamily: "gemini-2.5-flash-image",
         costTier: "low",
@@ -190,7 +169,6 @@ export default function ImageButton(props: Props) {
         latencyTier: "fast",
       };
 
-      // Tämä lähtee mukaan vain jos page.tsx antaa lähdekuvan.
       if (hasSourceImage) {
         body.sourceImage = {
           name: sourceImage?.name || "image",
@@ -230,37 +208,10 @@ export default function ImageButton(props: Props) {
         }
       }
 
-      if (typeof j?.imageUrl === "string" && j.imageUrl.trim()) {
-        const md = makeMarkdownImageFromAnyUrl(j.imageUrl);
-        if (md) {
-          props.onStatus?.(md);
-          props.clearPrompt?.();
-          return;
-        }
-      }
-
       if (typeof j?.markdown === "string" && j.markdown.trim()) {
         props.onStatus?.(j.markdown);
         props.clearPrompt?.();
         return;
-      }
-
-      if (typeof j?.image_url === "string" && j.image_url.trim()) {
-        const md = makeMarkdownImageFromAnyUrl(j.image_url);
-        if (md) {
-          props.onStatus?.(md);
-          props.clearPrompt?.();
-          return;
-        }
-      }
-
-      if (typeof j?.url === "string" && j.url.trim()) {
-        const md = makeMarkdownImageFromAnyUrl(j.url);
-        if (md) {
-          props.onStatus?.(md);
-          props.clearPrompt?.();
-          return;
-        }
       }
 
       if (typeof j?.text === "string" && j.text.trim()) {
