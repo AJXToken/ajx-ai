@@ -8198,6 +8198,9 @@ export default function ChatPage(): React.JSX.Element {
 
               <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")} style={isMobile ? { minWidth: 0, flex: "0 1 auto" } : undefined}>
                 <div className="ajxControlLabel">{locale === "es" ? "Agentes" : locale === "en" ? "Agents" : "Agentit"}</div>
+                <span style={{ fontSize: 12, fontWeight: 950, color: "rgba(16,24,40,0.62)", whiteSpace: "nowrap" }}>
+                  {locale === "es" ? "Agentes" : locale === "en" ? "Agents" : "Agentit"}
+                </span>
                 <div className="ajxSelectWrap">
                   <select
                     value={mode}
@@ -8291,8 +8294,7 @@ export default function ChatPage(): React.JSX.Element {
                               : "Valitse pikatoiminto tai kirjoita oma tavoitteesi."}
                         </div>
                       </div>
-                      <div className="ajxCompactPlan">{planLabel}</div>
-                    </div>
+                      <div className="ajxCompactPlan">{planLabel}</div></div>
 
                     <div className="ajxCompactGrid">
                       <button
@@ -8322,45 +8324,7 @@ export default function ChatPage(): React.JSX.Element {
             }}
           >
             ×
-          </button>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
-              marginBottom: 12,
-            }}
-          >
-            <div style={{ fontSize: 13, fontWeight: 950, color: "#101318" }}>
-              {locale === "es" ? "Acciones rápidas" : locale === "en" ? "Quick actions" : "Pikatoiminnot"}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setToolsOpen(false)}
-              aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-              title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 999,
-                border: "1px solid rgba(16,24,40,0.10)",
-                background: "#ffffff",
-                color: "#101318",
-                fontSize: 24,
-                fontWeight: 900,
-                lineHeight: 1,
-                cursor: "pointer",
-                boxShadow: "0 10px 24px rgba(16,24,40,0.10)",
-              }}
-            >
-              ×
-            </button>
-          </div>
-
-          {quickActions.map((action) => (
+          </button>{quickActions.map((action) => (
                         <button
                           key={action.id}
                           type="button"
@@ -8462,45 +8426,7 @@ export default function ChatPage(): React.JSX.Element {
             }}
           >
             ×
-          </button>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
-              marginBottom: 12,
-            }}
-          >
-            <div style={{ fontSize: 13, fontWeight: 950, color: "#101318" }}>
-              {locale === "es" ? "Acciones rápidas" : locale === "en" ? "Quick actions" : "Pikatoiminnot"}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setToolsOpen(false)}
-              aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-              title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 999,
-                border: "1px solid rgba(16,24,40,0.10)",
-                background: "#ffffff",
-                color: "#101318",
-                fontSize: 24,
-                fontWeight: 900,
-                lineHeight: 1,
-                cursor: "pointer",
-                boxShadow: "0 10px 24px rgba(16,24,40,0.10)",
-              }}
-            >
-              ×
-            </button>
-          </div>
-
-          {quickActions.map((action) => (
+          </button>{quickActions.map((action) => (
                       <button
                         key={action.id}
                         type="button"
@@ -9089,45 +9015,7 @@ export default function ChatPage(): React.JSX.Element {
             }}
           >
             ×
-          </button>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
-              marginBottom: 12,
-            }}
-          >
-            <div style={{ fontSize: 13, fontWeight: 950, color: "#101318" }}>
-              {locale === "es" ? "Acciones rápidas" : locale === "en" ? "Quick actions" : "Pikatoiminnot"}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setToolsOpen(false)}
-              aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-              title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: 999,
-                border: "1px solid rgba(16,24,40,0.10)",
-                background: "#ffffff",
-                color: "#101318",
-                fontSize: 24,
-                fontWeight: 900,
-                lineHeight: 1,
-                cursor: "pointer",
-                boxShadow: "0 10px 24px rgba(16,24,40,0.10)",
-              }}
-            >
-              ×
-            </button>
-          </div>
-
-          {quickActions.map((action) => (
+          </button>{quickActions.map((action) => (
             <button
               key={action.id}
               type="button"
@@ -9455,6 +9343,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
