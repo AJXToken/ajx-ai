@@ -606,6 +606,85 @@ function renderImagesFromContent(text: string) {
           }
         }
       `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
+
+        @media (min-width: 981px) {
+          .ajxAgentGroup {
+            flex: 0 0 210px !important;
+            width: 210px !important;
+            min-width: 210px !important;
+            max-width: 210px !important;
+          }
+
+          .ajxAgentLabel {
+            font-size: 12px !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            font-size: 13px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelectWrap {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelect {
+            width: 100% !important;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            padding-left: 10px !important;
+            padding-right: 22px !important;
+          }
+        }
+
+        @media (max-width: 980px) {
+          .ajxTopControls {
+            overflow: visible !important;
+          }
+
+          .ajxTopControls .ajxAgentGroup {
+            min-width: 150px !important;
+            max-width: 178px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -1972,6 +2051,85 @@ function renderPlainRichText(text: string, locale: Locale) {
           }
         }
       `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
+
+        @media (min-width: 981px) {
+          .ajxAgentGroup {
+            flex: 0 0 210px !important;
+            width: 210px !important;
+            min-width: 210px !important;
+            max-width: 210px !important;
+          }
+
+          .ajxAgentLabel {
+            font-size: 12px !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            font-size: 13px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelectWrap {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelect {
+            width: 100% !important;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            padding-left: 10px !important;
+            padding-right: 22px !important;
+          }
+        }
+
+        @media (max-width: 980px) {
+          .ajxTopControls {
+            overflow: visible !important;
+          }
+
+          .ajxTopControls .ajxAgentGroup {
+            min-width: 150px !important;
+            max-width: 178px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -2475,6 +2633,85 @@ function RichMessage({
           }
 
           .ajxSidebarToggleText {
+            display: none !important;
+          }
+        }
+      `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
+
+        @media (min-width: 981px) {
+          .ajxAgentGroup {
+            flex: 0 0 210px !important;
+            width: 210px !important;
+            min-width: 210px !important;
+            max-width: 210px !important;
+          }
+
+          .ajxAgentLabel {
+            font-size: 12px !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            font-size: 13px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelectWrap {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelect {
+            width: 100% !important;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            padding-left: 10px !important;
+            padding-right: 22px !important;
+          }
+        }
+
+        @media (max-width: 980px) {
+          .ajxTopControls {
+            overflow: visible !important;
+          }
+
+          .ajxTopControls .ajxAgentGroup {
+            min-width: 150px !important;
+            max-width: 178px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
             display: none !important;
           }
         }
@@ -10305,8 +10542,88 @@ export default function ChatPage(): React.JSX.Element {
           }
         }
       `}</style>
+
+      <style jsx global>{`
+        /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
+
+        @media (min-width: 981px) {
+          .ajxAgentGroup {
+            flex: 0 0 210px !important;
+            width: 210px !important;
+            min-width: 210px !important;
+            max-width: 210px !important;
+          }
+
+          .ajxAgentLabel {
+            font-size: 12px !important;
+          }
+
+          .ajxAgentGroup .ajxAgentSelect {
+            font-size: 13px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+            box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelectWrap {
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            width: 100% !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) .ajxSelect {
+            width: 100% !important;
+            background: transparent !important;
+            border: 0 !important;
+            box-shadow: none !important;
+            padding-left: 10px !important;
+            padding-right: 22px !important;
+          }
+        }
+
+        @media (max-width: 980px) {
+          .ajxTopControls {
+            overflow: visible !important;
+          }
+
+          .ajxTopControls .ajxAgentGroup {
+            min-width: 150px !important;
+            max-width: 178px !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup) {
+            position: relative !important;
+            overflow: hidden !important;
+            isolation: isolate !important;
+            background: #ffffff !important;
+          }
+
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::before,
+          .ajxTopControls > .ajxControlGroup:not(.ajxAgentGroup)::after,
+          .ajxSelectWrap::before,
+          .ajxSelectWrap::after {
+            content: none !important;
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
+
 
 
