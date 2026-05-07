@@ -58,7 +58,7 @@ const copy = {
       ["Strategia", "Suunta, priorisointi, kasvu ja päätöksenteon tuki."],
     ],
 
-    s5: "5. Free vs Plus",
+    s5: "5. Tasot ja ominaisuudet",
     plans: [
       ["Free", "10 viestiä päivässä. Sopii kokeiluun ja yleisiin kysymyksiin."],
       ["Plus", "Laajempi käyttö, parempi työmuisti ja yrittäjän pikatoiminnot."],
@@ -129,7 +129,7 @@ const copy = {
       ["Strategy", "Direction, prioritization, growth, and decision support."],
     ],
 
-    s5: "5. Free vs Plus",
+    s5: "5. Tasot ja ominaisuudet",
     plans: [
       ["Free", "10 messages per day. Good for testing and general questions."],
       ["Plus", "Broader usage, better working memory, and entrepreneur quick actions."],
@@ -200,7 +200,7 @@ const copy = {
       ["Estrategia", "Dirección, prioridades, crecimiento y apoyo en decisiones."],
     ],
 
-    s5: "5. Free vs Plus",
+    s5: "5. Tasot ja ominaisuudet",
     plans: [
       ["Free", "10 mensajes al día. Bueno para probar y preguntas generales."],
       ["Plus", "Más uso, mejor memoria de trabajo y acciones rápidas para emprendedores."],
@@ -520,3 +520,4 @@ const topLinkStyle: React.CSSProperties = {
   fontWeight: 900,
   boxShadow: "0 10px 24px rgba(11,13,18,0.08)",
 };
+
