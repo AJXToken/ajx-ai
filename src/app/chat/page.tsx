@@ -2409,6 +2409,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const [plusOpen, setPlusOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [legalOpen, setLegalOpen] = useState(false);
 
   const [plan, setPlan] = useState<Plan>("free");
   const [limits, setLimits] = useState<Limits>({
@@ -3685,6 +3686,17 @@ export default function ChatPage(): React.JSX.Element {
     }
     return "AJX AI on tekoäly ja voi tehdä virheitä. Tarkista tiedot aina.";
   }, [locale]);
+
+  const legalTitle = locale === "es" ? "Información importante" : locale === "en" ? "Important information" : "Lisätiedot";
+
+  const legalBody =
+    locale === "es"
+      ? "AJX AI es una herramienta de inteligencia artificial. Puede cometer errores. La información no sustituye asesoramiento legal, financiero, fiscal, médico ni profesional. Verifica siempre la información importante desde fuentes oficiales. Las decisiones finales son responsabilidad del usuario."
+      : locale === "en"
+        ? "AJX AI is an AI tool. It can make mistakes. The information does not replace legal, financial, tax, medical, or professional advice. Always verify important information from official sources. Final decisions remain the user responsibility."
+        : "AJX AI on tekoälytyökalu. Se voi tehdä virheitä. Tiedot eivät korvaa juridista, taloudellista, verotuksellista, lääketieteellistä tai muuta ammattilaisen neuvontaa. Tarkista tärkeät tiedot aina virallisista lähteistä. Lopullinen vastuu päätöksistä on käyttäjällä.";
+
+  const legalClose = locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje";
 
   const imageIntentHint = useMemo(() => {
     if (!hasPendingImage) return "";
@@ -8832,6 +8844,22 @@ export default function ChatPage(): React.JSX.Element {
 
                   <div className="ajxDisclaimerRow">
                     <span>{isMobile ? (locale === "es" ? "AJX AI puede cometer errores. Verifica siempre la información importante." : locale === "en" ? "AJX AI can make mistakes. Always verify important information." : "AJX AI voi tehdä virheitä. Tarkista tiedot aina.") : disclaimerText}</span>
+                    <button
+                      type="button"
+                      onClick={() => setLegalOpen(true)}
+                      style={{
+                        border: 0,
+                        background: "transparent",
+                        color: "#15803d",
+                        fontSize: 11,
+                        fontWeight: 900,
+                        textDecoration: "underline",
+                        cursor: "pointer",
+                        padding: 0,
+                      }}
+                    >
+                      {locale === "es" ? "Más info" : locale === "en" ? "More info" : "Lisätiedot"}
+                    </button>
                     <span className="ajxDisclaimerPlan">{planMiniText}</span>
                   </div>
                 </div>
@@ -8841,6 +8869,67 @@ export default function ChatPage(): React.JSX.Element {
         </div>
       </div>
 
+
+      {legalOpen ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={legalTitle}
+          onClick={() => setLegalOpen(false)}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000000,
+            background: "rgba(15,23,42,0.34)",
+            backdropFilter: "blur(8px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 18,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              maxWidth: 520,
+              borderRadius: 24,
+              background: "#ffffff",
+              border: "1px solid rgba(16,24,40,0.10)",
+              boxShadow: "0 28px 90px rgba(16,24,40,0.26)",
+              padding: 22,
+              color: "#101318",
+            }}
+          >
+            <div style={{ fontSize: 20, fontWeight: 950, marginBottom: 10 }}>
+              {legalTitle}
+            </div>
+
+            <div style={{ fontSize: 14, lineHeight: 1.65, opacity: 0.82 }}>
+              {legalBody}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setLegalOpen(false)}
+              style={{
+                marginTop: 18,
+                width: "100%",
+                height: 44,
+                borderRadius: 16,
+                border: "1px solid rgba(16,24,40,0.10)",
+                background: "#101318",
+                color: "#ffffff",
+                fontSize: 14,
+                fontWeight: 900,
+                cursor: "pointer",
+              }}
+            >
+              {legalClose}
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       {toolsOpen && isMobile ? (
         <div
@@ -9188,6 +9277,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
