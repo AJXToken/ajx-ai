@@ -9501,3 +9501,66 @@ export default function ChatPage(): React.JSX.Element {
 
 
 
+
+<style jsx global>{`
+  /* ===== AJX AGENT SELECTOR FINAL ===== */
+
+  .ajxTopControls .ajxAgentGroup {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+
+    height: 42px !important;
+    padding: 0 10px 0 12px !important;
+
+    background: #ffffff !important;
+    border: 1px solid rgba(16,24,40,0.10) !important;
+    border-radius: 18px !important;
+
+    box-shadow: 0 8px 22px rgba(16,24,40,0.06) !important;
+  }
+
+  .ajxAgentGroup .ajxControlLabel {
+    display: none !important;
+  }
+
+  .ajxAgentLabel {
+    font-size: 13px !important;
+    font-weight: 950 !important;
+    color: #101318 !important;
+    white-space: nowrap !important;
+  }
+
+  .ajxAgentGroup .ajxSelectWrap {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .ajxAgentGroup .ajxAgentSelect {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+
+    height: 38px !important;
+
+    font-size: 13px !important;
+    font-weight: 950 !important;
+
+    padding-right: 20px !important;
+  }
+
+  @media (max-width: 980px) {
+    .ajxTopControls .ajxAgentGroup {
+      height: 40px !important;
+      border-radius: 17px !important;
+      padding: 0 8px 0 10px !important;
+    }
+
+    .ajxAgentLabel,
+    .ajxAgentGroup .ajxAgentSelect {
+      font-size: 12px !important;
+    }
+  }
+`}</style>
+
