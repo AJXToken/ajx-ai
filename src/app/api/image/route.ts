@@ -513,7 +513,7 @@ export async function POST(req: NextRequest) {
     if (genUsedToday + 1 > limits.imgGenPerDay) {
       return jsonError(
         403,
-        "KuvaluontikiintiÃ¶ on tÃ¤ynnÃ¤ tÃ¤ltÃ¤ pÃ¤ivÃ¤ltÃ¤.",
+        "Kuvagenerointi on täynnä tältä päivältä. Voit luoda lisää kuvia huomenna.",
         { plan, limits, usage },
         resHeaders
       );
@@ -522,7 +522,7 @@ export async function POST(req: NextRequest) {
     if (limits.imgGenPerMonth <= 0 || genUsedMonth + 1 > limits.imgGenPerMonth) {
       return jsonError(
         403,
-        "KuvaluontikiintiÃ¶ on tÃ¤ynnÃ¤ tÃ¤ltÃ¤ kuulta.",
+        "Kuvagenerointi on täynnä tältä kuukaudelta.",
         { plan, limits, usage },
         resHeaders
       );
@@ -672,3 +672,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
