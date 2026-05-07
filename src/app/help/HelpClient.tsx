@@ -17,75 +17,70 @@ const copy = {
     brand: "AJX AI",
     title: "Ohjeet",
     intro:
-      "AJX AI auttaa yrittäjiä ratkaisemaan ongelmia, kehittämään liiketoimintaa, luomaan sisältöä ja jäsentämään päätöksiä. Mitä tarkempi kysymys, sitä parempi vastaus.",
+      "AJX AI on yrittäjän käytännön työpari. Se auttaa tekemään valmiita tarjouksia, mainoksia, myyntitekstejä, toimintasuunnitelmia, hinnoittelua, rahoituksen hakemisen pohjia ja yritysongelmien ratkaisuja.",
     backToChat: "← Takaisin chattiin",
 
-    s1: "1. Miten aloittaa",
-    s1p1: "Kirjoita chattiin mahdollisimman selkeästi mitä haluat saada aikaan.",
+    s1: "1. Mitä AJX AI tekee",
+    s1items: [
+      "tekee valmiita tekstejä, ei pelkkiä neuvoja",
+      "auttaa tarjouksissa, mainoksissa, myynnissä, hinnoittelussa ja rahoituksessa",
+      "kysyy tarvittaessa muutaman tarkentavan kysymyksen",
+      "muuttaa vastauksesi valmiiksi tekstiksi, suunnitelmaksi tai toimintalistaksi",
+      "auttaa jäsentämään päätöksiä, mutta ei tee päätöksiä puolestasi",
+    ],
+
+    s2: "2. Paras tapa käyttää",
+    s2p1:
+      "Kirjoita mitä haluat saada aikaan. Kerro toimiala, maa tai alue, tavoite, asiakas ja mahdolliset rajat. Mitä konkreettisempi pyyntö, sitä käyttökelpoisempi vastaus.",
     goodExample: "Hyvä esimerkki",
     badExample: "Heikompi esimerkki",
     goodExampleText:
-      "Minulla on ilmanvaihtoalan yritys Espanjassa. Anna 10 käytännön tapaa löytää uusia asiakkaita seuraavan 30 päivän aikana.",
-    badExampleText: "Miten saan lisää asiakkaita?",
+      "Minulla on ilmanvaihtoalan yritys Costa Blancalla. Tee valmis Facebook-mainos kanavapuhdistuksesta. Ei terveysväitteitä, ei energiansäästöväitteitä, sävy suora ja paikallinen.",
+    badExampleText: "Tee mainos.",
 
-    s2: "2. Agentit",
-    generalTitle: "Yleinen",
-    generalText:
-      "Rento keskustelu, yleiset kysymykset, luonnollinen apu ja arjen sparraus.",
-    researchTitle: "Tiedonhaku",
-    researchText:
-      "Suora ja faktapainotteinen tapa etsiä tietoa, vertailla vaihtoehtoja ja selittää asioita selkeästi.",
-    ideationTitle: "Ideointi",
-    ideationText:
-      "Innostava ja luova agentti ideoihin, markkinointiin, sisältöihin, kampanjoihin ja uusiin näkökulmiin.",
-    analysisTitle: "Analysointi",
-    analysisText:
-      "Rauhallinen ja looginen agentti vertailuihin, numeroihin, riskeihin ja päätelmien tekemiseen.",
-    strategyTitle: "Strategia",
-    strategyText:
-      "Suora ja liiketoimintakeskeinen agentti päätöksentukeen, suuntaan, priorisointiin ja kasvuun.",
-
-    s3: "3. Mitä AJX AI:lla voi tehdä",
+    s3: "3. Pikatoiminnot",
     s3items: [
-      "kirjoittaa mainoksia ja myyntitekstejä",
-      "luoda tarjouksia asiakkaille",
-      "ideoida kampanjoita ja sisältöjä",
-      "analysoida kilpailijoita",
-      "jäsentää liiketoiminnan ongelmia",
-      "pohtia hinnoittelua ja kasvua",
-      "tiivistää pitkiä tekstejä ja aineistoja",
-      "auttaa kuvien analysoinnissa",
+      "Luo tarjous: tekee asiakkaalle lähetettävän tarjouksen",
+      "Luo mainos: tekee valmiit mainosversiot",
+      "Kasvata myyntiä: antaa käytännön myyntitoimet ja viestipohjat",
+      "Hanki asiakkaita: etsii lähestymistavan ja tekee yhteydenottotekstit",
+      "Paranna hinnoittelua: auttaa nostamaan katetta järkevästi",
+      "Hanki tukia ja rahoitusta: jäsentää realistiset rahoituspolut",
+      "Ratkaise yritysongelma: purkaa ongelman ja antaa seuraavat askeleet",
     ],
 
-    s4: "4. Promptivinkit",
-    marketing: "Markkinointi",
-    marketingPrompt:
-      "Kirjoita Facebook-mainos ilmanvaihtoremontista Costa Blancan alueelle. Tee siitä selkeä, luotettava ja myyvä.",
-    sales: "Myynti",
-    salesPrompt:
-      "Kirjoita asiakkaalle tarjous ilmanvaihtokartoituksesta. Sävy saa olla asiallinen mutta helposti lähestyttävä.",
-    growth: "Kasvu",
-    growthPrompt:
-      "Anna 10 käytännön tapaa kasvattaa paikallisen palveluyrityksen myyntiä seuraavan 3 kuukauden aikana.",
-    analysis: "Analyysi",
-    analysisPrompt:
-      "Vertaa kahta hinnoittelumallia ja kerro kummassa on parempi kate, parempi myyntipotentiaali ja pienempi riski.",
-
-    s5: "5. Miten saada parempia vastauksia",
-    s5items: [
-      "kerro toimiala ja maa tai alue",
-      "kerro mitä olet oikeasti yrittämässä saavuttaa",
-      "anna tarvittaessa taustatiedot ja rajat",
-      "pyydä vastaus tiettyyn muotoon, esimerkiksi 5 kohtaa tai valmis teksti",
-      "jatka keskustelua tarkentamalla, älä aloita aina alusta",
+    s4: "4. Agentit",
+    agents: [
+      ["Yleinen", "Rento keskustelu, yleinen apu ja arjen sparraus."],
+      ["Tiedonhaku", "Faktapainotteinen tapa selvittää, vertailla ja jäsentää tietoa."],
+      ["Ideointi", "Ideat, kampanjat, sisällöt ja uudet kulmat."],
+      ["Analysointi", "Vertailut, riskit, numerot ja johtopäätökset."],
+      ["Strategia", "Suunta, priorisointi, kasvu ja päätöksenteon tuki."],
     ],
 
-    s6: "6. Huomioitavaa",
-    s6items: [
-      "AJX AI on työkalu, ei päätöksentekijä",
-      "lopullinen vastuu liiketoiminta- ja investointipäätöksistä on aina käyttäjällä",
-      "web-haku ja muut ominaisuudet riippuvat käytössä olevasta tasosta",
-      "mitä parempi kysymys, sitä parempi lopputulos",
+    s5: "5. Free vs Plus",
+    plans: [
+      ["Free", "10 viestiä päivässä. Sopii kokeiluun ja yleisiin kysymyksiin."],
+      ["Plus", "Laajempi käyttö, parempi työmuisti ja yrittäjän pikatoiminnot."],
+      ["Pro", "Laajemmat analyysit, web-haku ja vaativampi työskentely."],
+      ["Company", "Laajin taso strategiaan, analyysiin ja yrityskäyttöön."],
+    ],
+
+    s6: "6. Esimerkkipyynnöt",
+    prompts: [
+      ["Tarjous", "Tee valmis tarjous ilmanvaihtokanavien puhdistuksesta. Asiakas on [asiakas], hinta on [hinta], työ tehdään [aikataulu]."],
+      ["Mainos", "Tee kolme lyhyttä Facebook-mainosta palvelulle [palvelu] alueella [alue]. Kirjoita kuin paikallinen yrittäjä, ei markkinointihypeä."],
+      ["Myynti", "Tee 7 päivän suunnitelma, jolla saan 20 uutta yrityskontaktia palvelulle [palvelu]. Lisää valmis viestipohja."],
+      ["Hinnoittelu", "Auta hinnoittelemaan palvelu. Työ kestää [aika], kulut ovat [kulut], tavoitekate on [kate]."],
+    ],
+
+    s7: "7. Tärkeää",
+    s7items: [
+      "AJX AI voi tehdä virheitä.",
+      "Tarkista tärkeät tiedot aina virallisista lähteistä.",
+      "AJX AI ei korvaa juridista, taloudellista, verotuksellista, lääketieteellistä tai muuta ammattilaisen neuvontaa.",
+      "Lopullinen vastuu päätöksistä on käyttäjällä.",
+      "Rahoitukset, tuet, lait, verotus, hinnat ja ehdot voivat muuttua.",
     ],
   },
 
@@ -93,75 +88,70 @@ const copy = {
     brand: "AJX AI",
     title: "Help",
     intro:
-      "AJX AI helps entrepreneurs solve problems, improve business, create content, and structure decisions. The more precise your question is, the better the answer will be.",
+      "AJX AI is a practical work partner for entrepreneurs. It helps create ready-to-use offers, ads, sales texts, action plans, pricing drafts, funding paths, and business problem solutions.",
     backToChat: "← Back to chat",
 
-    s1: "1. How to start",
-    s1p1: "Write as clearly as possible what you want to achieve.",
+    s1: "1. What AJX AI does",
+    s1items: [
+      "creates ready-to-use outputs, not just advice",
+      "helps with offers, ads, sales, pricing, marketing, and funding",
+      "asks a few clarifying questions when needed",
+      "turns your answers into a finished text, plan, or action list",
+      "supports decisions, but does not make decisions for you",
+    ],
+
+    s2: "2. Best way to use it",
+    s2p1:
+      "Write what you want to achieve. Mention your industry, country or area, goal, customer, and limits. The more concrete your request is, the more useful the answer will be.",
     goodExample: "Good example",
     badExample: "Weaker example",
     goodExampleText:
-      "I run a ventilation business in Spain. Give me 10 practical ways to find new customers during the next 30 days.",
-    badExampleText: "How do I get more customers?",
+      "I run a ventilation business in Costa Blanca. Create a Facebook ad for duct cleaning. No health claims, no energy-saving claims, direct local tone.",
+    badExampleText: "Make an ad.",
 
-    s2: "2. Agents",
-    generalTitle: "General",
-    generalText:
-      "Relaxed conversation, general questions, natural help, and everyday sparring.",
-    researchTitle: "Research",
-    researchText:
-      "A direct and fact-focused way to find information, compare options, and explain things clearly.",
-    ideationTitle: "Ideation",
-    ideationText:
-      "An inspiring and creative agent for ideas, marketing, content, campaigns, and new angles.",
-    analysisTitle: "Analysis",
-    analysisText:
-      "A calm and logical agent for comparisons, numbers, risks, and conclusions.",
-    strategyTitle: "Strategy",
-    strategyText:
-      "A direct and business-focused agent for decision support, direction, prioritization, and growth.",
-
-    s3: "3. What you can do with AJX AI",
+    s3: "3. Quick actions",
     s3items: [
-      "write ads and sales copy",
-      "create offers for customers",
-      "brainstorm campaigns and content",
-      "analyze competitors",
-      "structure business problems",
-      "think through pricing and growth",
-      "summarize long texts and materials",
-      "help with image analysis",
+      "Create offer: creates a customer-ready offer",
+      "Create ad: creates ready ad versions",
+      "Grow sales: gives practical sales actions and message templates",
+      "Get customers: creates outreach paths and contact texts",
+      "Improve pricing: helps improve margin realistically",
+      "Find grants & funding: structures realistic funding paths",
+      "Solve problem: breaks down the issue and gives next steps",
     ],
 
-    s4: "4. Prompt tips",
-    marketing: "Marketing",
-    marketingPrompt:
-      "Write a Facebook ad for a ventilation renovation service in Costa Blanca. Make it clear, trustworthy, and persuasive.",
-    sales: "Sales",
-    salesPrompt:
-      "Write a customer offer for a ventilation survey. The tone should be professional but approachable.",
-    growth: "Growth",
-    growthPrompt:
-      "Give me 10 practical ways to grow the sales of a local service business over the next 3 months.",
-    analysis: "Analysis",
-    analysisPrompt:
-      "Compare two pricing models and tell me which one has better margin, better sales potential, and lower risk.",
-
-    s5: "5. How to get better answers",
-    s5items: [
-      "mention your industry and country or area",
-      "say what you are actually trying to achieve",
-      "give background details and limits when needed",
-      "ask for a specific output format, for example 5 points or a ready-made text",
-      "keep refining the discussion instead of always starting over",
+    s4: "4. Agents",
+    agents: [
+      ["General", "Relaxed conversation, general help, and everyday sparring."],
+      ["Research", "Fact-focused help for finding, comparing, and structuring information."],
+      ["Ideation", "Ideas, campaigns, content, and new angles."],
+      ["Analysis", "Comparisons, risks, numbers, and conclusions."],
+      ["Strategy", "Direction, prioritization, growth, and decision support."],
     ],
 
-    s6: "6. Important notes",
-    s6items: [
-      "AJX AI is a tool, not a decision-maker",
-      "final responsibility for business and investment decisions always remains with the user",
-      "web search and other features depend on your current plan",
-      "the better the question, the better the result",
+    s5: "5. Free vs Plus",
+    plans: [
+      ["Free", "10 messages per day. Good for testing and general questions."],
+      ["Plus", "Broader usage, better working memory, and entrepreneur quick actions."],
+      ["Pro", "Broader analysis, web search, and more demanding work."],
+      ["Company", "The widest level for strategy, analysis, and business use."],
+    ],
+
+    s6: "6. Example prompts",
+    prompts: [
+      ["Offer", "Create a ready offer for duct cleaning. Customer is [customer], price is [price], work is done [schedule]."],
+      ["Ad", "Create three short Facebook ads for [service] in [area]. Write like a local entrepreneur, no marketing hype."],
+      ["Sales", "Create a 7-day plan to get 20 new business contacts for [service]. Add a ready message template."],
+      ["Pricing", "Help price this service. Work takes [time], costs are [costs], target margin is [margin]."],
+    ],
+
+    s7: "7. Important",
+    s7items: [
+      "AJX AI can make mistakes.",
+      "Always verify important information from official sources.",
+      "AJX AI does not replace legal, financial, tax, medical, or other professional advice.",
+      "Final responsibility for decisions remains with the user.",
+      "Funding, grants, laws, taxes, prices, and terms can change.",
     ],
   },
 
@@ -169,75 +159,70 @@ const copy = {
     brand: "AJX AI",
     title: "Ayuda",
     intro:
-      "AJX AI ayuda a emprendedores a resolver problemas, desarrollar el negocio, crear contenido y estructurar decisiones. Cuanto más precisa sea tu pregunta, mejor será la respuesta.",
+      "AJX AI es un compañero práctico para emprendedores. Ayuda a crear ofertas, anuncios, textos de venta, planes de acción, precios, financiación y soluciones de negocio listas para usar.",
     backToChat: "← Volver al chat",
 
-    s1: "1. Cómo empezar",
-    s1p1: "Escribe lo más claramente posible lo que quieres conseguir.",
+    s1: "1. Qué hace AJX AI",
+    s1items: [
+      "crea resultados listos para usar, no solo consejos",
+      "ayuda con ofertas, anuncios, ventas, precios, marketing y financiación",
+      "hace algunas preguntas concretas cuando hace falta",
+      "convierte tus respuestas en un texto, plan o lista de acciones",
+      "apoya decisiones, pero no decide por ti",
+    ],
+
+    s2: "2. Mejor forma de usarlo",
+    s2p1:
+      "Escribe qué quieres conseguir. Indica sector, país o zona, objetivo, cliente y límites. Cuanto más concreta sea la petición, más útil será la respuesta.",
     goodExample: "Buen ejemplo",
     badExample: "Ejemplo más débil",
     goodExampleText:
-      "Tengo una empresa de ventilación en España. Dame 10 formas prácticas de encontrar nuevos clientes durante los próximos 30 días.",
-    badExampleText: "¿Cómo consigo más clientes?",
+      "Tengo una empresa de ventilación en Costa Blanca. Crea un anuncio de Facebook para limpieza de conductos. Sin promesas de salud, sin ahorro energético, tono local y directo.",
+    badExampleText: "Haz un anuncio.",
 
-    s2: "2. Agentes",
-    generalTitle: "General",
-    generalText:
-      "Conversación relajada, preguntas generales, ayuda natural y apoyo para el día a día.",
-    researchTitle: "Búsqueda",
-    researchText:
-      "Una forma directa y orientada a hechos para buscar información, comparar opciones y explicar las cosas con claridad.",
-    ideationTitle: "Ideación",
-    ideationText:
-      "Un agente inspirador y creativo para ideas, marketing, contenido, campañas y nuevos enfoques.",
-    analysisTitle: "Análisis",
-    analysisText:
-      "Un agente tranquilo y lógico para comparaciones, cifras, riesgos y conclusiones.",
-    strategyTitle: "Estrategia",
-    strategyText:
-      "Un agente directo y orientado al negocio para apoyo en decisiones, dirección, prioridades y crecimiento.",
-
-    s3: "3. Qué puedes hacer con AJX AI",
+    s3: "3. Acciones rápidas",
     s3items: [
-      "escribir anuncios y textos de venta",
-      "crear ofertas para clientes",
-      "idear campañas y contenido",
-      "analizar competidores",
-      "estructurar problemas del negocio",
-      "reflexionar sobre precios y crecimiento",
-      "resumir textos y materiales largos",
-      "ayudar con el análisis de imágenes",
+      "Crear oferta: crea una oferta lista para enviar",
+      "Crear anuncio: crea versiones de anuncio listas",
+      "Aumentar ventas: da acciones prácticas y mensajes",
+      "Conseguir clientes: crea textos de contacto y canales",
+      "Mejorar precios: ayuda a mejorar margen de forma realista",
+      "Buscar ayudas y financiación: ordena vías realistas",
+      "Resolver problema: divide el problema y da próximos pasos",
     ],
 
-    s4: "4. Consejos para prompts",
-    marketing: "Marketing",
-    marketingPrompt:
-      "Escribe un anuncio de Facebook para una reforma de ventilación en Costa Blanca. Hazlo claro, fiable y convincente.",
-    sales: "Ventas",
-    salesPrompt:
-      "Escribe una oferta para un cliente sobre una inspección de ventilación. El tono debe ser profesional pero cercano.",
-    growth: "Crecimiento",
-    growthPrompt:
-      "Dame 10 formas prácticas de aumentar las ventas de una empresa local de servicios durante los próximos 3 meses.",
-    analysis: "Análisis",
-    analysisPrompt:
-      "Compara dos modelos de precios y dime cuál tiene mejor margen, mejor potencial de ventas y menor riesgo.",
-
-    s5: "5. Cómo conseguir mejores respuestas",
-    s5items: [
-      "indica tu sector y el país o la zona",
-      "explica qué estás intentando lograr realmente",
-      "da contexto y límites cuando haga falta",
-      "pide un formato concreto, por ejemplo 5 puntos o un texto listo para usar",
-      "sigue afinando la conversación en lugar de empezar siempre desde cero",
+    s4: "4. Agentes",
+    agents: [
+      ["General", "Conversación relajada, ayuda general y apoyo diario."],
+      ["Búsqueda", "Ayuda basada en hechos para buscar, comparar y ordenar información."],
+      ["Ideación", "Ideas, campañas, contenidos y nuevos enfoques."],
+      ["Análisis", "Comparaciones, riesgos, números y conclusiones."],
+      ["Estrategia", "Dirección, prioridades, crecimiento y apoyo en decisiones."],
     ],
 
-    s6: "6. Importante",
-    s6items: [
-      "AJX AI es una herramienta, no un tomador de decisiones",
-      "la responsabilidad final de las decisiones empresariales y de inversión siempre recae en el usuario",
-      "la búsqueda web y otras funciones dependen del plan que estés usando",
-      "cuanto mejor sea la pregunta, mejor será el resultado",
+    s5: "5. Free vs Plus",
+    plans: [
+      ["Free", "10 mensajes al día. Bueno para probar y preguntas generales."],
+      ["Plus", "Más uso, mejor memoria de trabajo y acciones rápidas para emprendedores."],
+      ["Pro", "Más análisis, búsqueda web y trabajo más exigente."],
+      ["Company", "El nivel más amplio para estrategia, análisis y uso empresarial."],
+    ],
+
+    s6: "6. Ejemplos de prompts",
+    prompts: [
+      ["Oferta", "Crea una oferta lista para limpieza de conductos. Cliente: [cliente], precio: [precio], fecha: [fecha]."],
+      ["Anuncio", "Crea tres anuncios cortos de Facebook para [servicio] en [zona]. Escribe como una empresa local, sin exageración."],
+      ["Ventas", "Crea un plan de 7 días para conseguir 20 contactos empresariales para [servicio]. Añade un mensaje listo."],
+      ["Precios", "Ayúdame a fijar el precio. El trabajo tarda [tiempo], costes [costes], margen objetivo [margen]."],
+    ],
+
+    s7: "7. Importante",
+    s7items: [
+      "AJX AI puede cometer errores.",
+      "Verifica siempre la información importante desde fuentes oficiales.",
+      "AJX AI no sustituye asesoramiento legal, financiero, fiscal, médico ni profesional.",
+      "La responsabilidad final de las decisiones es del usuario.",
+      "Financiación, ayudas, leyes, impuestos, precios y condiciones pueden cambiar.",
     ],
   },
 };
@@ -278,89 +263,31 @@ export default function HelpClient() {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100dvh",
-        background:
-          "linear-gradient(180deg, #f6f7fb 0%, #eef1f6 55%, #e8ebf2 100%)",
-        color: "#0b0d12",
-        padding: "24px",
-        fontFamily:
-          'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial',
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 920,
-          margin: "0 auto",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            gap: 10,
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            marginBottom: 16,
-          }}
-        >
+    <main style={mainStyle}>
+      <div style={{ maxWidth: 960, margin: "0 auto" }}>
+        <div style={topRowStyle}>
           <a href={chatHref} onClick={handleBack} style={topLinkStyle}>
             {c.backToChat}
           </a>
         </div>
 
-        <div
-          style={{
-            background: "rgba(255,255,255,0.82)",
-            border: "1px solid rgba(11,13,18,0.08)",
-            borderRadius: 24,
-            padding: 24,
-            boxShadow: "0 28px 90px rgba(11,13,18,0.16)",
-            backdropFilter: "blur(10px)",
-          }}
-        >
+        <div style={panelStyle}>
           <div style={{ marginBottom: 28 }}>
-            <div
-              style={{
-                fontSize: 13,
-                fontWeight: 800,
-                letterSpacing: 0.4,
-                textTransform: "uppercase",
-                opacity: 0.65,
-                marginBottom: 8,
-              }}
-            >
-              {c.brand}
-            </div>
-
-            <h1
-              style={{
-                margin: 0,
-                fontSize: 34,
-                lineHeight: 1.1,
-                fontWeight: 950,
-              }}
-            >
-              {c.title}
-            </h1>
-
-            <p
-              style={{
-                marginTop: 12,
-                marginBottom: 0,
-                fontSize: 16,
-                lineHeight: 1.65,
-                color: "rgba(11,13,18,0.72)",
-                maxWidth: 760,
-              }}
-            >
-              {c.intro}
-            </p>
+            <div style={brandStyle}>{c.brand}</div>
+            <h1 style={h1Style}>{c.title}</h1>
+            <p style={introStyle}>{c.intro}</p>
           </div>
 
           <Section title={c.s1}>
-            <p style={pStyle}>{c.s1p1}</p>
+            <ul style={listStyle}>
+              {c.s1items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </Section>
+
+          <Section title={c.s2}>
+            <p style={pStyle}>{c.s2p1}</p>
 
             <div style={exampleBoxStyle}>
               <div style={exampleLabelStyle}>{c.goodExample}</div>
@@ -373,14 +300,6 @@ export default function HelpClient() {
             </div>
           </Section>
 
-          <Section title={c.s2}>
-            <InfoCard title={c.generalTitle} text={c.generalText} />
-            <InfoCard title={c.researchTitle} text={c.researchText} />
-            <InfoCard title={c.ideationTitle} text={c.ideationText} />
-            <InfoCard title={c.analysisTitle} text={c.analysisText} />
-            <InfoCard title={c.strategyTitle} text={c.strategyText} />
-          </Section>
-
           <Section title={c.s3}>
             <ul style={listStyle}>
               {c.s3items.map((item) => (
@@ -391,24 +310,31 @@ export default function HelpClient() {
 
           <Section title={c.s4}>
             <div style={gridStyle}>
-              <PromptCard title={c.marketing} prompt={c.marketingPrompt} />
-              <PromptCard title={c.sales} prompt={c.salesPrompt} />
-              <PromptCard title={c.growth} prompt={c.growthPrompt} />
-              <PromptCard title={c.analysis} prompt={c.analysisPrompt} />
+              {c.agents.map(([title, text]) => (
+                <InfoCard key={title} title={title} text={text} />
+              ))}
             </div>
           </Section>
 
           <Section title={c.s5}>
-            <ul style={listStyle}>
-              {c.s5items.map((item) => (
-                <li key={item}>{item}</li>
+            <div style={gridStyle}>
+              {c.plans.map(([title, text]) => (
+                <InfoCard key={title} title={title} text={text} />
               ))}
-            </ul>
+            </div>
           </Section>
 
           <Section title={c.s6}>
+            <div style={gridStyle}>
+              {c.prompts.map(([title, prompt]) => (
+                <PromptCard key={title} title={title} prompt={prompt} />
+              ))}
+            </div>
+          </Section>
+
+          <Section title={c.s7}>
             <ul style={listStyle}>
-              {c.s6items.map((item) => (
+              {c.s7items.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -427,17 +353,8 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section style={{ marginTop: 28 }}>
-      <h2
-        style={{
-          margin: "0 0 12px 0",
-          fontSize: 22,
-          lineHeight: 1.2,
-          fontWeight: 900,
-        }}
-      >
-        {title}
-      </h2>
+    <section style={{ marginTop: 30 }}>
+      <h2 style={h2Style}>{title}</h2>
       <div>{children}</div>
     </section>
   );
@@ -446,24 +363,8 @@ function Section({
 function InfoCard({ title, text }: { title: string; text: string }) {
   return (
     <div style={cardStyle}>
-      <div
-        style={{
-          fontSize: 16,
-          fontWeight: 900,
-          marginBottom: 6,
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          fontSize: 15,
-          lineHeight: 1.6,
-          color: "rgba(11,13,18,0.74)",
-        }}
-      >
-        {text}
-      </div>
+      <div style={cardTitleStyle}>{title}</div>
+      <div style={cardTextStyle}>{text}</div>
     </div>
   );
 }
@@ -471,28 +372,69 @@ function InfoCard({ title, text }: { title: string; text: string }) {
 function PromptCard({ title, prompt }: { title: string; prompt: string }) {
   return (
     <div style={cardStyle}>
-      <div
-        style={{
-          fontSize: 15,
-          fontWeight: 900,
-          marginBottom: 8,
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          fontSize: 14,
-          lineHeight: 1.6,
-          color: "rgba(11,13,18,0.78)",
-          whiteSpace: "pre-wrap",
-        }}
-      >
-        {prompt}
-      </div>
+      <div style={cardTitleStyle}>{title}</div>
+      <div style={promptStyle}>{prompt}</div>
     </div>
   );
 }
+
+const mainStyle: React.CSSProperties = {
+  minHeight: "100dvh",
+  background: "linear-gradient(180deg, #f6f7fb 0%, #eef1f6 55%, #e8ebf2 100%)",
+  color: "#0b0d12",
+  padding: "24px",
+  fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial',
+};
+
+const topRowStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 10,
+  alignItems: "center",
+  justifyContent: "space-between",
+  flexWrap: "wrap",
+  marginBottom: 16,
+};
+
+const panelStyle: React.CSSProperties = {
+  background: "rgba(255,255,255,0.86)",
+  border: "1px solid rgba(11,13,18,0.08)",
+  borderRadius: 26,
+  padding: 26,
+  boxShadow: "0 28px 90px rgba(11,13,18,0.16)",
+  backdropFilter: "blur(10px)",
+};
+
+const brandStyle: React.CSSProperties = {
+  fontSize: 13,
+  fontWeight: 900,
+  letterSpacing: 0.4,
+  textTransform: "uppercase",
+  color: "#15803d",
+  marginBottom: 8,
+};
+
+const h1Style: React.CSSProperties = {
+  margin: 0,
+  fontSize: 36,
+  lineHeight: 1.08,
+  fontWeight: 950,
+};
+
+const h2Style: React.CSSProperties = {
+  margin: "0 0 12px 0",
+  fontSize: 22,
+  lineHeight: 1.2,
+  fontWeight: 950,
+};
+
+const introStyle: React.CSSProperties = {
+  marginTop: 12,
+  marginBottom: 0,
+  fontSize: 16,
+  lineHeight: 1.65,
+  color: "rgba(11,13,18,0.74)",
+  maxWidth: 800,
+};
 
 const pStyle: React.CSSProperties = {
   margin: "0 0 14px 0",
@@ -506,20 +448,44 @@ const listStyle: React.CSSProperties = {
   paddingLeft: 20,
   lineHeight: 1.9,
   fontSize: 15,
-  color: "rgba(11,13,18,0.8)",
+  color: "rgba(11,13,18,0.82)",
+};
+
+const gridStyle: React.CSSProperties = {
+  display: "grid",
+  gap: 12,
 };
 
 const cardStyle: React.CSSProperties = {
   border: "1px solid rgba(11,13,18,0.08)",
-  background: "rgba(255,255,255,0.72)",
+  background: "rgba(255,255,255,0.78)",
   borderRadius: 18,
   padding: 16,
-  marginBottom: 12,
+  marginBottom: 0,
+};
+
+const cardTitleStyle: React.CSSProperties = {
+  fontSize: 16,
+  fontWeight: 950,
+  marginBottom: 6,
+};
+
+const cardTextStyle: React.CSSProperties = {
+  fontSize: 15,
+  lineHeight: 1.6,
+  color: "rgba(11,13,18,0.74)",
+};
+
+const promptStyle: React.CSSProperties = {
+  fontSize: 14,
+  lineHeight: 1.65,
+  color: "rgba(11,13,18,0.80)",
+  whiteSpace: "pre-wrap",
 };
 
 const exampleBoxStyle: React.CSSProperties = {
   border: "1px solid rgba(11,13,18,0.08)",
-  background: "rgba(255,255,255,0.72)",
+  background: "rgba(255,255,255,0.78)",
   borderRadius: 18,
   padding: 16,
   marginBottom: 12,
@@ -527,7 +493,7 @@ const exampleBoxStyle: React.CSSProperties = {
 
 const exampleLabelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 900,
+  fontWeight: 950,
   letterSpacing: 0.3,
   textTransform: "uppercase",
   color: "rgba(11,13,18,0.58)",
@@ -537,12 +503,7 @@ const exampleLabelStyle: React.CSSProperties = {
 const exampleTextStyle: React.CSSProperties = {
   fontSize: 15,
   lineHeight: 1.65,
-  color: "rgba(11,13,18,0.82)",
-};
-
-const gridStyle: React.CSSProperties = {
-  display: "grid",
-  gap: 12,
+  color: "rgba(11,13,18,0.84)",
 };
 
 const topLinkStyle: React.CSSProperties = {
@@ -550,7 +511,7 @@ const topLinkStyle: React.CSSProperties = {
   alignItems: "center",
   gap: 8,
   border: "1px solid rgba(11,13,18,0.12)",
-  background: "rgba(255,255,255,0.72)",
+  background: "rgba(255,255,255,0.76)",
   color: "#0b0d12",
   textDecoration: "none",
   borderRadius: 14,
