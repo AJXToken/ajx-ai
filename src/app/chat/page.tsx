@@ -2409,6 +2409,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const [plusOpen, setPlusOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const [quickActionsClosed, setQuickActionsClosed] = useState(false);
   const [legalOpen, setLegalOpen] = useState(false);
 
   const [plan, setPlan] = useState<Plan>("free");
@@ -2510,7 +2511,7 @@ export default function ChatPage(): React.JSX.Element {
 
   const quickActions = useMemo(() => quickActionsForLocale(locale), [locale]);
 
-  const showQuickActions = !loading && pending.length === 0;
+  const showQuickActions = !loading && pending.length === 0 && !quickActionsClosed;
 
   function closeSidebarOnMobile() {
     if (isMobile) setSidebarOpen(false);
@@ -2924,6 +2925,7 @@ export default function ChatPage(): React.JSX.Element {
     setPending([]);
     setForceWebNext(false);
     setManualImageIntent(null);
+    setQuickActionsClosed(false);
     closeSidebarOnMobile();
     requestAnimationFrame(() => {
       if (inputRef.current) {
@@ -2949,6 +2951,7 @@ export default function ChatPage(): React.JSX.Element {
     setPending([]);
     setForceWebNext(false);
     setManualImageIntent(null);
+    setQuickActionsClosed(false);
     closeSidebarOnMobile();
     requestAnimationFrame(() => {
       if (inputRef.current) {
@@ -8197,7 +8200,7 @@ export default function ChatPage(): React.JSX.Element {
               </a>
 
               <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")} style={isMobile ? { minWidth: 0, flex: "0 1 auto" } : undefined}>
-                <div className="ajxControlLabel">{t(locale, "ui.ajx_mode")}</div>
+                <div className="ajxControlLabel">{locale === "es" ? "Agentes" : locale === "en" ? "Agents" : "Agentit"}</div>
                 <div className="ajxSelectWrap">
                   <select
                     value={mode}
@@ -8295,19 +8298,24 @@ export default function ChatPage(): React.JSX.Element {
 
                       <button
                         type="button"
-                        className="ajxTopHelpBtn"
-                        onClick={() => {
-                          appendAssistantMessage(
-                            locale === "fi"
-                              ? "Ohjeet\n\nAJX AI auttaa yrittäjää tekemään konkreettisia töitä: tarjouksia, mainoksia, myyntisuunnitelmia, hinnoittelua, rahoituksen hakua ja yritysongelmien ratkaisua.\n\nVoit kirjoittaa normaalisti tai käyttää pikatoimintoja."
-                              : locale === "es"
-                                ? "Ayuda\n\nAJX AI ayuda a emprendedores a hacer trabajo práctico: ofertas, anuncios, ventas, precios, financiación y resolución de problemas.\n\nPuedes escribir normalmente o usar acciones rápidas."
-                                : "Help\n\nAJX AI helps entrepreneurs do practical work: offers, ads, sales plans, pricing, funding and business problem solving.\n\nYou can write normally or use quick actions."
-                          );
-                          scrollToBottom(true);
+                        aria-label={locale === "es" ? "Cerrar acciones rápidas" : locale === "en" ? "Close quick actions" : "Sulje pikatoiminnot"}
+                        title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+                        onClick={() => setQuickActionsClosed(true)}
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 999,
+                          border: "1px solid rgba(16,24,40,0.10)",
+                          background: "#ffffff",
+                          color: "#101318",
+                          fontSize: 22,
+                          fontWeight: 900,
+                          lineHeight: 1,
+                          cursor: "pointer",
+                          boxShadow: "0 8px 20px rgba(16,24,40,0.08)",
                         }}
                       >
-                        {helpLabel}
+                        ×
                       </button>
                     </div>
 
@@ -9277,6 +9285,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
