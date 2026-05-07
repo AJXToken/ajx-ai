@@ -8196,12 +8196,42 @@ export default function ChatPage(): React.JSX.Element {
                 {helpLabel}
               </a>
 
-              <div className="ajxControlGroup" aria-label={t(locale, "ui.ajx_mode")} style={isMobile ? { minWidth: 0, flex: "0 1 auto" } : undefined}>
-                <div className="ajxControlLabel">{locale === "es" ? "Agentes" : locale === "en" ? "Agents" : "Agentit"}</div>
-                <span style={{ fontSize: 12, fontWeight: 950, color: "rgba(16,24,40,0.62)", whiteSpace: "nowrap" }}>
-                  {locale === "es" ? "Agentes" : locale === "en" ? "Agents" : "Agentit"}
-                </span>
-                <div className="ajxSelectWrap">
+              <div
+  className="ajxControlGroup"
+  aria-label={t(locale, "ui.ajx_mode")}
+  style={
+    isMobile
+      ? {
+          minWidth: 0,
+          flex: "0 1 auto",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          paddingLeft: 12,
+          paddingRight: 10,
+        }
+      : {
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          paddingLeft: 14,
+          paddingRight: 12,
+        }
+  }
+>
+  <span
+    style={{
+      fontSize: 13,
+      fontWeight: 800,
+      color: "rgba(16,24,40,0.72)",
+      whiteSpace: "nowrap",
+      flex: "0 0 auto",
+    }}
+  >
+    {locale === "es" ? "Agentes:" : locale === "en" ? "Agents:" : "Agentit:"}
+  </span>
+
+  <div className="ajxSelectWrap" style={{ minWidth: 0, flex: 1 }}>
                   <select
                     value={mode}
                     onChange={(e) => setMode(e.target.value as AjxMode)}
@@ -9316,6 +9346,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
