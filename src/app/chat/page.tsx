@@ -8292,23 +8292,6 @@ export default function ChatPage(): React.JSX.Element {
                         </div>
                       </div>
                       <div className="ajxCompactPlan">{planLabel}</div>
-
-                      <button
-                        type="button"
-                        className="ajxTopHelpBtn"
-                        onClick={() => {
-                          appendAssistantMessage(
-                            locale === "fi"
-                              ? "Ohjeet\n\nAJX AI auttaa yrittäjää tekemään konkreettisia töitä: tarjouksia, mainoksia, myyntisuunnitelmia, hinnoittelua, rahoituksen hakua ja yritysongelmien ratkaisua.\n\nVoit kirjoittaa normaalisti tai käyttää pikatoimintoja."
-                              : locale === "es"
-                                ? "Ayuda\n\nAJX AI ayuda a emprendedores a hacer trabajo práctico: ofertas, anuncios, ventas, precios, financiación y resolución de problemas.\n\nPuedes escribir normalmente o usar acciones rápidas."
-                                : "Help\n\nAJX AI helps entrepreneurs do practical work: offers, ads, sales plans, pricing, funding and business problem solving.\n\nYou can write normally or use quick actions."
-                          );
-                          scrollToBottom(true);
-                        }}
-                      >
-                        {helpLabel}
-                      </button>
                     </div>
 
                     <div className="ajxCompactGrid">
@@ -8340,6 +8323,42 @@ export default function ChatPage(): React.JSX.Element {
           >
             ×
           </button>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              marginBottom: 12,
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 950, color: "#101318" }}>
+              {locale === "es" ? "Acciones rápidas" : locale === "en" ? "Quick actions" : "Pikatoiminnot"}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setToolsOpen(false)}
+              aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+              title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: "1px solid rgba(16,24,40,0.10)",
+                background: "#ffffff",
+                color: "#101318",
+                fontSize: 24,
+                fontWeight: 900,
+                lineHeight: 1,
+                cursor: "pointer",
+                boxShadow: "0 10px 24px rgba(16,24,40,0.10)",
+              }}
+            >
+              ×
+            </button>
+          </div>
 
           {quickActions.map((action) => (
                         <button
@@ -8444,6 +8463,42 @@ export default function ChatPage(): React.JSX.Element {
           >
             ×
           </button>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              marginBottom: 12,
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 950, color: "#101318" }}>
+              {locale === "es" ? "Acciones rápidas" : locale === "en" ? "Quick actions" : "Pikatoiminnot"}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setToolsOpen(false)}
+              aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+              title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: "1px solid rgba(16,24,40,0.10)",
+                background: "#ffffff",
+                color: "#101318",
+                fontSize: 24,
+                fontWeight: 900,
+                lineHeight: 1,
+                cursor: "pointer",
+                boxShadow: "0 10px 24px rgba(16,24,40,0.10)",
+              }}
+            >
+              ×
+            </button>
+          </div>
 
           {quickActions.map((action) => (
                       <button
@@ -9036,6 +9091,42 @@ export default function ChatPage(): React.JSX.Element {
             ×
           </button>
 
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              marginBottom: 12,
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 950, color: "#101318" }}>
+              {locale === "es" ? "Acciones rápidas" : locale === "en" ? "Quick actions" : "Pikatoiminnot"}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setToolsOpen(false)}
+              aria-label={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+              title={locale === "es" ? "Cerrar" : locale === "en" ? "Close" : "Sulje"}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 999,
+                border: "1px solid rgba(16,24,40,0.10)",
+                background: "#ffffff",
+                color: "#101318",
+                fontSize: 24,
+                fontWeight: 900,
+                lineHeight: 1,
+                cursor: "pointer",
+                boxShadow: "0 10px 24px rgba(16,24,40,0.10)",
+              }}
+            >
+              ×
+            </button>
+          </div>
+
           {quickActions.map((action) => (
             <button
               key={action.id}
@@ -9364,6 +9455,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
