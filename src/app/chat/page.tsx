@@ -8235,7 +8235,7 @@ export default function ChatPage(): React.JSX.Element {
                   <select
                     value={mode}
                     onChange={(e) => setMode(e.target.value as AjxMode)}
-                    className="ajxSelect"
+                    className="ajxSelect ajxAgentSelect"
                     title={t(locale, "ui.ajx_mode")}
                   >
                     {allowedModes.map((m) => (
@@ -9346,6 +9346,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
