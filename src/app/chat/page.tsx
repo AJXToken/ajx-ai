@@ -9497,10 +9497,10 @@ export default function ChatPage(): React.JSX.Element {
                               if (isMdImage) {
                                 setImageStatus(
                                   locale === "fi"
-                                    ? "âœ… Kuva luotu tai muokattu."
+                                    ? "✅ Kuva luotu tai muokattu."
                                     : locale === "es"
-                                      ? "âœ… Imagen creada o editada."
-                                      : "âœ… Image created or edited."
+                                      ? "✅ Imagen creada o editada."
+                                      : "✅ Image created or edited."
                                 );
                                 appendAssistantMessage(s);
                                 setManualImageIntent(null);
@@ -10531,6 +10531,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
