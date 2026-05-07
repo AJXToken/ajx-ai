@@ -543,36 +543,27 @@ function l(locale: Locale, fi: string, en: string, es: string) {
 function plusSavingsModeActivationText(locale: Locale) {
   return l(
     locale,
-    `Huikeaa ideointia! ðŸš€
-
-Olet saavuttanut Plus-paketin 2000 viestin tehorajan. Jotta voit jatkaa keskeytyksettÃ¤, olemme siirtÃ¤neet sinut SÃ¤Ã¤stÃ¶liekille loppukuun ajaksi.
-SÃ¤Ã¤stÃ¶liekillÃ¤ vastaukset pidetÃ¤Ã¤n hieman tiiviimpinÃ¤ kustannusten hallitsemiseksi.`,
-    `Amazing ideation! ðŸš€
-
-You have reached the Plus plan's 2000-message performance limit. To keep you going without interruption, you have been moved to Savings Flame for the rest of the month.
-In Savings Flame, replies are kept a bit shorter to keep costs under control.`,
-    `Â¡QuÃ© nivel de ideas! ðŸš€
-
-Has alcanzado el lÃ­mite de rendimiento de 2000 mensajes del plan Plus. Para que puedas seguir sin interrupciones, te hemos movido a Modo Ahorro hasta final de mes.
-En Modo Ahorro, las respuestas se mantienen un poco mÃ¡s breves para controlar los costes.`
+    "Olet käyttänyt tämän kuun laajan käyttömäärän. Vastaukset pidetään nyt hieman tiiviimpinä.",
+    "You have used this month's broad usage amount. Replies will now be kept a bit more compact.",
+    "Has usado la cantidad amplia de uso de este mes. Las respuestas serán ahora un poco más breves."
   );
 }
 
 function plusSavingsModeActiveText(locale: Locale) {
   return l(
     locale,
-    "SÃ¤Ã¤stÃ¶liekki on kÃ¤ytÃ¶ssÃ¤ tÃ¤mÃ¤n kuun loppuun. Vastaukset pidetÃ¤Ã¤n hieman tiiviimpinÃ¤ kustannusten hallitsemiseksi.",
-    "Savings Flame is active until the end of this month. Replies are kept a bit shorter to control costs.",
-    "El Modo Ahorro estÃ¡ activo hasta final de mes. Las respuestas se mantienen algo mÃ¡s breves para controlar los costes."
+    "Olet käyttänyt tämän kuun laajan käyttömäärän. Vastaukset pidetään nyt hieman tiiviimpinä.",
+    "You have used this month's broad usage amount. Replies will now be kept a bit more compact.",
+    "Has usado la cantidad amplia de uso de este mes. Las respuestas serán ahora un poco más breves."
   );
 }
 
 function plusSavingsModeLimitReachedText(locale: Locale) {
   return l(
     locale,
-    "Olet kÃ¤yttÃ¤nyt tÃ¤mÃ¤n kuun Plus-paketin 2000 viestin tehorajan sekÃ¤ SÃ¤Ã¤stÃ¶liekki-vaiheen 1000 lisÃ¤viestiÃ¤. Uusi kuukausi avaa viestit taas normaalisti.",
-    "You have used this month's Plus 2000-message performance limit and the additional 1000 Savings Flame messages. A new month will reopen messages normally.",
-    "Has usado el lÃ­mite de rendimiento mensual de 2000 mensajes del plan Plus y los 1000 mensajes adicionales del Modo Ahorro. El nuevo mes volverÃ¡ a abrir los mensajes con normalidad."
+    "Olet käyttänyt tämän kuun laajan käyttömäärän. Vastaukset pidetään nyt hieman tiiviimpinä.",
+    "You have used this month's broad usage amount. Replies will now be kept a bit more compact.",
+    "Has usado la cantidad amplia de uso de este mes. Las respuestas serán ahora un poco más breves."
   );
 }
 
@@ -856,7 +847,7 @@ function plusSavingsNoticeState(args: {
   const after = Number(args.usageAfter?.msgThisMonth || 0);
 
   return {
-    activeForThisRequest: before >= PLUS_PRIMARY_LIMIT && before < PLUS_SAVINGS_TOTAL_LIMIT,
+    activeForThisRequest: before >= PLUS_PRIMARY_LIMIT,
     justActivated: before < PLUS_PRIMARY_LIMIT && after >= PLUS_PRIMARY_LIMIT,
   };
 }
@@ -4169,9 +4160,6 @@ async function callTextNonStream(): Promise<string> {
             if (plusBoostDecision.useBoost) {
               finalText = ("⚡ " + finalText.replace(/^(⚡\s*)+/g, "")).trim();
             }
-if (plusBoostDecision.useBoost) {
-  finalText = ("⚡ " + finalText.replace(/^(⚡\s*)+/g, "")).trim();
-}
 
             finalText = prependPlusSavingsNotice(finalText, locale, plusSavingsStateAfterUsage);
 
@@ -4255,9 +4243,6 @@ outText = prependPlusSavingsNotice(outText, locale, plusSavingsStateAfterUsage);
     if (plusBoostDecision.useBoost) {
       outText = ("⚡ " + outText.replace(/^(⚡\s*)+/g, "")).trim();
     }
-if (plusBoostDecision.useBoost) {
-  outText = ("⚡ " + outText.replace(/^(⚡\s*)+/g, "")).trim();
-}
 
 if (!isUsableModelText(outText)) {
   throw new Error("Malli palautti tyhjän vastauksen.");
@@ -4306,6 +4291,7 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
+
 
 
 
