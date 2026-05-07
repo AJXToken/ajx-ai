@@ -1,4 +1,4 @@
-// src/app/api/image/route.ts
+﻿// src/app/api/image/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
@@ -435,7 +435,7 @@ export async function POST(req: NextRequest) {
     if (!parsed) {
       return jsonError(
         400,
-        "Lähdekuva on virheellisessä muodossa. Odotettiin dataURL-kuvaa.",
+        "LÃ¤hdekuva on virheellisessÃ¤ muodossa. Odotettiin dataURL-kuvaa.",
         { plan, limits: baseLimits },
         resHeaders
       );
@@ -503,7 +503,7 @@ export async function POST(req: NextRequest) {
   if (!allowAnyGen) {
     return jsonError(
       403,
-      "Kuvien luonti ei ole käytössä tällä tasolla.",
+      "Kuvien luonti ei ole kÃ¤ytÃ¶ssÃ¤ tÃ¤llÃ¤ tasolla.",
       { plan, limits, usage },
       resHeaders
     );
@@ -513,7 +513,7 @@ export async function POST(req: NextRequest) {
     if (genUsedToday + 1 > limits.imgGenPerDay) {
       return jsonError(
         403,
-        "Kuvaluontikiintiö on täynnä tältä päivältä.",
+        "KuvaluontikiintiÃ¶ on tÃ¤ynnÃ¤ tÃ¤ltÃ¤ pÃ¤ivÃ¤ltÃ¤.",
         { plan, limits, usage },
         resHeaders
       );
@@ -522,7 +522,7 @@ export async function POST(req: NextRequest) {
     if (limits.imgGenPerMonth <= 0 || genUsedMonth + 1 > limits.imgGenPerMonth) {
       return jsonError(
         403,
-        "Kuvaluontikiintiö on täynnä tältä kuulta.",
+        "KuvaluontikiintiÃ¶ on tÃ¤ynnÃ¤ tÃ¤ltÃ¤ kuulta.",
         { plan, limits, usage },
         resHeaders
       );
@@ -594,8 +594,8 @@ export async function POST(req: NextRequest) {
       const id = makeImageId();
       const outFile = path.join(IMAGES_DIR, `${id}.png`);
 
-      // Talletetaan local-deviä varten / mahdolliseksi debugiksi.
-      // Vercelissä ei nojauduta tähän kuvan näyttämisessä.
+      // Talletetaan local-deviÃ¤ varten / mahdolliseksi debugiksi.
+      // VercelissÃ¤ ei nojauduta tÃ¤hÃ¤n kuvan nÃ¤yttÃ¤misessÃ¤.
       try {
         fs.writeFileSync(outFile, Buffer.from(b64, "base64"));
       } catch {
