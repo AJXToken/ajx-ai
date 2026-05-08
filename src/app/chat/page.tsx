@@ -142,6 +142,47 @@ function stripMarkdownImages(text: string): string {
   return text.replace(re, "").replace(/\n{3,}/g, "\n\n").trim();
 }
 
+function dataUrlToBlobUrl(dataUrl: string): string {
+  const [meta, b64] = String(dataUrl || "").split(",");
+  const mime = meta.match(/data:([^;]+)/)?.[1] || "image/png";
+  const bin = atob(b64 || "");
+  const bytes = new Uint8Array(bin.length);
+
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+
+  return URL.createObjectURL(new Blob([bytes], { type: mime }));
+}
+
+async function copyImageToClipboard(url: string) {
+  if (!url.startsWith("data:image/")) return;
+
+  const ClipboardItemCtor = (window as any).ClipboardItem;
+  if (!navigator.clipboard || !ClipboardItemCtor) return;
+
+  const blob = await fetch(url).then((r) => r.blob());
+  await navigator.clipboard.write([new ClipboardItemCtor({ [blob.type]: blob })]);
+}
+
+function openImageUrl(url: string) {
+  if (url.startsWith("data:image/")) {
+    const blobUrl = dataUrlToBlobUrl(url);
+    window.open(blobUrl, "_blank", "noopener,noreferrer");
+    window.setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+    return;
+  }
+
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function downloadImageUrl(url: string, index: number) {
+  const a = document.createElement("a");
+  a.download = `ajx-image-${index + 1}.png`;
+  a.href = url;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 function renderImagesFromContent(text: string) {
   const urls = extractMarkdownImageUrls(text);
   if (urls.length === 0) return null;
@@ -149,17 +190,24 @@ function renderImagesFromContent(text: string) {
   return (
     <div className="ajxInlineImages">
       {urls.map((u, i) => (
-        <a
-          key={`${u}-${i}`}
-          href={u}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: "block", maxWidth: "100%" }}
-        >
+        <div key={`${u}-${i}`} style={{ display: "block", maxWidth: "100%" }}>
           <img src={u} alt="AJX Image" className={styles.inlineImage} />
-        </a>
+
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
+            <button type="button" className="ajxCopyBtn" onClick={() => openImageUrl(u)}>
+              Avaa kuva
+            </button>
+
+            <button type="button" className="ajxCopyBtn" onClick={() => copyImageToClipboard(u).catch(() => {})}>
+              Kopioi kuva
+            </button>
+
+            <button type="button" className="ajxCopyBtn" onClick={() => downloadImageUrl(u, i)}>
+              Lataa kuva
+            </button>
+          </div>
+        </div>
       ))}
-    
 <style jsx global>{`
   @media (max-width: 980px) {
     .ajxTopControls {
@@ -10531,6 +10579,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
