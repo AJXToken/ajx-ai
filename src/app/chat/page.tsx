@@ -12804,9 +12804,49 @@ export default function ChatPage(): React.JSX.Element {
           }
         }
       `}</style>
+<style jsx global>{`
+  /* ===== AJX QUESTION ROW FINAL WRAP FIX ===== */
+  .ajxQuestionRow {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    white-space: normal !important;
+  }
+
+  .ajxQuestionRow * {
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    white-space: normal !important;
+  }
+
+  .ajxManualOrderedRow {
+    display: grid !important;
+    grid-template-columns: 28px minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .ajxManualOrderedRow > span:last-child {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    white-space: pre-wrap !important;
+  }
+`}</style>
+
     </div>
   );
 }
+
 
 
 
