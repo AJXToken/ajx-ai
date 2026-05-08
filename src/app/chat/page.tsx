@@ -4132,7 +4132,9 @@ function quickActionQuestionInstruction(action: QuickAction, locale: Locale): st
     "Ã„lÃ¤ anna vielÃ¤ pitkÃ¤Ã¤ vastausta tai valmista suunnitelmaa.",
     "Kysy ensin tÃ¤smÃ¤lleen 3×5 lyhyttÃ¤ ja konkreettista kysymystÃ¤, joilla kerÃ¤Ã¤t tarvittavat tiedot.",
     "Tulosta vain 3–5 lyhyttä kysymystä.",
+    "Numeroi jokainen kysymys muodossa 1. 2. 3. 4. 5.",
     "Jokainen kysymys omalle rivilleen.",
+    "Älä käytä pallolistoja, viivoja tai numeroimatonta listaa.",
     "Älä lisää otsikoita, selityksiä tai muuta tekstiä.",
     "Ã„lÃ¤ selitÃ¤ ajatteluasi.",
     "Ã„lÃ¤ lisÃ¤Ã¤ yhteenvetoa, pitkÃ¤Ã¤ johdantoa tai lopullista tarjousta vielÃ¤.",
@@ -12848,6 +12850,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
