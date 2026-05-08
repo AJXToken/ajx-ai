@@ -59,6 +59,54 @@ const MAX_NON_IMAGE_FILE_BYTES = 8_000_000;
 type CanonicalPlan = "free" | "basic" | "plus" | "pro" | "company";
 const FREE_DISPLAY_LIMIT = 10;
 
+let ajxImageToastTimer: any = null;
+
+function showAjxImageToast(message: string) {
+  const old = document.getElementById("ajx-image-toast");
+  if (old) old.remove();
+
+  const el = document.createElement("div");
+  el.id = "ajx-image-toast";
+  el.innerText = message;
+
+  Object.assign(el.style, {
+    position: "fixed",
+    bottom: "90px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "rgba(15,15,20,0.96)",
+    color: "#fff",
+    padding: "10px 16px",
+    borderRadius: "14px",
+    fontSize: "14px",
+    fontWeight: "700",
+    zIndex: "999999",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.35)",
+    border: "1px solid rgba(255,255,255,0.08)",
+    backdropFilter: "blur(10px)",
+    opacity: "0",
+    transition: "all 0.18s ease"
+  });
+
+  document.body.appendChild(el);
+
+  requestAnimationFrame(() => {
+    el.style.opacity = "1";
+    el.style.bottom = "110px";
+  });
+
+  if (ajxImageToastTimer) clearTimeout(ajxImageToastTimer);
+
+  ajxImageToastTimer = setTimeout(() => {
+    el.style.opacity = "0";
+    el.style.bottom = "90px";
+
+    setTimeout(() => {
+      el.remove();
+    }, 220);
+  }, 1800);
+}
+
 type ImageIntentChoice = "analyze" | "edit" | null;
 
 type QuickAction = {
@@ -161,17 +209,20 @@ async function copyImageToClipboard(url: string) {
 
   const blob = await fetch(url).then((r) => r.blob());
   await navigator.clipboard.write([new ClipboardItemCtor({ [blob.type]: blob })]);
+showAjxImageToast("✅ Kuva kopioitu");
 }
 
 function openImageUrl(url: string) {
   if (url.startsWith("data:image/")) {
     const blobUrl = dataUrlToBlobUrl(url);
     window.open(blobUrl, "_blank", "noopener,noreferrer");
+showAjxImageToast("✅ Kuva avattu");
     window.setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
     return;
   }
 
   window.open(url, "_blank", "noopener,noreferrer");
+showAjxImageToast("✅ Kuva avattu");
 }
 
 function downloadImageUrl(url: string, index: number) {
@@ -181,6 +232,7 @@ function downloadImageUrl(url: string, index: number) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+showAjxImageToast("✅ Kuva ladattu");
 }
 
 function renderImagesFromContent(text: string) {
@@ -193,22 +245,54 @@ function renderImagesFromContent(text: string) {
         <div key={`${u}-${i}`} style={{ display: "block", maxWidth: "100%" }}>
           <img src={u} alt="AJX Image" className={styles.inlineImage} />
 
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 8 }}>
-            <button type="button" className="ajxCopyBtn" onClick={() => openImageUrl(u)}>
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 10 }}>
+            <button type="button" className="ajxImageActionBtn" onClick={() => openImageUrl(u)}>
               Avaa kuva
             </button>
 
-            <button type="button" className="ajxCopyBtn" onClick={() => copyImageToClipboard(u).catch(() => {})}>
+            <button type="button" className="ajxImageActionBtn" onClick={() => copyImageToClipboard(u).catch(() => {})}>
               Kopioi kuva
             </button>
 
-            <button type="button" className="ajxCopyBtn" onClick={() => downloadImageUrl(u, i)}>
+            <button type="button" className="ajxImageActionBtn" onClick={() => downloadImageUrl(u, i)}>
               Lataa kuva
             </button>
           </div>
         </div>
       ))}
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   @media (max-width: 980px) {
     .ajxTopControls {
       overflow: visible !important;
@@ -244,6 +328,38 @@ function renderImagesFromContent(text: string) {
 `}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
   .ajxComposerHelp {
     display: none !important;
@@ -257,9 +373,73 @@ function renderImagesFromContent(text: string) {
   }
 `}</style>
     
-<style jsx global>{``}</style>
+<style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+`}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
   .ajxParagraph,
   .ajxQuestionList,
@@ -294,6 +474,38 @@ function renderImagesFromContent(text: string) {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX QUICK ACTION GRID FIX ===== */
 
   .ajxQuickActionsGrid {
@@ -312,6 +524,38 @@ function renderImagesFromContent(text: string) {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
 
   @media (min-width: 981px) {
@@ -351,6 +595,38 @@ function renderImagesFromContent(text: string) {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
 
   @media (min-width: 981px) {
@@ -395,6 +671,38 @@ function renderImagesFromContent(text: string) {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
 
         .ajxParagraph,
@@ -432,6 +740,38 @@ function renderImagesFromContent(text: string) {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -544,6 +884,38 @@ function renderImagesFromContent(text: string) {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -656,6 +1028,38 @@ function renderImagesFromContent(text: string) {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
 
         @media (min-width: 981px) {
@@ -1654,6 +2058,38 @@ function renderPlainRichText(text: string, locale: Locale) {
       {out}
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   @media (max-width: 980px) {
     .ajxTopControls {
       overflow: visible !important;
@@ -1689,6 +2125,38 @@ function renderPlainRichText(text: string, locale: Locale) {
 `}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
   .ajxComposerHelp {
     display: none !important;
@@ -1702,9 +2170,73 @@ function renderPlainRichText(text: string, locale: Locale) {
   }
 `}</style>
     
-<style jsx global>{``}</style>
+<style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+`}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
   .ajxParagraph,
   .ajxQuestionList,
@@ -1739,6 +2271,38 @@ function renderPlainRichText(text: string, locale: Locale) {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX QUICK ACTION GRID FIX ===== */
 
   .ajxQuickActionsGrid {
@@ -1757,6 +2321,38 @@ function renderPlainRichText(text: string, locale: Locale) {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
 
   @media (min-width: 981px) {
@@ -1796,6 +2392,38 @@ function renderPlainRichText(text: string, locale: Locale) {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
 
   @media (min-width: 981px) {
@@ -1840,6 +2468,38 @@ function renderPlainRichText(text: string, locale: Locale) {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
 
         .ajxParagraph,
@@ -1877,6 +2537,38 @@ function renderPlainRichText(text: string, locale: Locale) {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -1989,6 +2681,38 @@ function renderPlainRichText(text: string, locale: Locale) {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -2101,6 +2825,38 @@ function renderPlainRichText(text: string, locale: Locale) {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
 
         @media (min-width: 981px) {
@@ -2240,6 +2996,38 @@ function RichMessage({
       })}
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   @media (max-width: 980px) {
     .ajxTopControls {
       overflow: visible !important;
@@ -2275,6 +3063,38 @@ function RichMessage({
 `}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
   .ajxComposerHelp {
     display: none !important;
@@ -2288,9 +3108,73 @@ function RichMessage({
   }
 `}</style>
     
-<style jsx global>{``}</style>
+<style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+`}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
   .ajxParagraph,
   .ajxQuestionList,
@@ -2325,6 +3209,38 @@ function RichMessage({
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX QUICK ACTION GRID FIX ===== */
 
   .ajxQuickActionsGrid {
@@ -2343,6 +3259,38 @@ function RichMessage({
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
 
   @media (min-width: 981px) {
@@ -2382,6 +3330,38 @@ function RichMessage({
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
 
   @media (min-width: 981px) {
@@ -2426,6 +3406,38 @@ function RichMessage({
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
 
         .ajxParagraph,
@@ -2463,6 +3475,38 @@ function RichMessage({
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -2575,6 +3619,38 @@ function RichMessage({
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -2687,6 +3763,38 @@ function RichMessage({
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
 
         @media (min-width: 981px) {
@@ -4729,6 +5837,38 @@ export default function ChatPage(): React.JSX.Element {
       <div className={styles.bg} aria-hidden="true" />
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxQuestionRow::before,
         .ajxQuestionRow::after {
           content: none !important;
@@ -4742,6 +5882,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxQuestionRow {
           display: grid !important;
           grid-template-columns: 28px minmax(0, 1fr) !important;
@@ -4758,6 +5930,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxQuestionRow::before,
         .ajxQuestionRow::after {
           content: none !important;
@@ -4767,6 +5971,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxRichListOrdered {
           list-style-type: decimal !important;
           list-style-position: outside !important;
@@ -4781,6 +6017,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX QUESTION NUMBER FIX FINAL ===== */
 
         .ajxQuestionList {
@@ -4809,6 +6077,38 @@ export default function ChatPage(): React.JSX.Element {
       `}</style>
 
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX UI FRAME CLEANUP FAST ===== */
 
         .ajxTopControls,
@@ -4994,6 +6294,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxMobileQuickClose {
           display: flex !important;
           align-items: center !important;
@@ -5025,6 +6357,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxMobileQuickCloseFloating {
           position: absolute !important;
           top: 12px !important;
@@ -5052,6 +6416,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         @media (max-width: 980px) {
           .ajxTopHelpBtn {
             display: inline-flex !important;
@@ -5158,6 +6554,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         @media (max-width: 980px) {
           .ajxTopHelpBtn {
             display: inline-flex !important;
@@ -5295,6 +6723,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxActionArrow::before,
         .ajxActionArrow::after {
           content: none !important;
@@ -5318,6 +6778,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX MOBILE TOOLS PANEL FIX ===== */
 
         @media (max-width: 980px) {
@@ -5448,6 +6940,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX MOBILE QUICK ACTION MODAL V1 ===== */
 
         @media (max-width: 980px) {
@@ -5673,6 +7197,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX MOBILE QUICKACTIONS TOP + HIDE CHAT TEXT ===== */
 
         .ajxSidebarToggleText {
@@ -5790,6 +7346,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX UI CLEANUP V1 ===== */
 
         /* Yläpalkin päällekkäiset kehykset pois */
@@ -5977,6 +7565,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX REMOVE EXTRA INNER FRAMES ===== */
 
         @media (max-width: 980px) {
@@ -6132,6 +7752,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX MOBILE CHAT + TOPBAR FIX ===== */
 
         .ajxControlGroup {
@@ -6312,6 +7964,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== FINAL FIX: REMOVE ARROW BALLS COMPLETELY ===== */
 
         .ajxActionArrow {
@@ -6352,6 +8036,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxCompactToolBtn b,
         .ajxToolsDrawerBtn b {
           all: unset !important;
@@ -6378,6 +8094,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxCompactToolBtn b,
         .ajxToolsDrawerBtn b {
           background: transparent !important;
@@ -6417,6 +8165,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         .ajxCompactToolBtn b,
         .ajxToolsDrawerBtn b {
           display: inline-flex !important;
@@ -8729,6 +10509,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX FINAL CHAT AREA + INNER BOX FIX ===== */
 
         @media (max-width: 980px) {
@@ -8994,6 +10806,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         :global([class*="sidebarBottom"]) {
           display: none !important;
         }
@@ -9001,6 +10845,38 @@ export default function ChatPage(): React.JSX.Element {
 
       
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX TOPBAR AGENT REWORK FINAL ===== */
 
         @media (max-width: 980px) {
@@ -9393,7 +11269,7 @@ export default function ChatPage(): React.JSX.Element {
                           <div className="ajxBubbleTop">
                             <button
                               type="button"
-                              className="ajxCopyBtn"
+                              className="ajxImageActionBtn"
                               onClick={() => handleCopy(messageTextForCopy, messageCopyKey)}
                               title={copyLabel(locale, copiedKey === messageCopyKey)}
                             >
@@ -10052,6 +11928,38 @@ export default function ChatPage(): React.JSX.Element {
       ) : null}
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   @media (max-width: 980px) {
     .ajxTopControls {
       overflow: visible !important;
@@ -10087,6 +11995,38 @@ export default function ChatPage(): React.JSX.Element {
 `}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== HIDE ONLY BOTTOM HELP BUTTON ===== */
   .ajxComposerHelp {
     display: none !important;
@@ -10100,9 +12040,73 @@ export default function ChatPage(): React.JSX.Element {
   }
 `}</style>
     
-<style jsx global>{``}</style>
+<style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+`}</style>
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FINAL TEXT WRAP FIX ===== */
   .ajxParagraph,
   .ajxQuestionList,
@@ -10137,6 +12141,38 @@ export default function ChatPage(): React.JSX.Element {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX QUICK ACTION GRID FIX ===== */
 
   .ajxQuickActionsGrid {
@@ -10155,6 +12191,38 @@ export default function ChatPage(): React.JSX.Element {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX FORCE DESKTOP QUICK ACTIONS HORIZONTAL ===== */
 
   @media (min-width: 981px) {
@@ -10194,6 +12262,38 @@ export default function ChatPage(): React.JSX.Element {
 
     
 <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
   /* ===== AJX REAL QUICK ACTION DESKTOP GRID FIX ===== */
 
   @media (min-width: 981px) {
@@ -10238,6 +12338,38 @@ export default function ChatPage(): React.JSX.Element {
 
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX FINAL VERTICAL TEXT FIX ===== */
 
         .ajxParagraph,
@@ -10275,6 +12407,38 @@ export default function ChatPage(): React.JSX.Element {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -10387,6 +12551,38 @@ export default function ChatPage(): React.JSX.Element {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX DESKTOP TOPBAR CLEAN FINAL ===== */
 
         @media (min-width: 981px) {
@@ -10499,6 +12695,38 @@ export default function ChatPage(): React.JSX.Element {
       `}</style>
 
       <style jsx global>{`
+  .ajxImageActionBtn {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  }
+
+  .ajxImageActionBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.13),
+      rgba(255,255,255,0.05)
+    );
+    box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .ajxImageActionBtn:active {
+    transform: scale(0.97);
+  }
+
         /* ===== AJX TOPBAR WIDTH + GHOST CLEAN FINAL 2 ===== */
 
         @media (min-width: 981px) {
@@ -10579,6 +12807,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
