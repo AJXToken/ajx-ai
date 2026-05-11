@@ -11659,6 +11659,12 @@ export default function ChatPage(): React.JSX.Element {
                       const files = Array.from(e.target.files || []);
                       e.target.value = "";
                       if (!files.length) return;
+
+                      if (pending.length + files.length > MAX_ATTACHMENTS) {
+                        appendAssistantMessage(`Voit liittää enintään ${MAX_ATTACHMENTS} tiedostoa kerralla.`);
+                        return;
+                      }
+
                       try {
                         for (const f of files) {
                           await addAttachmentFromFile(f, "image");
@@ -11690,6 +11696,12 @@ export default function ChatPage(): React.JSX.Element {
                       const files = Array.from(e.target.files || []);
                       e.target.value = "";
                       if (!files.length) return;
+
+                      if (pending.length + files.length > MAX_ATTACHMENTS) {
+                        appendAssistantMessage(`Voit liittää enintään ${MAX_ATTACHMENTS} tiedostoa kerralla.`);
+                        return;
+                      }
+
                       try {
                         for (const f of files) {
                           await addAttachmentFromFile(f, "file");
@@ -12894,6 +12906,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
