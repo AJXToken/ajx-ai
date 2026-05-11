@@ -11626,13 +11626,16 @@ export default function ChatPage(): React.JSX.Element {
                     ref={imgInputRef}
                     type="file"
                     accept="image/*"
+                    multiple
                     style={{ display: "none" }}
                     onChange={async (e) => {
-                      const f = e.target.files?.[0];
+                      const files = Array.from(e.target.files || []);
                       e.target.value = "";
-                      if (!f) return;
+                      if (!files.length) return;
                       try {
-                        await addAttachmentFromFile(f, "image");
+                        for (const f of files) {
+                          await addAttachmentFromFile(f, "image");
+                        }
                       } catch (err: any) {
                         appendAssistantMessage(
                           err?.message
@@ -11653,13 +11656,17 @@ export default function ChatPage(): React.JSX.Element {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept=".pdf,.txt,.csv,.json,.md,.doc,.docx,.xls,.xlsx,application/pdf,text/plain,text/csv,application/json" style={{ display: "none" }}
+                    accept=".pdf,.txt,.csv,.json,.md,.doc,.docx,.xls,.xlsx,application/pdf,text/plain,text/csv,application/json"
+                    multiple
+                    style={{ display: "none" }}
                     onChange={async (e) => {
-                      const f = e.target.files?.[0];
+                      const files = Array.from(e.target.files || []);
                       e.target.value = "";
-                      if (!f) return;
+                      if (!files.length) return;
                       try {
-                        await addAttachmentFromFile(f, "file");
+                        for (const f of files) {
+                          await addAttachmentFromFile(f, "file");
+                        }
                       } catch (err: any) {
                         appendAssistantMessage(
                           err?.message
@@ -12860,6 +12867,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
