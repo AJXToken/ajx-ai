@@ -143,7 +143,7 @@ const REDIS_REST_URL = process.env.AJX_UPSTASH_REDIS_REST_URL || "";
 const REDIS_REST_TOKEN = process.env.AJX_UPSTASH_REDIS_REST_TOKEN || "";
 const USAGE_KEY_PREFIX = "ajx:usage:v1";
 
-const PLUS_PRIMARY_LIMIT = 5000;
+const PLUS_PRIMARY_LIMIT = 2000;
 const PLUS_SAVINGS_EXTRA_LIMIT = 0;
 const PLUS_SAVINGS_TOTAL_LIMIT = PLUS_PRIMARY_LIMIT + PLUS_SAVINGS_EXTRA_LIMIT;
 const PLUS_SAVINGS_MAX_OUTPUT_TOKENS = 500;
@@ -4291,6 +4291,7 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
+
 
 
 
