@@ -314,6 +314,7 @@ type UsageRow = {
   extraMsgThisMonth?: number;
   extraImgThisMonth?: number;
   extraWebThisMonth?: number;
+  fileThisMonth?: number;
 
   dayKey?: string;
   reqToday?: number;
@@ -333,6 +334,7 @@ function emptyUsageRow(): UsageRow {
     extraMsgThisMonth: 0,
     extraImgThisMonth: 0,
     extraWebThisMonth: 0,
+    fileThisMonth: 0,
     dayKey: undefined,
     reqToday: 0,
     imgToday: 0,
@@ -2182,6 +2184,7 @@ type CanonicalLimits = {
   imgAnalysesPerMonth: number;
   imgAnalysesPerDay: number;
   webPerMonth: number;
+  fileAnalysesPerMonth: number;
   workMemory: number;
 };
 
@@ -2196,6 +2199,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 0,
         imgAnalysesPerDay: 0,
         webPerMonth: 0,
+        fileAnalysesPerMonth: 0,
         workMemory: 5,
       };
 
@@ -2206,6 +2210,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 0,
         imgAnalysesPerDay: 5,
         webPerMonth: 0,
+        fileAnalysesPerMonth: 10,
         workMemory: 10,
       };
 
@@ -2216,6 +2221,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 120,
         imgAnalysesPerDay: 0,
         webPerMonth: 0,
+        fileAnalysesPerMonth: 30,
         workMemory: 25,
       };
 
@@ -2226,6 +2232,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 200,
         imgAnalysesPerDay: 0,
         webPerMonth: 200,
+        fileAnalysesPerMonth: 120,
         workMemory: 50,
       };
 
@@ -2236,6 +2243,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 300,
         imgAnalysesPerDay: 0,
         webPerMonth: 300,
+        fileAnalysesPerMonth: 300,
         workMemory: 75,
       };
 
@@ -2246,6 +2254,7 @@ function canonicalLimits(plan: PlanId): CanonicalLimits {
         imgAnalysesPerMonth: 0,
         imgAnalysesPerDay: 0,
         webPerMonth: 0,
+        fileAnalysesPerMonth: 0,
         workMemory: 0,
       };
   }
@@ -3304,6 +3313,7 @@ export async function POST(req: NextRequest) {
   if (typeof usage.extraImgThisMonth !== "number") usage.extraImgThisMonth = 0;
   if (typeof usage.proUsedThisMonth !== "number") usage.proUsedThisMonth = 0;
   if (typeof usage.boostThisMonth !== "number") usage.boostThisMonth = 0;
+  if (typeof usage.fileThisMonth !== "number") usage.fileThisMonth = 0;
 
   const todayKey = getDayKey();
   if (usage.dayKey !== todayKey) {
@@ -3324,6 +3334,7 @@ export async function POST(req: NextRequest) {
   const effectiveImgLimit =
     Number(limits.imgAnalysesPerMonth || 0) + Number(usage.extraImgThisMonth || 0);
   const effectiveWebLimit = Number(limits.webPerMonth || 0) + Number(usage.extraWebThisMonth || 0);
+  const effectiveFileLimit = Number(limits.fileAnalysesPerMonth || 0);
 if (lastTextOriginal.length > budget.maxLastUserChars) {
     return NextResponse.json(
       {
@@ -4291,6 +4302,13 @@ if (!isUsableModelText(outText)) {
     );
   }
 }
+
+
+
+
+
+
+
 
 
 
