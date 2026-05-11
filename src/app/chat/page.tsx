@@ -54,6 +54,8 @@ const MIN_JPEG_QUALITY = 0.55;
 const TARGET_IMAGE_BYTES = 1_500_000;
 const HARD_MAX_IMAGE_BYTES = 2_200_000;
 const MAX_NON_IMAGE_FILE_BYTES = 8_000_000;
+const MAX_ATTACHMENTS = 6;
+const MAX_TOTAL_UPLOAD_BYTES = 15 * 1024 * 1024;
 
 // ====== Canonical plans (UI) ======
 type CanonicalPlan = "free" | "basic" | "plus" | "pro" | "company";
@@ -5137,6 +5139,31 @@ export default function ChatPage(): React.JSX.Element {
   }
 
   async function addAttachmentFromFile(file: File, kind: "image" | "file") {
+
+    if (pending.length >= MAX_ATTACHMENTS) {
+      throw new Error(
+        locale === "fi"
+          ? `Voit liittää enintään ${MAX_ATTACHMENTS} tiedostoa kerralla.`
+          : locale === "es"
+            ? `Puedes adjuntar un máximo de ${MAX_ATTACHMENTS} archivos a la vez.`
+            : `You can attach a maximum of ${MAX_ATTACHMENTS} files at once.`
+      );
+    }
+
+    const currentTotalBytes = pending.reduce(
+      (sum, p) => sum + estimateDataUrlBytes(p.dataUrl || ""),
+      0
+    );
+
+    if ((currentTotalBytes + file.size) > MAX_TOTAL_UPLOAD_BYTES) {
+      throw new Error(
+        locale === "fi"
+          ? "Liitteiden kokonaiskoko on liian suuri."
+          : locale === "es"
+            ? "El tamaño total de los archivos es demasiado grande."
+            : "Total attachment size is too large."
+      );
+    }
     if (kind === "image") {
       const compressed = await compressImageFile(file);
 
@@ -12867,6 +12894,8 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
+
 
 
 
