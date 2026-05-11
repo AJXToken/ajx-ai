@@ -48,11 +48,11 @@ type ChatErrJson = {
 const LOCALE_STORAGE_KEY = "ajx_locale_v1";
 
 // ===== image payload safety =====
-const MAX_IMAGE_DIMENSION = 1024;
-const INITIAL_JPEG_QUALITY = 0.75;
-const MIN_JPEG_QUALITY = 0.45;
-const TARGET_IMAGE_BYTES = 900_000;
-const HARD_MAX_IMAGE_BYTES = 1_200_000;
+const MAX_IMAGE_DIMENSION = 1400;
+const INITIAL_JPEG_QUALITY = 0.82;
+const MIN_JPEG_QUALITY = 0.55;
+const TARGET_IMAGE_BYTES = 1_500_000;
+const HARD_MAX_IMAGE_BYTES = 2_200_000;
 const MAX_NON_IMAGE_FILE_BYTES = 8_000_000;
 
 // ====== Canonical plans (UI) ======
@@ -12850,6 +12850,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
