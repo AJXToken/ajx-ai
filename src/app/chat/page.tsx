@@ -4260,6 +4260,16 @@ async function compressImageFile(file: File): Promise<{
     };
   }
 
+  const passThroughTypes = new Set(["image/png", "image/jpeg", "image/jpg", "image/webp"]);
+  if (passThroughTypes.has(file.type) && file.size <= HARD_MAX_IMAGE_BYTES) {
+    const dataUrl = await blobToDataUrl(file);
+    return {
+      name: file.name,
+      type: file.type === "image/jpg" ? "image/jpeg" : file.type,
+      dataUrl,
+    };
+  }
+
   const img = await loadImageElementFromFile(file);
 
   let width = img.naturalWidth || img.width;
@@ -12850,6 +12860,7 @@ export default function ChatPage(): React.JSX.Element {
     </div>
   );
 }
+
 
 
 
